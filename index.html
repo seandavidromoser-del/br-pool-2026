@@ -259,7 +259,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   <div class="step" id="step-19">
     <div class="step-label">Almost done</div>
     <div class="step-title">Tiebreaker</div>
-    <div class="step-sub">How many total goals will be scored in the Final? Used only to break ties — closest guess wins the tiebreak.</div>
+    <div class="live-bracket-label">Your bracket</div>
+    <div class="confirm-bracket bracket-box" id="live-bracket-19"></div>
+    <div class="step-sub" style="margin-top:1rem;">How many total goals will be scored in the Final? Used only to break ties — closest guess wins the tiebreak.</div>
     <input class="tiebreak-input" id="tiebreak" type="number" min="0" max="20" placeholder="e.g. 3" />
     <div class="nav">
       <button class="btn" onclick="goBack(19)">Back</button>
@@ -271,7 +273,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   <div class="step" id="step-20">
     <div class="step-label">Review</div>
     <div class="step-title">Double-check your picks</div>
-    <div class="step-sub">Everything look good? Hit submit when you're ready.</div>
+    <div class="live-bracket-label">Your bracket</div>
+    <div class="confirm-bracket bracket-box" id="live-bracket-20"></div>
+    <div class="step-sub" style="margin-top:1rem;">Everything look good? Hit submit when you're ready.</div>
     <div class="summary-card" id="summary-content"></div>
     <div class="nav">
       <button class="btn" onclick="goBack(20)">Back</button>
@@ -288,12 +292,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         </svg>
       </div>
       <div class="step-title">You're in, <span id="confirm-name"></span>!</div>
-      <div class="step-sub" style="margin-top:4px;">Here's a summary of your bracket. Stay tuned for updates via email as the tournament progresses.</div>
+      <div class="step-sub" style="margin-top:4px;">Here's your bracket. Stay tuned for updates via email as the tournament progresses.</div>
     </div>
+    <div class="bracket-section-label">Your knockout bracket</div>
+    <div class="confirm-bracket bracket-box" id="confirm-bracket"></div>
     <div class="bracket-section-label">Group stage picks</div>
     <div class="groups-summary" id="groups-summary"></div>
-    <div class="bracket-section-label">Your knockout bracket</div>
-    <div class="confirm-bracket" id="confirm-bracket"></div>
     <div class="stay-tuned">
       <p>We'll be in touch at <strong id="confirm-email"></strong> with standings updates as the tournament progresses.</p>
       <div class="shankly">
@@ -743,7 +747,11 @@ function selectMatchWinner(matchId, team, pickedSpanId, nextBtnId, totalPicks, r
   renderFn();
   // Update live bracket on current visible step
   var stepMap = {'r32-picked':'live-bracket-14','r16-picked':'live-bracket-15','qf-picked':'live-bracket-16','sf-picked':'live-bracket-17','final-picked':'live-bracket-18'};
-  if (stepMap[pickedSpanId]) renderLiveBracket(stepMap[pickedSpanId]);
+  if (stepMap[pickedSpanId]) {
+    renderLiveBracket(stepMap[pickedSpanId]);
+    renderLiveBracket('live-bracket-19');
+    renderLiveBracket('live-bracket-20');
+  }
 }
 
 function checkNextButton(btnId, picked, total) {
@@ -885,11 +893,14 @@ function goNext(cur) {
   } else if (cur === 17) {
     buildFinal(); showStep(18);
   } else if (cur === 18) {
+    renderLiveBracket('live-bracket-19');
     showStep(19);
   } else if (cur === 19) {
     picks.tiebreak = document.getElementById('tiebreak').value;
     if (!picks.tiebreak) { alert('Please enter a tiebreaker number.'); return; }
-    buildSummary(); showStep(20);
+    renderLiveBracket('live-bracket-20');
+    buildSummary();
+    showStep(20);
   }
 }
 
@@ -936,8 +947,8 @@ function submitPicks() {
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify(payload)
   })
-  .then(function() { buildConfirmation(); showStep(21); })
-  .catch(function() { buildConfirmation(); showStep(21); });
+  .then(function() { renderLiveBracket('confirm-bracket'); buildConfirmation(); showStep(21); })
+  .catch(function() { renderLiveBracket('confirm-bracket'); buildConfirmation(); showStep(21); });
 }
 
 buildGroupSteps();
