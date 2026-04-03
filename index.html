@@ -108,7 +108,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   </div>
   <div class="progress-bar"><div class="progress-fill" id="pbar" style="width:0%"></div></div>
 
-  <!-- Step 0: Welcome -->
   <div class="step active" id="step-0">
     <div class="step-label">Welcome</div>
     <div class="step-title">How the pool works</div>
@@ -135,7 +134,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 
   <div id="group-steps"></div>
 
-  <!-- Step 13: Eliminate 4 -->
   <div class="step" id="step-13">
     <div class="step-label">Group stage — final cut</div>
     <div class="step-title">Eliminate 4 third-place teams <span class="points-badge">1 pt each correct</span></div>
@@ -148,7 +146,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
   </div>
 
-  <!-- Step 14: Round of 32 -->
   <div class="step" id="step-14">
     <div class="step-label">Knockout rounds</div>
     <div class="step-title">Round of 32 <span class="points-badge">2 pts each</span></div>
@@ -161,7 +158,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
   </div>
 
-  <!-- Step 15: Round of 16 -->
   <div class="step" id="step-15">
     <div class="step-label">Knockout rounds</div>
     <div class="step-title">Round of 16 <span class="points-badge">4 pts each</span></div>
@@ -174,7 +170,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
   </div>
 
-  <!-- Step 16: Quarterfinals -->
   <div class="step" id="step-16">
     <div class="step-label">Knockout rounds</div>
     <div class="step-title">Quarterfinals <span class="points-badge">8 pts each</span></div>
@@ -187,7 +182,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
   </div>
 
-  <!-- Step 17: Semifinals -->
   <div class="step" id="step-17">
     <div class="step-label">Knockout rounds</div>
     <div class="step-title">Semifinals <span class="points-badge">16 pts each</span></div>
@@ -200,7 +194,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
   </div>
 
-  <!-- Step 18: Final -->
   <div class="step" id="step-18">
     <div class="step-label">Knockout rounds</div>
     <div class="step-title">The Final <span class="points-badge">32 pts</span></div>
@@ -213,7 +206,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
   </div>
 
-  <!-- Step 19: Tiebreaker -->
   <div class="step" id="step-19">
     <div class="step-label">Almost done</div>
     <div class="step-title">Tiebreaker</div>
@@ -225,7 +217,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
   </div>
 
-  <!-- Step 20: Review -->
   <div class="step" id="step-20">
     <div class="step-label">Review</div>
     <div class="step-title">Double-check your picks</div>
@@ -233,11 +224,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <div class="summary-card" id="summary-content"></div>
     <div class="nav">
       <button class="btn" onclick="goBack(20)">Back</button>
-      <button class="btn primary" onclick="submitPicks()">Submit my picks</button>
+      <button class="btn primary" id="submit-btn" onclick="submitPicks()">Submit my picks</button>
     </div>
   </div>
 
-  <!-- Step 21: Success -->
   <div class="step" id="step-21">
     <div class="success-header">
       <div class="success-icon">
@@ -263,6 +253,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 </div>
 
 <script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-5XOSNW5OzQFbezL3SOhS_iSl9_-aZWTv9QR3V60v4XcQfjX_BztLXqJz_696lGHY/exec';
+
 const GROUPS = {
   A: ['Mexico','South Korea','South Africa','Czechia'],
   B: ['Canada','Switzerland','Qatar','Bosnia & Herzegovina'],
@@ -285,56 +277,49 @@ function buildGroupSteps() {
   GK.forEach((g, i) => {
     const n = i + 1;
     const div = document.createElement('div');
-    div.className = 'step'; div.id = `step-${n}`;
-    div.innerHTML = `
-      <div class="step-label">Group stage — Group ${g}</div>
-      <div class="step-title">Group ${g} <span class="points-badge">1 pt each</span></div>
-      <div class="step-sub">Pick 3 teams to advance. Your top 2 advance automatically; your 3rd is your third-place prediction.</div>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#7B00FF;"></div>1st & 2nd place</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#CC0000;"></div>3rd place</div>
-      </div>
-      <div class="group-card">
-        <div class="group-name">Group ${g}</div>
-        <div class="teams-grid" id="group-${g}-teams"></div>
-        <div class="warning" id="group-${g}-warn">You can only pick 3 teams per group.</div>
-      </div>
-      <div class="nav">
-        <button class="btn" onclick="goBack(${n})">Back</button>
-        <button class="btn primary" id="group-${g}-next" onclick="goNext(${n})" disabled>Next &rarr;</button>
-      </div>`;
+    div.className = 'step'; div.id = 'step-' + n;
+    div.innerHTML =
+      '<div class="step-label">Group stage — Group ' + g + '</div>' +
+      '<div class="step-title">Group ' + g + ' <span class="points-badge">1 pt each</span></div>' +
+      '<div class="step-sub">Pick 3 teams to advance. Your top 2 advance automatically; your 3rd is your third-place prediction.</div>' +
+      '<div class="legend">' +
+        '<div class="legend-item"><div class="legend-dot" style="background:#7B00FF;"></div>1st & 2nd place</div>' +
+        '<div class="legend-item"><div class="legend-dot" style="background:#CC0000;"></div>3rd place</div>' +
+      '</div>' +
+      '<div class="group-card">' +
+        '<div class="group-name">Group ' + g + '</div>' +
+        '<div class="teams-grid" id="group-' + g + '-teams"></div>' +
+        '<div class="warning" id="group-' + g + '-warn">You can only pick 3 teams per group.</div>' +
+      '</div>' +
+      '<div class="nav">' +
+        '<button class="btn" onclick="goBack(' + n + ')">Back</button>' +
+        '<button class="btn primary" id="group-' + g + '-next" onclick="goNext(' + n + ')" disabled>Next &rarr;</button>' +
+      '</div>';
     container.appendChild(div);
     picks.groups[g] = [];
-    const grid = document.getElementById(`group-${g}-teams`) || (() => {
-      setTimeout(() => buildGroupTeams(g), 0); return null;
-    })();
-    if (grid) buildGroupTeamsInto(g, grid);
-    else setTimeout(() => buildGroupTeams(g), 0);
-  });
-}
-
-function buildGroupTeams(g) {
-  const grid = document.getElementById(`group-${g}-teams`);
-  if (grid) buildGroupTeamsInto(g, grid);
-}
-
-function buildGroupTeamsInto(g, grid) {
-  GROUPS[g].forEach(team => {
-    const el = document.createElement('div');
-    el.className = 'team-option';
-    el.dataset.group = g; el.dataset.team = team;
-    el.innerHTML = `<div class="check"></div>${team}`;
-    el.onclick = () => toggleGroup(g, team, el);
-    grid.appendChild(el);
+    (function(grp) {
+      setTimeout(function() {
+        var grid = document.getElementById('group-' + grp + '-teams');
+        if (!grid) return;
+        GROUPS[grp].forEach(function(team) {
+          var el = document.createElement('div');
+          el.className = 'team-option';
+          el.dataset.group = grp; el.dataset.team = team;
+          el.innerHTML = '<div class="check"></div>' + team;
+          el.onclick = function() { toggleGroup(grp, team, el); };
+          grid.appendChild(el);
+        });
+      }, 0);
+    })(g);
   });
 }
 
 function toggleGroup(g, team, el) {
-  const sel = picks.groups[g];
-  const warn = document.getElementById(`group-${g}-warn`);
+  var sel = picks.groups[g];
+  var warn = document.getElementById('group-' + g + '-warn');
   if (el.classList.contains('selected') || el.classList.contains('selected-third')) {
     el.classList.remove('selected','selected-third');
-    picks.groups[g] = sel.filter(t => t !== team);
+    picks.groups[g] = sel.filter(function(t) { return t !== team; });
   } else {
     if (sel.length >= 3) { warn.classList.add('show'); return; }
     warn.classList.remove('show');
@@ -342,14 +327,14 @@ function toggleGroup(g, team, el) {
     el.classList.add(picks.groups[g].length === 3 ? 'selected-third' : 'selected');
   }
   refreshGroupColors(g);
-  document.getElementById(`group-${g}-next`).disabled = picks.groups[g].length !== 3;
+  document.getElementById('group-' + g + '-next').disabled = picks.groups[g].length !== 3;
   refreshGroupDisabled(g);
 }
 
 function refreshGroupColors(g) {
-  const sel = picks.groups[g];
-  document.querySelectorAll(`.team-option[data-group="${g}"]`).forEach(el => {
-    const idx = sel.indexOf(el.dataset.team);
+  var sel = picks.groups[g];
+  document.querySelectorAll('.team-option[data-group="' + g + '"]').forEach(function(el) {
+    var idx = sel.indexOf(el.dataset.team);
     el.classList.remove('selected','selected-third');
     if (idx === 0 || idx === 1) el.classList.add('selected');
     else if (idx === 2) el.classList.add('selected-third');
@@ -357,36 +342,36 @@ function refreshGroupColors(g) {
 }
 
 function refreshGroupDisabled(g) {
-  const sel = picks.groups[g];
-  document.querySelectorAll(`.team-option[data-group="${g}"]`).forEach(el => {
+  var sel = picks.groups[g];
+  document.querySelectorAll('.team-option[data-group="' + g + '"]').forEach(function(el) {
     if (!sel.includes(el.dataset.team) && sel.length >= 3) el.classList.add('disabled');
     else el.classList.remove('disabled');
   });
 }
 
 function getTop2() {
-  let t = [];
-  GK.forEach(g => { if (picks.groups[g].length >= 2) t = t.concat(picks.groups[g].slice(0,2)); });
+  var t = [];
+  GK.forEach(function(g) { if (picks.groups[g].length >= 2) t = t.concat(picks.groups[g].slice(0,2)); });
   return t;
 }
 function getThirds() {
-  let t = [];
-  GK.forEach(g => { if (picks.groups[g].length === 3) t.push(picks.groups[g][2]); });
+  var t = [];
+  GK.forEach(function(g) { if (picks.groups[g].length === 3) t.push(picks.groups[g][2]); });
   return t;
 }
-function get32() { return getTop2().concat(getThirds().filter(t => !picks.eliminated.includes(t))); }
+function get32() { return getTop2().concat(getThirds().filter(function(t) { return !picks.eliminated.includes(t); })); }
 
 function buildElimStep() {
   picks.eliminated = [];
-  const container = document.getElementById('third-place-pool');
+  var container = document.getElementById('third-place-pool');
   container.innerHTML = '';
   document.getElementById('elim-count').textContent = '0';
   document.getElementById('elim-next').disabled = true;
-  getThirds().forEach(team => {
-    const el = document.createElement('div');
+  getThirds().forEach(function(team) {
+    var el = document.createElement('div');
     el.className = 'ko-team';
-    el.innerHTML = `<div class="check"></div>${team}<span style="font-size:12px;color:#999;margin-left:auto;">3rd place</span>`;
-    el.onclick = () => toggleElim(el, team);
+    el.innerHTML = '<div class="check"></div>' + team + '<span style="font-size:12px;color:#999;margin-left:auto;">3rd place</span>';
+    el.onclick = function() { toggleElim(el, team); };
     container.appendChild(el);
   });
 }
@@ -394,27 +379,27 @@ function buildElimStep() {
 function toggleElim(el, team) {
   if (el.classList.contains('to-eliminate')) {
     el.classList.remove('to-eliminate');
-    picks.eliminated = picks.eliminated.filter(t => t !== team);
+    picks.eliminated = picks.eliminated.filter(function(t) { return t !== team; });
   } else {
     if (picks.eliminated.length >= 4) return;
     picks.eliminated.push(team); el.classList.add('to-eliminate');
   }
   document.getElementById('elim-count').textContent = picks.eliminated.length;
   document.getElementById('elim-next').disabled = picks.eliminated.length !== 4;
-  document.querySelectorAll('#third-place-pool .ko-team').forEach(e => {
+  document.querySelectorAll('#third-place-pool .ko-team').forEach(function(e) {
     if (!e.classList.contains('to-eliminate') && picks.eliminated.length >= 4) e.classList.add('disabled');
     else e.classList.remove('disabled');
   });
 }
 
 function buildKO(cid, teams, list, max, countId, nextId) {
-  const c = document.getElementById(cid);
+  var c = document.getElementById(cid);
   c.innerHTML = ''; list.length = 0;
-  teams.forEach(team => {
-    const el = document.createElement('div');
+  teams.forEach(function(team) {
+    var el = document.createElement('div');
     el.className = 'ko-team';
-    el.innerHTML = `<div class="check"></div>${team}`;
-    el.onclick = () => toggleKO(el, team, list, max, countId, nextId, cid);
+    el.innerHTML = '<div class="check"></div>' + team;
+    el.onclick = function() { toggleKO(el, team, list, max, countId, nextId, cid); };
     c.appendChild(el);
   });
   document.getElementById(countId).textContent = 0;
@@ -430,59 +415,59 @@ function toggleKO(el, team, list, max, countId, nextId, cid) {
   }
   document.getElementById(countId).textContent = list.length;
   document.getElementById(nextId).disabled = list.length !== max;
-  document.querySelectorAll(`#${cid} .ko-team`).forEach(e => {
+  document.querySelectorAll('#' + cid + ' .ko-team').forEach(function(e) {
     if (!e.classList.contains('selected') && list.length >= max) e.classList.add('disabled');
     else e.classList.remove('disabled');
   });
 }
 
 function buildSummary() {
-  let html = `<div class="summary-section"><div class="summary-label">Name</div><div style="font-size:15px;font-weight:600;">${picks.name}</div></div>`;
-  html += `<div class="summary-section"><div class="summary-label">Email</div><div style="font-size:14px;color:#555;">${picks.email}</div></div>`;
-  html += `<div class="summary-section"><div class="summary-label">Group stage top 2 (24)</div><div class="summary-teams">`;
-  GK.forEach(g => picks.groups[g].slice(0,2).forEach(t => { html += `<span class="summary-tag">${t}</span>`; }));
-  html += `</div></div><div class="summary-section"><div class="summary-label">Third-place advancers (8)</div><div class="summary-teams">`;
-  getThirds().filter(t => !picks.eliminated.includes(t)).forEach(t => { html += `<span class="summary-tag">${t}</span>`; });
-  html += `</div></div><div class="summary-section"><div class="summary-label">Eliminated (4)</div><div class="summary-teams">`;
-  picks.eliminated.forEach(t => { html += `<span class="summary-tag out">${t}</span>`; });
-  html += `</div></div>`;
-  html += `<div class="summary-section"><div class="summary-label">Round of 32 (16)</div><div class="summary-teams">${picks.r32.map(t=>`<span class="summary-tag">${t}</span>`).join('')}</div></div>`;
-  html += `<div class="summary-section"><div class="summary-label">Round of 16 (8)</div><div class="summary-teams">${picks.r16.map(t=>`<span class="summary-tag">${t}</span>`).join('')}</div></div>`;
-  html += `<div class="summary-section"><div class="summary-label">Quarterfinals (4)</div><div class="summary-teams">${picks.qf.map(t=>`<span class="summary-tag">${t}</span>`).join('')}</div></div>`;
-  html += `<div class="summary-section"><div class="summary-label">Semifinals (2)</div><div class="summary-teams">${picks.sf.map(t=>`<span class="summary-tag">${t}</span>`).join('')}</div></div>`;
-  html += `<div class="summary-section"><div class="summary-label">World Cup winner</div><div class="summary-teams">${picks.final.map(t=>`<span class="summary-tag winner">${t}</span>`).join('')}</div></div>`;
-  html += `<div class="summary-section"><div class="summary-label">Tiebreaker</div><div style="font-size:15px;font-weight:600;">${picks.tiebreak} goals</div></div>`;
+  var html = '<div class="summary-section"><div class="summary-label">Name</div><div style="font-size:15px;font-weight:600;">' + picks.name + '</div></div>';
+  html += '<div class="summary-section"><div class="summary-label">Email</div><div style="font-size:14px;color:#555;">' + picks.email + '</div></div>';
+  html += '<div class="summary-section"><div class="summary-label">Group stage top 2 (24)</div><div class="summary-teams">';
+  GK.forEach(function(g) { picks.groups[g].slice(0,2).forEach(function(t) { html += '<span class="summary-tag">' + t + '</span>'; }); });
+  html += '</div></div><div class="summary-section"><div class="summary-label">Third-place advancers (8)</div><div class="summary-teams">';
+  getThirds().filter(function(t) { return !picks.eliminated.includes(t); }).forEach(function(t) { html += '<span class="summary-tag">' + t + '</span>'; });
+  html += '</div></div><div class="summary-section"><div class="summary-label">Eliminated (4)</div><div class="summary-teams">';
+  picks.eliminated.forEach(function(t) { html += '<span class="summary-tag out">' + t + '</span>'; });
+  html += '</div></div>';
+  html += '<div class="summary-section"><div class="summary-label">Round of 32 (16)</div><div class="summary-teams">' + picks.r32.map(function(t) { return '<span class="summary-tag">' + t + '</span>'; }).join('') + '</div></div>';
+  html += '<div class="summary-section"><div class="summary-label">Round of 16 (8)</div><div class="summary-teams">' + picks.r16.map(function(t) { return '<span class="summary-tag">' + t + '</span>'; }).join('') + '</div></div>';
+  html += '<div class="summary-section"><div class="summary-label">Quarterfinals (4)</div><div class="summary-teams">' + picks.qf.map(function(t) { return '<span class="summary-tag">' + t + '</span>'; }).join('') + '</div></div>';
+  html += '<div class="summary-section"><div class="summary-label">Semifinals (2)</div><div class="summary-teams">' + picks.sf.map(function(t) { return '<span class="summary-tag">' + t + '</span>'; }).join('') + '</div></div>';
+  html += '<div class="summary-section"><div class="summary-label">World Cup winner</div><div class="summary-teams">' + picks.final.map(function(t) { return '<span class="summary-tag winner">' + t + '</span>'; }).join('') + '</div></div>';
+  html += '<div class="summary-section"><div class="summary-label">Tiebreaker</div><div style="font-size:15px;font-weight:600;">' + picks.tiebreak + ' goals</div></div>';
   document.getElementById('summary-content').innerHTML = html;
 }
 
 function buildConfirmation() {
   document.getElementById('confirm-name').textContent = picks.name;
   document.getElementById('confirm-email').textContent = picks.email;
-  const gs = document.getElementById('groups-summary');
+  var gs = document.getElementById('groups-summary');
   gs.innerHTML = '';
-  GK.forEach(g => {
-    const t = picks.groups[g];
-    const pill = document.createElement('div');
+  GK.forEach(function(g) {
+    var t = picks.groups[g];
+    var pill = document.createElement('div');
     pill.className = 'group-pill';
-    pill.innerHTML = `<div class="group-pill-label">Group ${g}</div><div class="group-pill-teams">${t[0]||''}<br>${t[1]||''}<br><span class="third">${t[2]||''}</span></div>`;
+    pill.innerHTML = '<div class="group-pill-label">Group ' + g + '</div><div class="group-pill-teams">' + (t[0]||'') + '<br>' + (t[1]||'') + '<br><span class="third">' + (t[2]||'') + '</span></div>';
     gs.appendChild(pill);
   });
-  const rounds = [
+  var rounds = [
     { label:'R32 (16)', teams: picks.r32, cls:'' },
     { label:'R16 (8)', teams: picks.r16, cls:'r16' },
     { label:'QF (4)', teams: picks.qf, cls:'qf' },
     { label:'SF (2)', teams: picks.sf, cls:'semi' },
     { label:'Champion', teams: picks.final, cls:'champion' }
   ];
-  const bv = document.getElementById('bracket-visual');
+  var bv = document.getElementById('bracket-visual');
   bv.innerHTML = '';
-  rounds.forEach(r => {
-    const col = document.createElement('div'); col.className = 'bracket-col';
-    col.innerHTML = `<div class="bracket-col-header">${r.label}</div>`;
-    const td = document.createElement('div'); td.className = 'bracket-teams';
-    r.teams.forEach(team => {
-      const el = document.createElement('div');
-      el.className = `bracket-team ${r.cls}`; el.textContent = team;
+  rounds.forEach(function(r) {
+    var col = document.createElement('div'); col.className = 'bracket-col';
+    col.innerHTML = '<div class="bracket-col-header">' + r.label + '</div>';
+    var td = document.createElement('div'); td.className = 'bracket-teams';
+    r.teams.forEach(function(team) {
+      var el = document.createElement('div');
+      el.className = 'bracket-team ' + r.cls; el.textContent = team;
       td.appendChild(el);
     });
     col.appendChild(td); bv.appendChild(col);
@@ -490,12 +475,12 @@ function buildConfirmation() {
 }
 
 function updateProgress(n) {
-  document.getElementById('pbar').style.width = Math.round((n/21)*100)+'%';
+  document.getElementById('pbar').style.width = Math.round((n/21)*100) + '%';
 }
 
 function showStep(n) {
-  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById(`step-${n}`);
+  document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active'); });
+  var el = document.getElementById('step-' + n);
   if (el) { el.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
   updateProgress(n);
 }
@@ -509,10 +494,10 @@ function goNext(cur) {
   } else if (cur >= 1 && cur <= 11) { showStep(cur + 1); }
   else if (cur === 12) { buildElimStep(); showStep(13); }
   else if (cur === 13) { buildKO('r32-pool', get32(), picks.r32, 16, 'r32-count', 'r32-next'); showStep(14); }
-  else if (cur === 14) { buildKO('r16-pool', [...picks.r32], picks.r16, 8, 'r16-count', 'r16-next'); showStep(15); }
-  else if (cur === 15) { buildKO('qf-pool', [...picks.r16], picks.qf, 4, 'qf-count', 'qf-next'); showStep(16); }
-  else if (cur === 16) { buildKO('sf-pool', [...picks.qf], picks.sf, 2, 'sf-count', 'sf-next'); showStep(17); }
-  else if (cur === 17) { buildKO('final-pool', [...picks.sf], picks.final, 1, 'final-count', 'final-next'); showStep(18); }
+  else if (cur === 14) { buildKO('r16-pool', picks.r32.slice(), picks.r16, 8, 'r16-count', 'r16-next'); showStep(15); }
+  else if (cur === 15) { buildKO('qf-pool', picks.r16.slice(), picks.qf, 4, 'qf-count', 'qf-next'); showStep(16); }
+  else if (cur === 16) { buildKO('sf-pool', picks.qf.slice(), picks.sf, 2, 'sf-count', 'sf-next'); showStep(17); }
+  else if (cur === 17) { buildKO('final-pool', picks.sf.slice(), picks.final, 1, 'final-count', 'final-next'); showStep(18); }
   else if (cur === 18) { showStep(19); }
   else if (cur === 19) {
     picks.tiebreak = document.getElementById('tiebreak').value;
@@ -527,17 +512,25 @@ function goBack(cur) {
   else if (cur === 13) showStep(12);
   else if (cur === 14) { buildElimStep(); showStep(13); }
   else if (cur === 15) { buildKO('r32-pool', get32(), picks.r32, 16, 'r32-count', 'r32-next'); showStep(14); }
-  else if (cur === 16) { buildKO('r16-pool', [...picks.r32], picks.r16, 8, 'r16-count', 'r16-next'); showStep(15); }
-  else if (cur === 17) { buildKO('qf-pool', [...picks.r16], picks.qf, 4, 'qf-count', 'qf-next'); showStep(16); }
-  else if (cur === 18) { buildKO('sf-pool', [...picks.qf], picks.sf, 2, 'sf-count', 'sf-next'); showStep(17); }
+  else if (cur === 16) { buildKO('r16-pool', picks.r32.slice(), picks.r16, 8, 'r16-count', 'r16-next'); showStep(15); }
+  else if (cur === 17) { buildKO('qf-pool', picks.r16.slice(), picks.qf, 4, 'qf-count', 'qf-next'); showStep(16); }
+  else if (cur === 18) { buildKO('sf-pool', picks.qf.slice(), picks.sf, 2, 'sf-count', 'sf-next'); showStep(17); }
   else if (cur === 19) showStep(18);
   else if (cur === 20) showStep(19);
 }
 
 function submitPicks() {
-  console.log('Submitted:', JSON.stringify(picks));
-  buildConfirmation();
-  showStep(21);
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(picks)
+  })
+  .then(function() { buildConfirmation(); showStep(21); })
+  .catch(function() { buildConfirmation(); showStep(21); });
 }
 
 buildGroupSteps();
