@@ -453,15 +453,25 @@ function getSurvivingThirds() {
   return getThirds().filter(function(t) { return !picks.eliminated.includes(t); });
 }
 
-function resolveTeam(src) {
+function getAllAssignedWildcards(excludeSlot, excludeMatchId) {
+  var used = [];
+  Object.keys(picks.wildcards).forEach(function(key) {
+    if (key !== excludeSlot + '_' + excludeMatchId) {
+      used.push(picks.wildcards[key]);
+    }
+  });
+  return used;
+}
+
+function resolveTeam(src, excludeSlot, excludeMatchId) {
   if (!src) return null;
   if (src.type === 'winner')    return groupWinner(src.group);
   if (src.type === 'runner_up') return groupRunnerUp(src.group);
   if (src.type === 'third') {
-    // Eligible surviving thirds from the specified groups
+    var alreadyUsed = getAllAssignedWildcards(excludeSlot, excludeMatchId);
     var eligible = src.groups.map(function(g) { return groupThird(g); })
-      .filter(function(t) { return t && !picks.eliminated.includes(t); });
-    return eligible.length > 0 ? eligible : null; // return array for wildcard
+      .filter(function(t) { return t && !picks.eliminated.includes(t) && !alreadyUsed.includes(t); });
+    return eligible.length > 0 ? eligible : null;
   }
   return null;
 }
@@ -518,8 +528,8 @@ function buildBracketRound(containerId, structure, pickedSpanId, nextBtnId, tota
     var t1, t2;
     if (matchup.t1) {
       // R32
-      t1 = resolveTeam(matchup.t1);
-      t2 = resolveTeam(matchup.t2);
+      t1 = resolveTeam(matchup.t1, 'wc1', matchup.id);
+      t2 = resolveTeam(matchup.t2, 'wc2', matchup.id);
     } else {
       // R16, QF, SF, Final
       t1 = getPrevWinner(matchup.m1);
@@ -542,6 +552,11 @@ function buildBracketRound(containerId, structure, pickedSpanId, nextBtnId, tota
     if (currentWinner) pickedCount++;
 
     function renderMatchup() {
+      // Re-resolve each render so eligible thirds stay current
+      if (matchup.t1) {
+        t1 = resolveTeam(matchup.t1, 'wc1', matchup.id);
+        t2 = resolveTeam(matchup.t2, 'wc2', matchup.id);
+      }
       // Clear existing team rows
       var existing = card.querySelectorAll('.matchup-team, .matchup-divider, .wildcard-selector');
       existing.forEach(function(e) { e.remove(); });
