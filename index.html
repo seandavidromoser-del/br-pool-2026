@@ -113,16 +113,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bracket-progress span { font-weight: 600; color: #1a1a1a; }
 
 /* Confirm bracket visual */
-.confirm-bracket { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 0.5rem; min-width: 0; }
+.confirm-bracket { display: flex; gap: 6px; padding-bottom: 0.5rem; min-width: 0; }
+.live-bracket { display: flex; gap: 6px; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e8e8e8; }
 .confirm-col { display: flex; flex-direction: column; flex: 1; min-width: 90px; }
 .confirm-col-header { font-size: 9px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; padding: 0 2px 6px; }
 .confirm-teams { display: flex; flex-direction: column; gap: 3px; }
 .confirm-team { font-size: 10px; padding: 4px 5px; border-radius: 3px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bracket-box .confirm-col-header { color: #1A0080; font-weight: 700; }
+.bracket-box .confirm-team.empty { background: #e8e8e8; color: #bbb; }
+.bracket-box .confirm-team.r32 { background: #e0e0e0; color: #444; }
 .confirm-team.r32 { background: #f0f0f0; color: #555; }
 .confirm-team.r16 { background: #CC0000; color: #FFD0D0; font-weight: 600; }
 .confirm-team.qf { background: #FF5500; color: #FFE8D0; font-weight: 600; }
 .confirm-team.sf { background: #7B00FF; color: #E8DAFF; font-weight: 600; }
 .confirm-team.champ { background: #CCFF00; color: #1a1a00; font-weight: 700; font-size: 11px; padding: 7px 5px; }
+.live-bracket-label { font-size: 11px; font-weight: 700; color: #1A0080; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.bracket-box { background: #f5f5f5; border: 2px solid #1A0080; border-radius: 12px; padding: 1rem; margin-bottom: 0.5rem; }
 </style>
 </head>
 <body>
@@ -139,8 +145,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <div class="step-title">How the pool works</div>
     <div class="step-sub">Make your picks before the tournament kicks off on June 11. Points are awarded for every correct prediction — the later the round, the more they're worth.</div>
     <div class="how-it-works">
-      <p>Pick 3 teams from each group, eliminate 4 third-place teams to get to 32, then fill out the bracket round by round. The bracket follows the official FIFA structure, so teams from the same group can never meet before the Round of 16 at the earliest.</p>
-      <p>Points double each round, so there's always something to play for right up to the Final.</p>
+      <p>Pick 3 teams from each group, eliminate 4 third-place teams to get to 32, then fill out the official FIFA bracket round by round. Yes, there are 12 groups now. Yes, FIFA added a Round of 32. We know.</p>
+      <p>Points double each round, so even if your group stage picks are a disaster, there's always a chance to claw it back. That's the beauty of it.</p>
     </div>
     <div class="overview-grid">
       <div class="overview-row"><span class="round-name">Group stage</span><span class="pts">1 pt each</span></div>
@@ -178,7 +184,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   <div class="step" id="step-14">
     <div class="step-label">Knockout bracket</div>
     <div class="step-title">Round of 32 <span class="points-badge">2 pts each</span></div>
-    <div class="step-sub">Pick the winner of each matchup. Your picks from the group stage determine who appears in each slot. For third-place wildcard slots, choose which of your qualifying third-place teams advances.</div>
+    <div class="live-bracket-label">Your bracket</div>
+    <div class="confirm-bracket bracket-box" id="live-bracket-14"></div>
+    <div class="step-sub" style="margin-top:1.5rem;">Every matchup below is a real, officially scheduled game — your group stage picks determine who shows up in each slot. For the 8 third-place wildcard spots, pick which of your surviving third-place teams sneaks through. No two teams from the same group can meet here, because even FIFA isn't that chaotic.</div>
     <div class="bracket-progress">Picked: <span id="r32-picked">0</span> / 16</div>
     <div class="bracket-round" id="r32-bracket"></div>
     <div class="nav">
@@ -191,7 +199,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   <div class="step" id="step-15">
     <div class="step-label">Knockout bracket</div>
     <div class="step-title">Round of 16 <span class="points-badge">4 pts each</span></div>
-    <div class="step-sub">Pick the winner of each matchup from your Round of 32 picks.</div>
+    <div class="live-bracket-label">Your bracket</div>
+    <div class="confirm-bracket bracket-box" id="live-bracket-15"></div>
+    <div class="step-sub" style="margin-top:1.5rem;">Down to 16. The bracket is tightening, the stakes are doubling, and your group stage gambles are about to pay off — or not. Pick who advances from each matchup.</div>
     <div class="bracket-progress">Picked: <span id="r16-picked">0</span> / 8</div>
     <div class="bracket-round" id="r16-bracket"></div>
     <div class="nav">
@@ -204,7 +214,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   <div class="step" id="step-16">
     <div class="step-label">Knockout bracket</div>
     <div class="step-title">Quarterfinals <span class="points-badge">8 pts each</span></div>
-    <div class="step-sub">Pick the winner of each quarterfinal matchup.</div>
+    <div class="live-bracket-label">Your bracket</div>
+    <div class="confirm-bracket bracket-box" id="live-bracket-16"></div>
+    <div class="step-sub" style="margin-top:1.5rem;">The quarterfinals. Where dark horses die and favorites finally earn their hype. Pick your four survivors.</div>
     <div class="bracket-progress">Picked: <span id="qf-picked">0</span> / 4</div>
     <div class="bracket-round" id="qf-bracket"></div>
     <div class="nav">
@@ -217,7 +229,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   <div class="step" id="step-17">
     <div class="step-label">Knockout bracket</div>
     <div class="step-title">Semifinals <span class="points-badge">16 pts each</span></div>
-    <div class="step-sub">Pick the winner of each semifinal matchup.</div>
+    <div class="live-bracket-label">Your bracket</div>
+    <div class="confirm-bracket bracket-box" id="live-bracket-17"></div>
+    <div class="step-sub" style="margin-top:1.5rem;">Two matches stand between your picks and glory. Who's going to the Final?</div>
     <div class="bracket-progress">Picked: <span id="sf-picked">0</span> / 2</div>
     <div class="bracket-round" id="sf-bracket"></div>
     <div class="nav">
@@ -230,7 +244,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   <div class="step" id="step-18">
     <div class="step-label">Knockout bracket</div>
     <div class="step-title">The Final <span class="points-badge">32 pts</span></div>
-    <div class="step-sub">Pick the World Cup winner.</div>
+    <div class="live-bracket-label">Your bracket</div>
+    <div class="confirm-bracket bracket-box" id="live-bracket-18"></div>
+    <div class="step-sub" style="margin-top:1.5rem;">This is it. One match, one trophy, one champion. Who are you putting your name behind?</div>
     <div class="bracket-progress">Picked: <span id="final-picked">0</span> / 1</div>
     <div class="bracket-round" id="final-bracket"></div>
     <div class="nav">
@@ -453,25 +469,32 @@ function getSurvivingThirds() {
   return getThirds().filter(function(t) { return !picks.eliminated.includes(t); });
 }
 
-function getAllAssignedWildcards(excludeSlot, excludeMatchId) {
-  var used = [];
+// wildcards: { matchId_slot: teamName }
+// wildcardByTeam: { teamName: true } — flat set of all claimed teams
+
+function getAllClaimedWildcardTeams(exceptMatchId, exceptSlot) {
+  var claimed = [];
   Object.keys(picks.wildcards).forEach(function(key) {
-    if (key !== excludeSlot + '_' + excludeMatchId) {
-      used.push(picks.wildcards[key]);
+    // key format: matchId + '_' + slot (e.g. "74_wc2")
+    var parts = key.split('_');
+    var mid = parseInt(parts[0]);
+    var sl  = parts[1];
+    if (!(mid === exceptMatchId && sl === exceptSlot)) {
+      claimed.push(picks.wildcards[key]);
     }
   });
-  return used;
+  return claimed;
 }
 
-function resolveTeam(src, excludeSlot, excludeMatchId) {
+function resolveTeam(src, matchId, slot) {
   if (!src) return null;
   if (src.type === 'winner')    return groupWinner(src.group);
   if (src.type === 'runner_up') return groupRunnerUp(src.group);
   if (src.type === 'third') {
-    var alreadyUsed = getAllAssignedWildcards(excludeSlot, excludeMatchId);
+    var claimed = getAllClaimedWildcardTeams(matchId, slot);
     var eligible = src.groups.map(function(g) { return groupThird(g); })
-      .filter(function(t) { return t && !picks.eliminated.includes(t) && !alreadyUsed.includes(t); });
-    return eligible.length > 0 ? eligible : null;
+      .filter(function(t) { return t && !picks.eliminated.includes(t) && !claimed.includes(t); });
+    return eligible.length > 0 ? eligible : [];
   }
   return null;
 }
@@ -494,6 +517,22 @@ function buildElimStep() {
     el.className = 'ko-team';
     el.innerHTML = '<div class="check"></div>' + team + '<span style="font-size:12px;color:#999;margin-left:auto;">3rd place</span>';
     el.onclick = function() { toggleElim(el, team); };
+    container.appendChild(el);
+  });
+}
+
+function buildElimStepPreserve() {
+  var prevElim = picks.eliminated.slice();
+  var container = document.getElementById('third-place-pool');
+  container.innerHTML = '';
+  document.getElementById('elim-count').textContent = prevElim.length;
+  document.getElementById('elim-next').disabled = prevElim.length !== 4;
+  getThirds().forEach(function(team) {
+    var el = document.createElement('div');
+    el.className = 'ko-team' + (prevElim.includes(team) ? ' to-eliminate' : '');
+    el.innerHTML = '<div class="check"></div>' + team + '<span style="font-size:12px;color:#999;margin-left:auto;">3rd place</span>';
+    el.onclick = function() { toggleElim(el, team); };
+    if (!prevElim.includes(team) && prevElim.length >= 4) el.classList.add('disabled');
     container.appendChild(el);
   });
 }
@@ -525,24 +564,11 @@ function buildBracketRound(containerId, structure, pickedSpanId, nextBtnId, tota
     card.className = 'matchup-card';
     card.id = 'matchup-' + matchup.id;
 
-    var t1, t2;
-    if (matchup.t1) {
-      // R32
-      t1 = resolveTeam(matchup.t1, 'wc1', matchup.id);
-      t2 = resolveTeam(matchup.t2, 'wc2', matchup.id);
-    } else {
-      // R16, QF, SF, Final
-      t1 = getPrevWinner(matchup.m1);
-      t2 = getPrevWinner(matchup.m2);
-    }
-
     var isWildcard1 = matchup.t1 && matchup.t1.type === 'third';
     var isWildcard2 = matchup.t2 && matchup.t2.type === 'third';
-
     var label1 = getSlotLabel(matchup.t1, matchup.m1);
     var label2 = getSlotLabel(matchup.t2, matchup.m2);
 
-    // Header
     var hdr = document.createElement('div');
     hdr.className = 'matchup-header';
     hdr.textContent = 'Match ' + matchup.id;
@@ -552,47 +578,52 @@ function buildBracketRound(containerId, structure, pickedSpanId, nextBtnId, tota
     if (currentWinner) pickedCount++;
 
     function renderMatchup() {
-      // Re-resolve each render so eligible thirds stay current
-      if (matchup.t1) {
-        t1 = resolveTeam(matchup.t1, 'wc1', matchup.id);
-        t2 = resolveTeam(matchup.t2, 'wc2', matchup.id);
-      }
-      // Clear existing team rows
       var existing = card.querySelectorAll('.matchup-team, .matchup-divider, .wildcard-selector');
       existing.forEach(function(e) { e.remove(); });
 
-      var wc1 = picks.wildcards['wc1_' + matchup.id];
-      var wc2 = picks.wildcards['wc2_' + matchup.id];
+      var t1, t2;
+      if (matchup.t1) {
+        t1 = resolveTeam(matchup.t1, matchup.id, 'wc1');
+        t2 = resolveTeam(matchup.t2, matchup.id, 'wc2');
+      } else {
+        t1 = getPrevWinner(matchup.m1);
+        t2 = getPrevWinner(matchup.m2);
+      }
+
+      var wc1Key = matchup.id + '_wc1';
+      var wc2Key = matchup.id + '_wc2';
+      var wc1 = picks.wildcards[wc1Key];
+      var wc2 = picks.wildcards[wc2Key];
 
       var team1Name = isWildcard1 ? wc1 : (Array.isArray(t1) ? null : t1);
       var team2Name = isWildcard2 ? wc2 : (Array.isArray(t2) ? null : t2);
-
       currentWinner = picks.matchWinners[matchup.id] || null;
 
-      // Wildcard selector for t1 if needed
-      if (isWildcard1 && !wc1) {
-        var ws = buildWildcardSelector(matchup.id, 'wc1', t1, label1, renderMatchup);
-        card.appendChild(ws);
+      // Wildcard selector for slot 1
+      if (isWildcard1) {
+        var eligible1 = Array.isArray(t1) ? t1 : [];
+        var ws1 = buildWildcardSelector(matchup.id, wc1Key, eligible1, label1, wc1, renderMatchup);
+        card.appendChild(ws1);
       }
 
       // Team 1 row
       var row1 = document.createElement('div');
       row1.className = 'matchup-team' + (currentWinner === team1Name && team1Name ? ' selected' : '') + (!team1Name ? ' tbd' : '');
       var badge1 = label1 ? '<span class="group-badge">' + label1 + '</span>' : '';
-      row1.innerHTML = '<div class="match-check"></div>' + (team1Name || (isWildcard1 ? 'Pick 3rd place →' : (label1 || 'TBD'))) + badge1;
+      row1.innerHTML = '<div class="match-check"></div>' + (team1Name || (isWildcard1 ? 'Pick 3rd place above' : (label1 || 'TBD'))) + badge1;
       if (team1Name) {
         row1.onclick = function() { selectMatchWinner(matchup.id, team1Name, pickedSpanId, nextBtnId, totalPicks, renderMatchup); };
       }
       card.appendChild(row1);
 
-      // Divider
-      var div = document.createElement('div');
-      div.className = 'matchup-divider'; div.textContent = 'vs';
-      card.appendChild(div);
+      var divEl = document.createElement('div');
+      divEl.className = 'matchup-divider'; divEl.textContent = 'vs';
+      card.appendChild(divEl);
 
-      // Wildcard selector for t2 if needed
-      if (isWildcard2 && !wc2) {
-        var ws2 = buildWildcardSelector(matchup.id, 'wc2', t2, label2, renderMatchup);
+      // Wildcard selector for slot 2
+      if (isWildcard2) {
+        var eligible2 = Array.isArray(t2) ? t2 : [];
+        var ws2 = buildWildcardSelector(matchup.id, wc2Key, eligible2, label2, wc2, renderMatchup);
         card.appendChild(ws2);
       }
 
@@ -600,7 +631,7 @@ function buildBracketRound(containerId, structure, pickedSpanId, nextBtnId, tota
       var row2 = document.createElement('div');
       row2.className = 'matchup-team' + (currentWinner === team2Name && team2Name ? ' selected' : '') + (!team2Name ? ' tbd' : '');
       var badge2 = label2 ? '<span class="group-badge">' + label2 + '</span>' : '';
-      row2.innerHTML = '<div class="match-check"></div>' + (team2Name || (isWildcard2 ? 'Pick 3rd place →' : (label2 || 'TBD'))) + badge2;
+      row2.innerHTML = '<div class="match-check"></div>' + (team2Name || (isWildcard2 ? 'Pick 3rd place above' : (label2 || 'TBD'))) + badge2;
       if (team2Name) {
         row2.onclick = function() { selectMatchWinner(matchup.id, team2Name, pickedSpanId, nextBtnId, totalPicks, renderMatchup); };
       }
@@ -615,47 +646,47 @@ function buildBracketRound(containerId, structure, pickedSpanId, nextBtnId, tota
   checkNextButton(nextBtnId, pickedCount, totalPicks);
 }
 
-function getUsedWildcards(excludeSlot, excludeMatchId) {
-  var used = [];
-  Object.keys(picks.wildcards).forEach(function(key) {
-    var keySlot = key.replace(/_\d+$/, '').replace(/\d+$/, '');
-    var keyMatch = parseInt(key.split('_').pop());
-    if (!(key === excludeSlot + '_' + excludeMatchId)) {
-      used.push(picks.wildcards[key]);
-    }
-  });
-  return used;
-}
-
-function buildWildcardSelector(matchId, slot, eligibleArr, label, onPick) {
+function buildWildcardSelector(matchId, wcKey, eligible, label, chosen, onChange) {
   var ws = document.createElement('div');
   ws.className = 'wildcard-selector';
-  var chosen = picks.wildcards[slot + '_' + matchId];
-  ws.innerHTML = '<div class="wildcard-label">Which 3rd-place team advances here? (' + label + ')</div><div class="wildcard-options"></div>';
+  var labelText = chosen
+    ? 'Advancing: <strong>' + chosen + '</strong>'
+    : 'This slot belongs to a 3rd-place qualifier — one of those teams FIFA decided deserved another chance. Pick which of yours advances (' + label + ').';
+  ws.innerHTML = '<div class="wildcard-label">' + labelText + '</div><div class="wildcard-options"></div>';
   var opts = ws.querySelector('.wildcard-options');
-  var available = Array.isArray(eligibleArr) ? eligibleArr : [];
-  // Filter out teams already assigned to other wildcard slots
-  var usedElsewhere = getUsedWildcards(slot, matchId);
-  var filteredAvailable = available.filter(function(team) {
-    return !usedElsewhere.includes(team);
-  });
-  if (filteredAvailable.length === 0) {
-    var msg = document.createElement('div');
-    msg.style.cssText = 'font-size:12px;color:#BA7517;font-style:italic;';
-    msg.textContent = 'No eligible third-place teams remaining for this slot.';
-    opts.appendChild(msg);
-  }
-  filteredAvailable.forEach(function(team) {
-    var btn = document.createElement('button');
-    btn.className = 'wildcard-btn' + (chosen === team ? ' chosen' : '');
-    btn.textContent = team;
-    btn.onclick = function() {
-      picks.wildcards[slot + '_' + matchId] = team;
-      // Re-render entire R32 bracket so other selectors update
+
+  if (chosen) {
+    // Show undo button
+    var undo = document.createElement('button');
+    undo.className = 'wildcard-btn';
+    undo.style.cssText = 'background:#f5f5f5;border-color:#ccc;color:#666;';
+    undo.textContent = '✕ Change';
+    undo.onclick = function() {
+      delete picks.wildcards[wcKey];
+      // Also clear match winner for this matchup since team is gone
+      var mid = parseInt(wcKey.split('_')[0]);
+      delete picks.matchWinners[mid];
       rebuildR32Cards();
     };
-    opts.appendChild(btn);
-  });
+    opts.appendChild(undo);
+  } else {
+    if (eligible.length === 0) {
+      var msg = document.createElement('span');
+      msg.style.cssText = 'font-size:12px;color:#BA7517;font-style:italic;';
+      msg.textContent = 'All eligible 3rd-place teams already assigned — use Change above to free one up.';
+      opts.appendChild(msg);
+    }
+    eligible.forEach(function(team) {
+      var btn = document.createElement('button');
+      btn.className = 'wildcard-btn';
+      btn.textContent = team;
+      btn.onclick = function() {
+        picks.wildcards[wcKey] = team;
+        rebuildR32Cards();
+      };
+      opts.appendChild(btn);
+    });
+  }
   return ws;
 }
 
@@ -667,6 +698,40 @@ function getSlotLabel(src, prevMatchId) {
   return '';
 }
 
+function renderLiveBracket(containerId) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '';
+
+  var r32w = R32_STRUCTURE.map(function(m) { return picks.matchWinners[m.id] || null; });
+  var r16w = R16_STRUCTURE.map(function(m) { return picks.matchWinners[m.id] || null; });
+  var qfw  = QF_STRUCTURE.map(function(m)  { return picks.matchWinners[m.id] || null; });
+  var sfw  = SF_STRUCTURE.map(function(m)  { return picks.matchWinners[m.id] || null; });
+  var fw   = picks.matchWinners[FINAL_STRUCTURE.id] || null;
+
+  var rounds = [
+    { label:'R32', teams: r32w, cls:'r32' },
+    { label:'R16', teams: r16w, cls:'r16' },
+    { label:'QF',  teams: qfw,  cls:'qf'  },
+    { label:'SF',  teams: sfw,  cls:'sf'  },
+    { label:'Champion', teams: [fw], cls:'champ' }
+  ];
+
+  rounds.forEach(function(r) {
+    var col = document.createElement('div'); col.className = 'confirm-col';
+    col.innerHTML = '<div class="confirm-col-header">' + r.label + '</div>';
+    var td = document.createElement('div'); td.className = 'confirm-teams';
+    r.teams.forEach(function(team) {
+      var teamEl = document.createElement('div');
+      teamEl.className = 'confirm-team ' + (team ? r.cls : 'empty');
+      teamEl.textContent = team || '—';
+      td.appendChild(teamEl);
+    });
+    col.appendChild(td);
+    el.appendChild(col);
+  });
+}
+
 function selectMatchWinner(matchId, team, pickedSpanId, nextBtnId, totalPicks, renderFn) {
   var prev = picks.matchWinners[matchId];
   picks.matchWinners[matchId] = team;
@@ -676,6 +741,9 @@ function selectMatchWinner(matchId, team, pickedSpanId, nextBtnId, totalPicks, r
     checkNextButton(nextBtnId, cur, totalPicks);
   }
   renderFn();
+  // Update live bracket on current visible step
+  var stepMap = {'r32-picked':'live-bracket-14','r16-picked':'live-bracket-15','qf-picked':'live-bracket-16','sf-picked':'live-bracket-17','final-picked':'live-bracket-18'};
+  if (stepMap[pickedSpanId]) renderLiveBracket(stepMap[pickedSpanId]);
 }
 
 function checkNextButton(btnId, picked, total) {
@@ -684,28 +752,35 @@ function checkNextButton(btnId, picked, total) {
 
 // ── Specific round builders ───────────────────────────────────────────────────
 function buildR32() {
-  picks.matchWinners = {}; picks.wildcards = {};
+  picks.matchWinners = {};
+  picks.wildcards = {};
   buildBracketRound('r32-bracket', R32_STRUCTURE, 'r32-picked', 'r32-next', 16, null);
+  renderLiveBracket('live-bracket-14');
 }
 
 function rebuildR32Cards() {
   buildBracketRound('r32-bracket', R32_STRUCTURE, 'r32-picked', 'r32-next', 16, null);
+  renderLiveBracket('live-bracket-14');
 }
 
 function buildR16() {
   buildBracketRound('r16-bracket', R16_STRUCTURE, 'r16-picked', 'r16-next', 8, getMatchWinner);
+  renderLiveBracket('live-bracket-15');
 }
 
 function buildQF() {
   buildBracketRound('qf-bracket', QF_STRUCTURE, 'qf-picked', 'qf-next', 4, getMatchWinner);
+  renderLiveBracket('live-bracket-16');
 }
 
 function buildSF() {
   buildBracketRound('sf-bracket', SF_STRUCTURE, 'sf-picked', 'sf-next', 2, getMatchWinner);
+  renderLiveBracket('live-bracket-17');
 }
 
 function buildFinal() {
   buildBracketRound('final-bracket', [FINAL_STRUCTURE], 'final-picked', 'final-next', 1, getMatchWinner);
+  renderLiveBracket('live-bracket-18');
 }
 
 // ── Summary & Confirmation ────────────────────────────────────────────────────
@@ -822,8 +897,8 @@ function goBack(cur) {
   if (cur === 1) showStep(0);
   else if (cur >= 2 && cur <= 12) showStep(cur - 1);
   else if (cur === 13) showStep(12);
-  else if (cur === 14) { buildElimStep(); showStep(13); }
-  else if (cur === 15) { buildR32(); showStep(14); }
+  else if (cur === 14) { buildElimStepPreserve(); showStep(13); }
+  else if (cur === 15) { rebuildR32Cards(); showStep(14); }
   else if (cur === 16) { buildR16(); showStep(15); }
   else if (cur === 17) { buildQF(); showStep(16); }
   else if (cur === 18) { buildSF(); showStep(17); }
