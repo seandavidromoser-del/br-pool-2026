@@ -600,6 +600,18 @@ function buildBracketRound(containerId, structure, pickedSpanId, nextBtnId, tota
   checkNextButton(nextBtnId, pickedCount, totalPicks);
 }
 
+function getUsedWildcards(excludeSlot, excludeMatchId) {
+  var used = [];
+  Object.keys(picks.wildcards).forEach(function(key) {
+    var keySlot = key.replace(/_\d+$/, '').replace(/\d+$/, '');
+    var keyMatch = parseInt(key.split('_').pop());
+    if (!(key === excludeSlot + '_' + excludeMatchId)) {
+      used.push(picks.wildcards[key]);
+    }
+  });
+  return used;
+}
+
 function buildWildcardSelector(matchId, slot, eligibleArr, label, onPick) {
   var ws = document.createElement('div');
   ws.className = 'wildcard-selector';
@@ -607,14 +619,25 @@ function buildWildcardSelector(matchId, slot, eligibleArr, label, onPick) {
   ws.innerHTML = '<div class="wildcard-label">Which 3rd-place team advances here? (' + label + ')</div><div class="wildcard-options"></div>';
   var opts = ws.querySelector('.wildcard-options');
   var available = Array.isArray(eligibleArr) ? eligibleArr : [];
-  // Filter out teams already used as wildcards in other slots this round
-  available.forEach(function(team) {
+  // Filter out teams already assigned to other wildcard slots
+  var usedElsewhere = getUsedWildcards(slot, matchId);
+  var filteredAvailable = available.filter(function(team) {
+    return !usedElsewhere.includes(team);
+  });
+  if (filteredAvailable.length === 0) {
+    var msg = document.createElement('div');
+    msg.style.cssText = 'font-size:12px;color:#BA7517;font-style:italic;';
+    msg.textContent = 'No eligible third-place teams remaining for this slot.';
+    opts.appendChild(msg);
+  }
+  filteredAvailable.forEach(function(team) {
     var btn = document.createElement('button');
     btn.className = 'wildcard-btn' + (chosen === team ? ' chosen' : '');
     btn.textContent = team;
     btn.onclick = function() {
       picks.wildcards[slot + '_' + matchId] = team;
-      onPick();
+      // Re-render entire R32 bracket so other selectors update
+      rebuildR32Cards();
     };
     opts.appendChild(btn);
   });
@@ -647,6 +670,10 @@ function checkNextButton(btnId, picked, total) {
 // ── Specific round builders ───────────────────────────────────────────────────
 function buildR32() {
   picks.matchWinners = {}; picks.wildcards = {};
+  buildBracketRound('r32-bracket', R32_STRUCTURE, 'r32-picked', 'r32-next', 16, null);
+}
+
+function rebuildR32Cards() {
   buildBracketRound('r32-bracket', R32_STRUCTURE, 'r32-picked', 'r32-next', 16, null);
 }
 
