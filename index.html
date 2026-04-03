@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Bouman Romoser World Cup Pool 2026</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #1a1a1a; min-height: 100vh; }
+.app { max-width: 680px; margin: 0 auto; padding: 2rem 1rem; }
+.header { text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 3px solid #7B00FF; }
+.header h1 { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+.header p { font-size: 14px; color: #666; }
+.step { display: none; }
+.step.active { display: block; }
+.step-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.step-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+.step-sub { font-size: 14px; color: #555; margin-bottom: 1.5rem; line-height: 1.6; }
+.points-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; background: #E8DAFF; color: #4B00B5; border: 1px solid #9B6FFF; margin-left: 6px; vertical-align: middle; }
+.overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+.overview-row { background: white; border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e8e8e8; }
+.overview-row .round-name { font-size: 13px; color: #1a1a1a; }
+.overview-row .pts { font-size: 13px; font-weight: 600; color: #7B00FF; }
+.overview-total { background: #1A0080; border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.overview-total .round-name { font-size: 13px; font-weight: 600; color: #E8DAFF; }
+.overview-total .pts { font-size: 13px; font-weight: 600; color: #CCFF00; }
+.how-it-works { background: white; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; border: 1px solid #e8e8e8; }
+.how-it-works p { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 8px; }
+.how-it-works p:last-child { margin-bottom: 0; }
+.group-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.group-name { font-size: 13px; font-weight: 600; color: #666; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.teams-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.team-option { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer; font-size: 14px; color: #1a1a1a; background: white; user-select: none; transition: background 0.1s; }
+.team-option:hover { background: #f9f9f9; }
+.team-option.selected { background: #1A0080; border-color: #7B00FF; color: #E8DAFF; }
+.team-option.selected-third { background: #8B0000; border-color: #CC0000; color: #FFD0D0; }
+.team-option.disabled { opacity: 0.35; pointer-events: none; }
+.team-option .check { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #ccc; flex-shrink: 0; }
+.team-option.selected .check { background: #7B00FF; border-color: #7B00FF; }
+.team-option.selected-third .check { background: #CC0000; border-color: #CC0000; }
+.legend { display: flex; gap: 16px; margin-bottom: 1rem; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #666; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.warning { font-size: 12px; color: #CC0000; margin-top: 6px; display: none; }
+.warning.show { display: block; }
+.nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e8e8e8; }
+.btn { padding: 9px 22px; border-radius: 8px; border: 1px solid #ccc; background: white; color: #1a1a1a; font-size: 14px; cursor: pointer; font-weight: 500; }
+.btn:hover { background: #f5f5f5; }
+.btn.primary { background: #7B00FF; border-color: #7B00FF; color: white; }
+.btn.primary:hover { background: #5500CC; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+.progress-bar { width: 100%; height: 5px; background: #e0e0e0; border-radius: 3px; margin-bottom: 2rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #7B00FF, #CC0000, #CCFF00); border-radius: 3px; transition: width 0.4s; }
+.knockout-pool { display: flex; flex-direction: column; gap: 8px; }
+.ko-team { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer; font-size: 14px; color: #1a1a1a; background: white; user-select: none; }
+.ko-team:hover { background: #f9f9f9; }
+.ko-team.selected { background: #1A0080; border-color: #7B00FF; color: #E8DAFF; }
+.ko-team.to-eliminate { background: #8B0000; border-color: #CC0000; color: #FFD0D0; }
+.ko-team.disabled { opacity: 0.35; pointer-events: none; }
+.ko-team .check { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #ccc; flex-shrink: 0; }
+.ko-team.selected .check { background: #7B00FF; border-color: #7B00FF; }
+.ko-team.to-eliminate .check { background: #CC0000; border-color: #CC0000; }
+.sel-count { font-size: 13px; color: #666; margin-bottom: 1rem; }
+.sel-count span { font-weight: 600; color: #1a1a1a; }
+.elim-count { font-size: 13px; color: #CC0000; margin-bottom: 1rem; font-weight: 500; }
+.name-input, .email-input { width: 100%; padding: 11px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; color: #1a1a1a; background: white; margin-bottom: 1rem; }
+.tiebreak-input { width: 100px; padding: 11px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; text-align: center; color: #1a1a1a; background: white; }
+.name-input:focus, .email-input:focus, .tiebreak-input:focus { outline: none; border-color: #7B00FF; box-shadow: 0 0 0 3px rgba(123,0,255,0.1); }
+.summary-card { background: white; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid #e8e8e8; }
+.summary-section { margin-bottom: 1rem; }
+.summary-section:last-child { margin-bottom: 0; }
+.summary-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.summary-teams { display: flex; flex-wrap: wrap; gap: 6px; }
+.summary-tag { font-size: 12px; padding: 3px 10px; border-radius: 99px; background: #f5f5f5; border: 1px solid #e0e0e0; color: #1a1a1a; }
+.summary-tag.winner { background: #1A0080; border-color: #7B00FF; color: #E8DAFF; }
+.summary-tag.out { opacity: 0.45; text-decoration: line-through; }
+.success-header { text-align: center; padding: 1.5rem 0 1.25rem; }
+.success-icon { width: 54px; height: 54px; background: #00CC44; border-radius: 50%; margin: 0 auto 0.75rem; display: flex; align-items: center; justify-content: center; }
+.bracket-section-label { font-size: 11px; font-weight: 600; color: #999; margin: 1.25rem 0 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.groups-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.group-pill { background: #1A0080; border-radius: 8px; padding: 8px 10px; }
+.group-pill-label { font-size: 10px; color: #9B6FFF; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; font-weight: 600; }
+.group-pill-teams { font-size: 11px; color: #E8DAFF; line-height: 1.6; }
+.group-pill-teams .third { color: #9B6FFF; font-style: italic; }
+.bracket-wrap { overflow-x: auto; padding-bottom: 0.5rem; }
+.bracket { display: flex; gap: 6px; min-width: 520px; }
+.bracket-col { display: flex; flex-direction: column; flex: 1; }
+.bracket-col-header { font-size: 10px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; padding: 0 2px 6px; }
+.bracket-teams { display: flex; flex-direction: column; gap: 4px; }
+.bracket-team { font-size: 11px; padding: 5px 6px; border-radius: 4px; background: #f0f0f0; color: #777; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bracket-team.r16 { background: #CC0000; color: #FFD0D0; font-weight: 600; }
+.bracket-team.qf { background: #FF5500; color: #FFE8D0; font-weight: 600; }
+.bracket-team.semi { background: #7B00FF; color: #E8DAFF; font-weight: 600; }
+.bracket-team.champion { background: #CCFF00; color: #1a1a00; font-weight: 700; font-size: 13px; padding: 10px 6px; border-radius: 6px; }
+.stay-tuned { background: #8B0000; border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 1.5rem; }
+.stay-tuned p { font-size: 13px; color: #FFAAAA; line-height: 1.6; }
+.stay-tuned p strong { color: white; font-weight: 600; }
+.shankly { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #AA0000; }
+.shankly blockquote { font-size: 13px; color: #FFD0D0; line-height: 1.6; font-style: italic; }
+.shankly cite { display: block; margin-top: 6px; font-size: 12px; color: #FF9999; font-style: normal; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>The Bouman Romoser World Cup Pool 2026</h1>
+    <p>Hosted by JB & SD &nbsp;·&nbsp; June 11 – July 19, 2026</p>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="pbar" style="width:0%"></div></div>
+
+  <!-- Step 0: Welcome -->
+  <div class="step active" id="step-0">
+    <div class="step-label">Welcome</div>
+    <div class="step-title">How the pool works</div>
+    <div class="step-sub">Make your picks before the tournament kicks off on June 11. Points are awarded for every correct prediction — the later the round, the more they're worth.</div>
+    <div class="how-it-works">
+      <p>You'll pick 3 teams to advance from each of the 12 groups, then eliminate 4 of your 12 third-place teams to get to 32. From there, pick your way through the knockout rounds all the way to a winner.</p>
+      <p>Points double with each round, so there's always something to play for right up to the Final.</p>
+    </div>
+    <div class="overview-grid">
+      <div class="overview-row"><span class="round-name">Group stage</span><span class="pts">1 pt each</span></div>
+      <div class="overview-row"><span class="round-name">3rd place cut</span><span class="pts">1 pt each</span></div>
+      <div class="overview-row"><span class="round-name">Round of 32</span><span class="pts">2 pts each</span></div>
+      <div class="overview-row"><span class="round-name">Round of 16</span><span class="pts">4 pts each</span></div>
+      <div class="overview-row"><span class="round-name">Quarterfinals</span><span class="pts">8 pts each</span></div>
+      <div class="overview-row"><span class="round-name">Semifinals</span><span class="pts">16 pts each</span></div>
+    </div>
+    <div class="overview-total"><span class="round-name">Winner</span><span class="pts">32 pts</span></div>
+    <div style="font-size:12px;color:#999;margin-bottom:1.5rem;margin-top:0.5rem;">Tiebreaker: closest prediction of total goals scored in the Final.</div>
+    <div style="font-size:13px;color:#555;margin-bottom:1rem;">Enter your name and email to get started.</div>
+    <input class="name-input" id="entrant-name" type="text" placeholder="Your name" />
+    <input class="email-input" id="entrant-email" type="email" placeholder="Your email address" />
+    <div class="nav"><span></span><button class="btn primary" onclick="goNext(0)">Start picking &rarr;</button></div>
+  </div>
+
+  <div id="group-steps"></div>
+
+  <!-- Step 13: Eliminate 4 -->
+  <div class="step" id="step-13">
+    <div class="step-label">Group stage — final cut</div>
+    <div class="step-title">Eliminate 4 third-place teams <span class="points-badge">1 pt each correct</span></div>
+    <div class="step-sub">You picked 3 teams from each group — that's 36 teams. The real tournament advances 32, so tap the 4 third-place teams you think go home.</div>
+    <div class="elim-count">Eliminated: <span id="elim-count">0</span> / 4</div>
+    <div class="knockout-pool" id="third-place-pool"></div>
+    <div class="nav">
+      <button class="btn" onclick="goBack(13)">Back</button>
+      <button class="btn primary" id="elim-next" onclick="goNext(13)" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Step 14: Round of 32 -->
+  <div class="step" id="step-14">
+    <div class="step-label">Knockout rounds</div>
+    <div class="step-title">Round of 32 <span class="points-badge">2 pts each</span></div>
+    <div class="step-sub">Pick 16 teams to advance from your 32 predicted group stage qualifiers.</div>
+    <div class="sel-count">Selected: <span id="r32-count">0</span> / 16</div>
+    <div class="knockout-pool" id="r32-pool"></div>
+    <div class="nav">
+      <button class="btn" onclick="goBack(14)">Back</button>
+      <button class="btn primary" id="r32-next" onclick="goNext(14)" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Step 15: Round of 16 -->
+  <div class="step" id="step-15">
+    <div class="step-label">Knockout rounds</div>
+    <div class="step-title">Round of 16 <span class="points-badge">4 pts each</span></div>
+    <div class="step-sub">Pick 8 teams to advance from your Round of 32 picks.</div>
+    <div class="sel-count">Selected: <span id="r16-count">0</span> / 8</div>
+    <div class="knockout-pool" id="r16-pool"></div>
+    <div class="nav">
+      <button class="btn" onclick="goBack(15)">Back</button>
+      <button class="btn primary" id="r16-next" onclick="goNext(15)" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Step 16: Quarterfinals -->
+  <div class="step" id="step-16">
+    <div class="step-label">Knockout rounds</div>
+    <div class="step-title">Quarterfinals <span class="points-badge">8 pts each</span></div>
+    <div class="step-sub">Pick 4 teams to advance from your Round of 16 picks.</div>
+    <div class="sel-count">Selected: <span id="qf-count">0</span> / 4</div>
+    <div class="knockout-pool" id="qf-pool"></div>
+    <div class="nav">
+      <button class="btn" onclick="goBack(16)">Back</button>
+      <button class="btn primary" id="qf-next" onclick="goNext(16)" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Step 17: Semifinals -->
+  <div class="step" id="step-17">
+    <div class="step-label">Knockout rounds</div>
+    <div class="step-title">Semifinals <span class="points-badge">16 pts each</span></div>
+    <div class="step-sub">Pick 2 teams to advance from your quarterfinal picks.</div>
+    <div class="sel-count">Selected: <span id="sf-count">0</span> / 2</div>
+    <div class="knockout-pool" id="sf-pool"></div>
+    <div class="nav">
+      <button class="btn" onclick="goBack(17)">Back</button>
+      <button class="btn primary" id="sf-next" onclick="goNext(17)" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Step 18: Final -->
+  <div class="step" id="step-18">
+    <div class="step-label">Knockout rounds</div>
+    <div class="step-title">The Final <span class="points-badge">32 pts</span></div>
+    <div class="step-sub">Pick 1 team to win the World Cup from your semifinal picks.</div>
+    <div class="sel-count">Selected: <span id="final-count">0</span> / 1</div>
+    <div class="knockout-pool" id="final-pool"></div>
+    <div class="nav">
+      <button class="btn" onclick="goBack(18)">Back</button>
+      <button class="btn primary" id="final-next" onclick="goNext(18)" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Step 19: Tiebreaker -->
+  <div class="step" id="step-19">
+    <div class="step-label">Almost done</div>
+    <div class="step-title">Tiebreaker</div>
+    <div class="step-sub">How many total goals will be scored in the Final? Used only to break ties — closest guess wins the tiebreak.</div>
+    <input class="tiebreak-input" id="tiebreak" type="number" min="0" max="20" placeholder="e.g. 3" />
+    <div class="nav">
+      <button class="btn" onclick="goBack(19)">Back</button>
+      <button class="btn primary" onclick="goNext(19)">Review my picks &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Step 20: Review -->
+  <div class="step" id="step-20">
+    <div class="step-label">Review</div>
+    <div class="step-title">Double-check your picks</div>
+    <div class="step-sub">Everything look good? Hit submit when you're ready.</div>
+    <div class="summary-card" id="summary-content"></div>
+    <div class="nav">
+      <button class="btn" onclick="goBack(20)">Back</button>
+      <button class="btn primary" onclick="submitPicks()">Submit my picks</button>
+    </div>
+  </div>
+
+  <!-- Step 21: Success -->
+  <div class="step" id="step-21">
+    <div class="success-header">
+      <div class="success-icon">
+        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 14l4 4 8-8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="step-title">You're in, <span id="confirm-name"></span>!</div>
+      <div class="step-sub" style="margin-top:4px;">Here's a summary of your bracket. Stay tuned for updates via email as the tournament progresses.</div>
+    </div>
+    <div class="bracket-section-label">Group stage picks</div>
+    <div class="groups-summary" id="groups-summary"></div>
+    <div class="bracket-section-label">Knockout bracket</div>
+    <div class="bracket-wrap"><div class="bracket" id="bracket-visual"></div></div>
+    <div class="stay-tuned">
+      <p>We'll be in touch at <strong id="confirm-email"></strong> with standings updates as the tournament progresses.</p>
+      <div class="shankly">
+        <blockquote>"Some people think football is a matter of life and death. I assure you, it's much more serious than that."</blockquote>
+        <cite>— Bill Shankly, legendary Liverpool FC manager</cite>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GROUPS = {
+  A: ['Mexico','South Korea','South Africa','Czechia'],
+  B: ['Canada','Switzerland','Qatar','Bosnia & Herzegovina'],
+  C: ['Brazil','Morocco','Scotland','Haiti'],
+  D: ['USA','Paraguay','Australia','Türkiye'],
+  E: ['Germany','Curaçao','Ivory Coast','Ecuador'],
+  F: ['Netherlands','Japan','Sweden','Tunisia'],
+  G: ['Belgium','Egypt','Iran','New Zealand'],
+  H: ['Spain','Cape Verde','Saudi Arabia','Uruguay'],
+  I: ['France','Senegal','Iraq','Norway'],
+  J: ['Argentina','Algeria','Austria','Jordan'],
+  K: ['Portugal','DR Congo','Uzbekistan','Colombia'],
+  L: ['England','Croatia','Ghana','Panama']
+};
+const GK = Object.keys(GROUPS);
+let picks = { name:'', email:'', groups:{}, eliminated:[], r32:[], r16:[], qf:[], sf:[], final:[], tiebreak:'' };
+
+function buildGroupSteps() {
+  const container = document.getElementById('group-steps');
+  GK.forEach((g, i) => {
+    const n = i + 1;
+    const div = document.createElement('div');
+    div.className = 'step'; div.id = `step-${n}`;
+    div.innerHTML = `
+      <div class="step-label">Group stage — Group ${g}</div>
+      <div class="step-title">Group ${g} <span class="points-badge">1 pt each</span></div>
+      <div class="step-sub">Pick 3 teams to advance. Your top 2 advance automatically; your 3rd is your third-place prediction.</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#7B00FF;"></div>1st & 2nd place</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#CC0000;"></div>3rd place</div>
+      </div>
+      <div class="group-card">
+        <div class="group-name">Group ${g}</div>
+        <div class="teams-grid" id="group-${g}-teams"></div>
+        <div class="warning" id="group-${g}-warn">You can only pick 3 teams per group.</div>
+      </div>
+      <div class="nav">
+        <button class="btn" onclick="goBack(${n})">Back</button>
+        <button class="btn primary" id="group-${g}-next" onclick="goNext(${n})" disabled>Next &rarr;</button>
+      </div>`;
+    container.appendChild(div);
+    picks.groups[g] = [];
+    const grid = document.getElementById(`group-${g}-teams`) || (() => {
+      setTimeout(() => buildGroupTeams(g), 0); return null;
+    })();
+    if (grid) buildGroupTeamsInto(g, grid);
+    else setTimeout(() => buildGroupTeams(g), 0);
+  });
+}
+
+function buildGroupTeams(g) {
+  const grid = document.getElementById(`group-${g}-teams`);
+  if (grid) buildGroupTeamsInto(g, grid);
+}
+
+function buildGroupTeamsInto(g, grid) {
+  GROUPS[g].forEach(team => {
+    const el = document.createElement('div');
+    el.className = 'team-option';
+    el.dataset.group = g; el.dataset.team = team;
+    el.innerHTML = `<div class="check"></div>${team}`;
+    el.onclick = () => toggleGroup(g, team, el);
+    grid.appendChild(el);
+  });
+}
+
+function toggleGroup(g, team, el) {
+  const sel = picks.groups[g];
+  const warn = document.getElementById(`group-${g}-warn`);
+  if (el.classList.contains('selected') || el.classList.contains('selected-third')) {
+    el.classList.remove('selected','selected-third');
+    picks.groups[g] = sel.filter(t => t !== team);
+  } else {
+    if (sel.length >= 3) { warn.classList.add('show'); return; }
+    warn.classList.remove('show');
+    picks.groups[g].push(team);
+    el.classList.add(picks.groups[g].length === 3 ? 'selected-third' : 'selected');
+  }
+  refreshGroupColors(g);
+  document.getElementById(`group-${g}-next`).disabled = picks.groups[g].length !== 3;
+  refreshGroupDisabled(g);
+}
+
+function refreshGroupColors(g) {
+  const sel = picks.groups[g];
+  document.querySelectorAll(`.team-option[data-group="${g}"]`).forEach(el => {
+    const idx = sel.indexOf(el.dataset.team);
+    el.classList.remove('selected','selected-third');
+    if (idx === 0 || idx === 1) el.classList.add('selected');
+    else if (idx === 2) el.classList.add('selected-third');
+  });
+}
+
+function refreshGroupDisabled(g) {
+  const sel = picks.groups[g];
+  document.querySelectorAll(`.team-option[data-group="${g}"]`).forEach(el => {
+    if (!sel.includes(el.dataset.team) && sel.length >= 3) el.classList.add('disabled');
+    else el.classList.remove('disabled');
+  });
+}
+
+function getTop2() {
+  let t = [];
+  GK.forEach(g => { if (picks.groups[g].length >= 2) t = t.concat(picks.groups[g].slice(0,2)); });
+  return t;
+}
+function getThirds() {
+  let t = [];
+  GK.forEach(g => { if (picks.groups[g].length === 3) t.push(picks.groups[g][2]); });
+  return t;
+}
+function get32() { return getTop2().concat(getThirds().filter(t => !picks.eliminated.includes(t))); }
+
+function buildElimStep() {
+  picks.eliminated = [];
+  const container = document.getElementById('third-place-pool');
+  container.innerHTML = '';
+  document.getElementById('elim-count').textContent = '0';
+  document.getElementById('elim-next').disabled = true;
+  getThirds().forEach(team => {
+    const el = document.createElement('div');
+    el.className = 'ko-team';
+    el.innerHTML = `<div class="check"></div>${team}<span style="font-size:12px;color:#999;margin-left:auto;">3rd place</span>`;
+    el.onclick = () => toggleElim(el, team);
+    container.appendChild(el);
+  });
+}
+
+function toggleElim(el, team) {
+  if (el.classList.contains('to-eliminate')) {
+    el.classList.remove('to-eliminate');
+    picks.eliminated = picks.eliminated.filter(t => t !== team);
+  } else {
+    if (picks.eliminated.length >= 4) return;
+    picks.eliminated.push(team); el.classList.add('to-eliminate');
+  }
+  document.getElementById('elim-count').textContent = picks.eliminated.length;
+  document.getElementById('elim-next').disabled = picks.eliminated.length !== 4;
+  document.querySelectorAll('#third-place-pool .ko-team').forEach(e => {
+    if (!e.classList.contains('to-eliminate') && picks.eliminated.length >= 4) e.classList.add('disabled');
+    else e.classList.remove('disabled');
+  });
+}
+
+function buildKO(cid, teams, list, max, countId, nextId) {
+  const c = document.getElementById(cid);
+  c.innerHTML = ''; list.length = 0;
+  teams.forEach(team => {
+    const el = document.createElement('div');
+    el.className = 'ko-team';
+    el.innerHTML = `<div class="check"></div>${team}`;
+    el.onclick = () => toggleKO(el, team, list, max, countId, nextId, cid);
+    c.appendChild(el);
+  });
+  document.getElementById(countId).textContent = 0;
+  document.getElementById(nextId).disabled = true;
+}
+
+function toggleKO(el, team, list, max, countId, nextId, cid) {
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected'); list.splice(list.indexOf(team), 1);
+  } else {
+    if (list.length >= max) return;
+    list.push(team); el.classList.add('selected');
+  }
+  document.getElementById(countId).textContent = list.length;
+  document.getElementById(nextId).disabled = list.length !== max;
+  document.querySelectorAll(`#${cid} .ko-team`).forEach(e => {
+    if (!e.classList.contains('selected') && list.length >= max) e.classList.add('disabled');
+    else e.classList.remove('disabled');
+  });
+}
+
+function buildSummary() {
+  let html = `<div class="summary-section"><div class="summary-label">Name</div><div style="font-size:15px;font-weight:600;">${picks.name}</div></div>`;
+  html += `<div class="summary-section"><div class="summary-label">Email</div><div style="font-size:14px;color:#555;">${picks.email}</div></div>`;
+  html += `<div class="summary-section"><div class="summary-label">Group stage top 2 (24)</div><div class="summary-teams">`;
+  GK.forEach(g => picks.groups[g].slice(0,2).forEach(t => { html += `<span class="summary-tag">${t}</span>`; }));
+  html += `</div></div><div class="summary-section"><div class="summary-label">Third-place advancers (8)</div><div class="summary-teams">`;
+  getThirds().filter(t => !picks.eliminated.includes(t)).forEach(t => { html += `<span class="summary-tag">${t}</span>`; });
+  html += `</div></div><div class="summary-section"><div class="summary-label">Eliminated (4)</div><div class="summary-teams">`;
+  picks.eliminated.forEach(t => { html += `<span class="summary-tag out">${t}</span>`; });
+  html += `</div></div>`;
+  html += `<div class="summary-section"><div class="summary-label">Round of 32 (16)</div><div class="summary-teams">${picks.r32.map(t=>`<span class="summary-tag">${t}</span>`).join('')}</div></div>`;
+  html += `<div class="summary-section"><div class="summary-label">Round of 16 (8)</div><div class="summary-teams">${picks.r16.map(t=>`<span class="summary-tag">${t}</span>`).join('')}</div></div>`;
+  html += `<div class="summary-section"><div class="summary-label">Quarterfinals (4)</div><div class="summary-teams">${picks.qf.map(t=>`<span class="summary-tag">${t}</span>`).join('')}</div></div>`;
+  html += `<div class="summary-section"><div class="summary-label">Semifinals (2)</div><div class="summary-teams">${picks.sf.map(t=>`<span class="summary-tag">${t}</span>`).join('')}</div></div>`;
+  html += `<div class="summary-section"><div class="summary-label">World Cup winner</div><div class="summary-teams">${picks.final.map(t=>`<span class="summary-tag winner">${t}</span>`).join('')}</div></div>`;
+  html += `<div class="summary-section"><div class="summary-label">Tiebreaker</div><div style="font-size:15px;font-weight:600;">${picks.tiebreak} goals</div></div>`;
+  document.getElementById('summary-content').innerHTML = html;
+}
+
+function buildConfirmation() {
+  document.getElementById('confirm-name').textContent = picks.name;
+  document.getElementById('confirm-email').textContent = picks.email;
+  const gs = document.getElementById('groups-summary');
+  gs.innerHTML = '';
+  GK.forEach(g => {
+    const t = picks.groups[g];
+    const pill = document.createElement('div');
+    pill.className = 'group-pill';
+    pill.innerHTML = `<div class="group-pill-label">Group ${g}</div><div class="group-pill-teams">${t[0]||''}<br>${t[1]||''}<br><span class="third">${t[2]||''}</span></div>`;
+    gs.appendChild(pill);
+  });
+  const rounds = [
+    { label:'R32 (16)', teams: picks.r32, cls:'' },
+    { label:'R16 (8)', teams: picks.r16, cls:'r16' },
+    { label:'QF (4)', teams: picks.qf, cls:'qf' },
+    { label:'SF (2)', teams: picks.sf, cls:'semi' },
+    { label:'Champion', teams: picks.final, cls:'champion' }
+  ];
+  const bv = document.getElementById('bracket-visual');
+  bv.innerHTML = '';
+  rounds.forEach(r => {
+    const col = document.createElement('div'); col.className = 'bracket-col';
+    col.innerHTML = `<div class="bracket-col-header">${r.label}</div>`;
+    const td = document.createElement('div'); td.className = 'bracket-teams';
+    r.teams.forEach(team => {
+      const el = document.createElement('div');
+      el.className = `bracket-team ${r.cls}`; el.textContent = team;
+      td.appendChild(el);
+    });
+    col.appendChild(td); bv.appendChild(col);
+  });
+}
+
+function updateProgress(n) {
+  document.getElementById('pbar').style.width = Math.round((n/21)*100)+'%';
+}
+
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(`step-${n}`);
+  if (el) { el.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+  updateProgress(n);
+}
+
+function goNext(cur) {
+  if (cur === 0) {
+    picks.name = document.getElementById('entrant-name').value.trim();
+    picks.email = document.getElementById('entrant-email').value.trim();
+    if (!picks.name) { alert('Please enter your name.'); return; }
+    showStep(1);
+  } else if (cur >= 1 && cur <= 11) { showStep(cur + 1); }
+  else if (cur === 12) { buildElimStep(); showStep(13); }
+  else if (cur === 13) { buildKO('r32-pool', get32(), picks.r32, 16, 'r32-count', 'r32-next'); showStep(14); }
+  else if (cur === 14) { buildKO('r16-pool', [...picks.r32], picks.r16, 8, 'r16-count', 'r16-next'); showStep(15); }
+  else if (cur === 15) { buildKO('qf-pool', [...picks.r16], picks.qf, 4, 'qf-count', 'qf-next'); showStep(16); }
+  else if (cur === 16) { buildKO('sf-pool', [...picks.qf], picks.sf, 2, 'sf-count', 'sf-next'); showStep(17); }
+  else if (cur === 17) { buildKO('final-pool', [...picks.sf], picks.final, 1, 'final-count', 'final-next'); showStep(18); }
+  else if (cur === 18) { showStep(19); }
+  else if (cur === 19) {
+    picks.tiebreak = document.getElementById('tiebreak').value;
+    if (!picks.tiebreak) { alert('Please enter a tiebreaker number.'); return; }
+    buildSummary(); showStep(20);
+  }
+}
+
+function goBack(cur) {
+  if (cur === 1) showStep(0);
+  else if (cur >= 2 && cur <= 12) showStep(cur - 1);
+  else if (cur === 13) showStep(12);
+  else if (cur === 14) { buildElimStep(); showStep(13); }
+  else if (cur === 15) { buildKO('r32-pool', get32(), picks.r32, 16, 'r32-count', 'r32-next'); showStep(14); }
+  else if (cur === 16) { buildKO('r16-pool', [...picks.r32], picks.r16, 8, 'r16-count', 'r16-next'); showStep(15); }
+  else if (cur === 17) { buildKO('qf-pool', [...picks.r16], picks.qf, 4, 'qf-count', 'qf-next'); showStep(16); }
+  else if (cur === 18) { buildKO('sf-pool', [...picks.qf], picks.sf, 2, 'sf-count', 'sf-next'); showStep(17); }
+  else if (cur === 19) showStep(18);
+  else if (cur === 20) showStep(19);
+}
+
+function submitPicks() {
+  console.log('Submitted:', JSON.stringify(picks));
+  buildConfirmation();
+  showStep(21);
+}
+
+buildGroupSteps();
+showStep(0);
+</script>
+</body>
+</html>
