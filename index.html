@@ -30,7 +30,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .group-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
 .group-name { font-size: 13px; font-weight: 600; color: #666; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
 .teams-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.team-option { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer; font-size: 14px; color: #1a1a1a; background: white; user-select: none; transition: background 0.1s; }
+.team-option { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer; font-size: 14px; color: #1a1a1a; background: white; user-select: none; }
 .team-option:hover { background: #f9f9f9; }
 .team-option.selected { background: #1A0080; border-color: #7B00FF; color: #E8DAFF; }
 .team-option.selected-third { background: #8B0000; border-color: #CC0000; color: #FFD0D0; }
@@ -253,9 +253,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-5XOSNW5OzQFbezL3SOhS_iSl9_-aZWTv9QR3V60v4XcQfjX_BztLXqJz_696lGHY/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-5XOSNW5OzQFbezL3SOhS_iSl9_-aZWTv9QR3V60v4XcQfjX_BztLXqJz_696lGHY/exec';
 
-const GROUPS = {
+var GROUPS = {
   A: ['Mexico','South Korea','South Africa','Czechia'],
   B: ['Canada','Switzerland','Qatar','Bosnia & Herzegovina'],
   C: ['Brazil','Morocco','Scotland','Haiti'],
@@ -269,14 +269,14 @@ const GROUPS = {
   K: ['Portugal','DR Congo','Uzbekistan','Colombia'],
   L: ['England','Croatia','Ghana','Panama']
 };
-const GK = Object.keys(GROUPS);
-let picks = { name:'', email:'', groups:{}, eliminated:[], r32:[], r16:[], qf:[], sf:[], final:[], tiebreak:'' };
+var GK = Object.keys(GROUPS);
+var picks = { name:'', email:'', groups:{}, eliminated:[], r32:[], r16:[], qf:[], sf:[], final:[], tiebreak:'' };
 
 function buildGroupSteps() {
-  const container = document.getElementById('group-steps');
-  GK.forEach((g, i) => {
-    const n = i + 1;
-    const div = document.createElement('div');
+  var container = document.getElementById('group-steps');
+  GK.forEach(function(g, i) {
+    var n = i + 1;
+    var div = document.createElement('div');
     div.className = 'step'; div.id = 'step-' + n;
     div.innerHTML =
       '<div class="step-label">Group stage — Group ' + g + '</div>' +
@@ -454,9 +454,9 @@ function buildConfirmation() {
   });
   var rounds = [
     { label:'R32 (16)', teams: picks.r32, cls:'' },
-    { label:'R16 (8)', teams: picks.r16, cls:'r16' },
-    { label:'QF (4)', teams: picks.qf, cls:'qf' },
-    { label:'SF (2)', teams: picks.sf, cls:'semi' },
+    { label:'R16 (8)',  teams: picks.r16, cls:'r16' },
+    { label:'QF (4)',   teams: picks.qf,  cls:'qf' },
+    { label:'SF (2)',   teams: picks.sf,  cls:'semi' },
     { label:'Champion', teams: picks.final, cls:'champion' }
   ];
   var bv = document.getElementById('bracket-visual');
@@ -523,11 +523,26 @@ function submitPicks() {
   var btn = document.getElementById('submit-btn');
   btn.disabled = true;
   btn.textContent = 'Submitting...';
+
+  // Build flat payload with individual picks per round
+  var payload = {
+    name: picks.name,
+    email: picks.email,
+    groups: picks.groups,
+    eliminated: picks.eliminated,
+    r32: picks.r32,
+    r16: picks.r16,
+    qf: picks.qf,
+    sf: picks.sf,
+    winner: picks.final[0] || '',
+    tiebreak: picks.tiebreak
+  };
+
   fetch(SCRIPT_URL, {
     method: 'POST',
     mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(picks)
+    body: JSON.stringify(payload)
   })
   .then(function() { buildConfirmation(); showStep(21); })
   .catch(function() { buildConfirmation(); showStep(21); });
