@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>The Bouman Romoser World Cup Pool 2026</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
   tailwind.config = {
     theme: {
@@ -75,21 +76,21 @@
     .tile.wildcard .origin-wc { @apply bg-white/20 text-white; }
 
     /* Team list row (replaces pills for read-only displays) */
-    .team-row { @apply flex items-center justify-between gap-3 py-2 text-[13px]; }
+    .team-row { @apply flex items-center justify-between gap-3 py-2 text-[13px] leading-5; }
     .team-row + .team-row { @apply border-t border-slate-100; }
-    .team-row-name { @apply text-slate-800 truncate; }
+    .team-row-name { @apply text-slate-800 truncate leading-5; }
     .team-row-meta { @apply flex items-center gap-2 shrink-0; }
-    .team-row-wc-badge { @apply text-[10px] font-semibold uppercase tracking-wider text-wc-dark; }
-    .team-row-top2-badge { @apply text-[10px] font-semibold uppercase tracking-wider text-slate-400; }
-    .team-row-group { @apply text-[11px] font-medium text-slate-400 w-4 text-right; }
+    .team-row-wc-badge { @apply text-[10px] font-semibold uppercase tracking-wider text-wc-dark leading-5; }
+    .team-row-top2-badge { @apply text-[10px] font-semibold uppercase tracking-wider text-slate-400 leading-5; }
+    .team-row-group { @apply text-[11px] font-medium text-slate-400 w-4 text-right leading-5; }
 
     /* Grouped list (for R32 display: group header + rows) */
     .group-block-inline { @apply py-2; }
     .group-block-inline + .group-block-inline { @apply border-t border-slate-100; }
-    .group-block-card { @apply rounded-lg border border-slate-200 p-3 min-h-[7.5rem]; }
-    .group-block-header { @apply text-[11px] font-semibold text-brand-dark mb-1; }
-    .group-row { @apply flex items-center justify-between gap-2 text-[13px] py-0.5; }
-    .group-row-name { @apply text-slate-800 truncate; }
+    .group-block-card { @apply rounded-lg border border-slate-200 p-3 min-h-[8rem]; }
+    .group-block-header { @apply text-[11px] font-semibold text-brand-dark mb-1 leading-5; }
+    .group-row { @apply flex items-center justify-between gap-2 text-[13px] py-1 leading-5; }
+    .group-row-name { @apply text-slate-800 truncate leading-5; }
 
     /* Accordion */
     .accordion { @apply flex flex-col gap-2; }
@@ -99,6 +100,10 @@
     .accordion-item[open] > summary::after { @apply rotate-180; }
     .accordion-item[open] > summary { @apply border-b border-slate-100; }
     .accordion-body { @apply px-3.5 pt-1 pb-3; }
+
+    /* Shown only while html2canvas is capturing */
+    .capture-only { display: none; }
+    body.capturing .capture-only { display: block; }
   }
 </style>
 </head>
@@ -279,14 +284,24 @@
     <h2 class="mt-1 text-xl font-semibold">Double-check your picks</h2>
     <p class="mt-1 text-sm text-slate-600 leading-relaxed">Everything look good? Hit submit when you're ready.</p>
 
-    <div id="review-header" class="card p-5 mt-6"></div>
-    <div id="review-r32" class="card p-5 mt-4"></div>
-    <div id="review-ko" class="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"></div>
-    <div id="review-champion" class="mt-4"></div>
+    <div id="review-capture" class="bg-slate-50">
+      <div class="capture-only px-5 pt-5 pb-4 text-center">
+        <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-dark">Bouman Romoser World Cup Pool 2026</div>
+        <div class="text-lg font-bold mt-1">My picks</div>
+      </div>
+      <div id="review-header" class="card p-5 mt-6"></div>
+      <div id="review-r32" class="card p-5 mt-4"></div>
+      <div id="review-ko" class="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"></div>
+      <div id="review-champion" class="mt-4"></div>
+      <div class="capture-only text-center text-[11px] text-slate-400 mt-4 pb-2">June 11 – July 19, 2026</div>
+    </div>
 
-    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+    <div class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-slate-200">
       <button class="btn" onclick="goBack(8)">← Back</button>
-      <button class="btn btn-primary" id="submit-btn" onclick="submitPicks()">Submit my picks</button>
+      <div class="flex items-center gap-2">
+        <button class="btn" onclick="downloadPicks('review-capture', this)">Save as image</button>
+        <button class="btn btn-primary" id="submit-btn" onclick="submitPicks()">Submit my picks</button>
+      </div>
     </div>
   </div>
 
@@ -302,9 +317,20 @@
       <p class="mt-1 text-sm text-slate-600">Your picks have been submitted. Stay tuned for updates via email as the tournament progresses.</p>
     </div>
 
-    <div id="confirm-r32" class="card p-5 mt-4"></div>
-    <div id="confirm-ko" class="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"></div>
-    <div id="confirm-champion" class="mt-4"></div>
+    <div id="confirm-capture" class="bg-slate-50">
+      <div class="capture-only px-5 pt-5 pb-4 text-center">
+        <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-dark">Bouman Romoser World Cup Pool 2026</div>
+        <div class="text-lg font-bold mt-1">My picks</div>
+      </div>
+      <div id="confirm-r32" class="card p-5 mt-4"></div>
+      <div id="confirm-ko" class="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"></div>
+      <div id="confirm-champion" class="mt-4"></div>
+      <div class="capture-only text-center text-[11px] text-slate-400 mt-4 pb-2">June 11 – July 19, 2026</div>
+    </div>
+
+    <div class="mt-4 text-center">
+      <button class="btn" onclick="downloadPicks('confirm-capture', this)">Save picks as image</button>
+    </div>
 
     <div class="mt-6 card p-5">
       <p class="text-[13px] leading-relaxed text-slate-600">We'll be in touch at <strong id="confirm-email" class="text-slate-900 font-semibold"></strong> with standings updates as the tournament progresses.</p>
@@ -795,6 +821,62 @@ function renderChampionCard() {
   html += '</div>';
   html += '</div>';
   return html;
+}
+
+// ── Image download ───────────────────────────────────────────────────────────
+function picksFilename() {
+  var slug = (picks.name || 'picks').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return (slug || 'picks') + '-bouman-romoser-pool-2026.png';
+}
+
+function downloadPicks(containerId, btn) {
+  if (typeof html2canvas !== 'function') {
+    alert('Image library not loaded. Check your connection and try again.');
+    return;
+  }
+  var original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+  document.body.classList.add('capturing');
+
+  // Let the capture-only blocks paint before we snapshot
+  setTimeout(function() {
+    var el = document.getElementById(containerId);
+    html2canvas(el, {
+      backgroundColor: '#f8fafc',
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      onclone: function(clonedDoc) {
+        // html2canvas clips descenders inside overflow:hidden spans (truncate).
+        // Override those spans in the cloned DOM only — live UI is unaffected.
+        var style = clonedDoc.createElement('style');
+        style.textContent =
+          '.team-row-name, .group-row-name {' +
+            'overflow: visible !important;' +
+            'white-space: nowrap;' +
+            'padding-bottom: 3px;' +
+          '}' +
+          '.team-row, .group-row {' +
+            'line-height: 1.6 !important;' +
+          '}';
+        clonedDoc.head.appendChild(style);
+      }
+    }).then(function(canvas) {
+      var link = document.createElement('a');
+      link.download = picksFilename();
+      link.href = canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }).catch(function(err) {
+      alert('Could not generate image: ' + (err && err.message || err));
+    }).then(function() {
+      document.body.classList.remove('capturing');
+      btn.disabled = false;
+      btn.textContent = original;
+    });
+  }, 50);
 }
 
 function escapeHtml(s) {
