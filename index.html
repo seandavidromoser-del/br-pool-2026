@@ -4,308 +4,317 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>The Bouman Romoser World Cup Pool 2026</title>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #1a1a1a; min-height: 100vh; }
-.app { max-width: 680px; margin: 0 auto; padding: 2rem 1rem; }
-.header { text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 3px solid #7B00FF; }
-.header h1 { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-.header p { font-size: 14px; color: #666; }
-.step { display: none; }
-.step.active { display: block; }
-.step-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-.step-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-.step-sub { font-size: 14px; color: #555; margin-bottom: 1.5rem; line-height: 1.6; }
-.points-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; background: #E8DAFF; color: #4B00B5; border: 1px solid #9B6FFF; margin-left: 6px; vertical-align: middle; }
-.overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
-.overview-row { background: white; border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e8e8e8; }
-.overview-row .round-name { font-size: 13px; color: #1a1a1a; }
-.overview-row .pts { font-size: 13px; font-weight: 600; color: #7B00FF; }
-.overview-total { background: #1A0080; border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-.overview-total .round-name { font-size: 13px; font-weight: 600; color: #E8DAFF; }
-.overview-total .pts { font-size: 13px; font-weight: 600; color: #CCFF00; }
-.how-it-works { background: white; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; border: 1px solid #e8e8e8; }
-.how-it-works p { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 8px; }
-.how-it-works p:last-child { margin-bottom: 0; }
-.group-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
-.group-name { font-size: 13px; font-weight: 600; color: #666; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
-.teams-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.team-option { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer; font-size: 14px; color: #1a1a1a; background: white; user-select: none; }
-.team-option:hover { background: #f9f9f9; }
-.team-option.selected { background: #1A0080; border-color: #7B00FF; color: #E8DAFF; }
-.team-option.selected-third { background: #8B0000; border-color: #CC0000; color: #FFD0D0; }
-.team-option.disabled { opacity: 0.35; pointer-events: none; }
-.team-option .check { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #ccc; flex-shrink: 0; }
-.team-option.selected .check { background: #7B00FF; border-color: #7B00FF; }
-.team-option.selected-third .check { background: #CC0000; border-color: #CC0000; }
-.legend { display: flex; gap: 16px; margin-bottom: 1rem; flex-wrap: wrap; }
-.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #666; }
-.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.warning { font-size: 12px; color: #CC0000; margin-top: 6px; display: none; }
-.warning.show { display: block; }
-.nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e8e8e8; }
-.btn { padding: 9px 22px; border-radius: 8px; border: 1px solid #ccc; background: white; color: #1a1a1a; font-size: 14px; cursor: pointer; font-weight: 500; }
-.btn:hover { background: #f5f5f5; }
-.btn.primary { background: #7B00FF; border-color: #7B00FF; color: white; }
-.btn.primary:hover { background: #5500CC; }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
-.progress-bar { width: 100%; height: 5px; background: #e0e0e0; border-radius: 3px; margin-bottom: 2rem; }
-.progress-fill { height: 100%; background: linear-gradient(90deg, #7B00FF, #CC0000, #CCFF00); border-radius: 3px; transition: width 0.4s; }
-.knockout-pool { display: flex; flex-direction: column; gap: 8px; }
-.ko-team { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer; font-size: 14px; color: #1a1a1a; background: white; user-select: none; }
-.ko-team:hover { background: #f9f9f9; }
-.ko-team.selected { background: #1A0080; border-color: #7B00FF; color: #E8DAFF; }
-.ko-team.to-eliminate { background: #8B0000; border-color: #CC0000; color: #FFD0D0; }
-.ko-team.disabled { opacity: 0.35; pointer-events: none; }
-.ko-team .check { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #ccc; flex-shrink: 0; }
-.ko-team.selected .check { background: #7B00FF; border-color: #7B00FF; }
-.ko-team.to-eliminate .check { background: #CC0000; border-color: #CC0000; }
-.elim-count { font-size: 13px; color: #CC0000; margin-bottom: 1rem; font-weight: 500; }
-.name-input, .email-input { width: 100%; padding: 11px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; color: #1a1a1a; background: white; margin-bottom: 1rem; }
-.tiebreak-input { width: 100px; padding: 11px 14px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; text-align: center; color: #1a1a1a; background: white; }
-.name-input:focus, .email-input:focus, .tiebreak-input:focus { outline: none; border-color: #7B00FF; box-shadow: 0 0 0 3px rgba(123,0,255,0.1); }
-.summary-card { background: white; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; border: 1px solid #e8e8e8; }
-.summary-section { margin-bottom: 1rem; }
-.summary-section:last-child { margin-bottom: 0; }
-.summary-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-.summary-teams { display: flex; flex-wrap: wrap; gap: 6px; }
-.summary-tag { font-size: 12px; padding: 3px 10px; border-radius: 99px; background: #f5f5f5; border: 1px solid #e0e0e0; color: #1a1a1a; }
-.summary-tag.winner-tag { background: #1A0080; border-color: #7B00FF; color: #E8DAFF; }
-.summary-tag.out { opacity: 0.45; text-decoration: line-through; }
-.success-header { text-align: center; padding: 1.5rem 0 1.25rem; }
-.success-icon { width: 54px; height: 54px; background: #00CC44; border-radius: 50%; margin: 0 auto 0.75rem; display: flex; align-items: center; justify-content: center; }
-.bracket-section-label { font-size: 11px; font-weight: 600; color: #999; margin: 1.25rem 0 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
-.groups-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.group-pill { background: #1A0080; border-radius: 8px; padding: 8px 10px; }
-.group-pill-label { font-size: 10px; color: #9B6FFF; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; font-weight: 600; }
-.group-pill-teams { font-size: 11px; color: #E8DAFF; line-height: 1.6; }
-.group-pill-teams .third { color: #9B6FFF; font-style: italic; }
-.stay-tuned { background: #8B0000; border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 1.5rem; }
-.stay-tuned p { font-size: 13px; color: #FFAAAA; line-height: 1.6; }
-.stay-tuned p strong { color: white; font-weight: 600; }
-.shankly { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #AA0000; }
-.shankly blockquote { font-size: 13px; color: #FFD0D0; line-height: 1.6; font-style: italic; }
-.shankly cite { display: block; margin-top: 6px; font-size: 12px; color: #FF9999; font-style: normal; }
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            DEFAULT: '#16a34a',
+            dark: '#15803d',
+            deep: '#14532d',
+            light: '#dcfce7',
+            bg: '#f0fdf4',
+          },
+          wc: {
+            DEFAULT: '#64748b',
+            dark: '#475569',
+            deep: '#334155',
+            light: '#e2e8f0',
+            bg: '#f1f5f9',
+          },
+        },
+        fontFamily: {
+          sans: ['-apple-system','BlinkMacSystemFont','"Segoe UI"','Roboto','system-ui','sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+<style type="text/tailwindcss">
+  @layer base {
+    summary::-webkit-details-marker { display: none; }
+    summary { list-style: none; }
+  }
+  @layer components {
+    .step { @apply hidden; }
+    .step.active { @apply block; }
 
-/* Bracket styles */
-.bracket-round { display: flex; flex-direction: column; gap: 12px; }
-.matchup-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; overflow: hidden; }
-.matchup-header { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 14px; background: #f9f9f9; border-bottom: 1px solid #e8e8e8; }
-.matchup-teams { display: flex; flex-direction: column; }
-.matchup-team { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; font-size: 14px; color: #1a1a1a; user-select: none; border-bottom: 0.5px solid #f0f0f0; transition: background 0.1s; }
-.matchup-team:last-child { border-bottom: none; }
-.matchup-team:hover { background: #f9f9f9; }
-.matchup-team.selected { background: #1A0080; color: #E8DAFF; }
-.matchup-team.selected .match-check { background: #7B00FF; border-color: #7B00FF; }
-.matchup-team.tbd { color: #bbb; cursor: default; pointer-events: none; font-style: italic; }
-.matchup-team.tbd:hover { background: white; }
-.match-check { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #ccc; flex-shrink: 0; }
-.matchup-divider { font-size: 11px; color: #bbb; text-align: center; padding: 4px; background: #fafafa; border-top: 0.5px solid #f0f0f0; border-bottom: 0.5px solid #f0f0f0; }
-.matchup-team .group-badge { font-size: 10px; color: #999; margin-left: auto; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
-.matchup-team.selected .group-badge { background: rgba(255,255,255,0.2); color: #B5D4F4; }
-.wildcard-selector { padding: 10px 14px; background: #FAEEDA; border-bottom: 1px solid #e8e8e8; }
-.wildcard-label { font-size: 11px; color: #BA7517; margin-bottom: 6px; font-weight: 600; }
-.wildcard-options { display: flex; flex-wrap: wrap; gap: 6px; }
-.wildcard-btn { font-size: 12px; padding: 4px 10px; border-radius: 6px; border: 1px solid #BA7517; background: white; color: #633806; cursor: pointer; }
-.wildcard-btn:hover { background: #FAEEDA; }
-.wildcard-btn.chosen { background: #8B0000; border-color: #CC0000; color: white; }
-.bracket-progress { font-size: 13px; color: #666; margin-bottom: 1rem; }
-.bracket-progress span { font-weight: 600; color: #1a1a1a; }
+    .btn { @apply inline-flex items-center justify-center gap-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none; }
+    .btn-primary { @apply border-brand bg-brand text-white hover:bg-brand-dark hover:border-brand-dark focus:ring-brand/30; }
 
-/* Confirm bracket visual */
-.confirm-bracket { display: flex; gap: 6px; padding-bottom: 0.5rem; min-width: 0; }
-.live-bracket { display: flex; gap: 6px; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e8e8e8; }
-.confirm-col { display: flex; flex-direction: column; flex: 1; min-width: 90px; }
-.confirm-col-header { font-size: 9px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; padding: 0 2px 6px; }
-.confirm-teams { display: flex; flex-direction: column; gap: 3px; }
-.confirm-team { font-size: 10px; padding: 4px 5px; border-radius: 3px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bracket-box .confirm-col-header { color: #1A0080; font-weight: 700; }
-.bracket-box .confirm-team.empty { background: #e8e8e8; color: #bbb; }
-.bracket-box .confirm-team.r32 { background: #e0e0e0; color: #444; }
-.confirm-team.r32 { background: #f0f0f0; color: #555; }
-.confirm-team.r16 { background: #CC0000; color: #FFD0D0; font-weight: 600; }
-.confirm-team.qf { background: #FF5500; color: #FFE8D0; font-weight: 600; }
-.confirm-team.sf { background: #7B00FF; color: #E8DAFF; font-weight: 600; }
-.confirm-team.champ { background: #CCFF00; color: #1a1a00; font-weight: 700; font-size: 11px; padding: 7px 5px; }
-.live-bracket-label { font-size: 11px; font-weight: 700; color: #1A0080; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.06em; }
-.bracket-box { background: #f5f5f5; border: 2px solid #1A0080; border-radius: 12px; padding: 1rem; margin-bottom: 0.5rem; }
+    .card { @apply rounded-xl border border-slate-200 bg-white; }
+    .card-sm { @apply rounded-lg border border-slate-200 bg-white; }
+
+    .input { @apply block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-[15px] text-slate-900 placeholder:text-slate-400 transition focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20; }
+
+    .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500; }
+    .section-label { @apply text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500; }
+
+    .badge { @apply inline-block rounded-full border border-brand/30 bg-brand-light px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-brand-dark; }
+
+    /* Selectable team tile */
+    .tile { @apply relative flex items-center gap-2.5 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 cursor-pointer select-none transition hover:border-slate-300 hover:bg-slate-50; }
+    .tile.selected { @apply border-brand bg-brand text-white hover:bg-brand-dark hover:border-brand-dark; }
+    .tile.wildcard { @apply border-wc bg-wc text-white hover:bg-wc-dark hover:border-wc-dark; }
+    .tile.disabled { @apply opacity-40 pointer-events-none; }
+    .tile-check { @apply h-4 w-4 shrink-0 rounded-full border-[1.5px] border-slate-300 transition; }
+    .tile.selected .tile-check, .tile.wildcard .tile-check { @apply border-white bg-white/30; }
+    .tile-name { @apply flex-1 truncate; }
+
+    .origin-badge { @apply inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide; }
+    .origin-group { @apply bg-slate-100 text-slate-500 normal-case tracking-normal font-normal; }
+    .origin-adv { @apply bg-brand-light text-brand-dark; }
+    .origin-wc { @apply bg-wc-light text-wc-dark; }
+    .tile.selected .origin-group,
+    .tile.selected .origin-adv,
+    .tile.selected .origin-wc,
+    .tile.wildcard .origin-group,
+    .tile.wildcard .origin-adv,
+    .tile.wildcard .origin-wc { @apply bg-white/20 text-white; }
+
+    /* Team list row (replaces pills for read-only displays) */
+    .team-row { @apply flex items-center justify-between gap-3 py-2 text-[13px]; }
+    .team-row + .team-row { @apply border-t border-slate-100; }
+    .team-row-name { @apply text-slate-800 truncate; }
+    .team-row-meta { @apply flex items-center gap-2 shrink-0; }
+    .team-row-wc-badge { @apply text-[10px] font-semibold uppercase tracking-wider text-wc-dark; }
+    .team-row-top2-badge { @apply text-[10px] font-semibold uppercase tracking-wider text-slate-400; }
+    .team-row-group { @apply text-[11px] font-medium text-slate-400 w-4 text-right; }
+
+    /* Grouped list (for R32 display: group header + rows) */
+    .group-block-inline { @apply py-2; }
+    .group-block-inline + .group-block-inline { @apply border-t border-slate-100; }
+    .group-block-card { @apply rounded-lg border border-slate-200 p-3 min-h-[7.5rem]; }
+    .group-block-header { @apply text-[11px] font-semibold text-brand-dark mb-1; }
+    .group-row { @apply flex items-center justify-between gap-2 text-[13px] py-0.5; }
+    .group-row-name { @apply text-slate-800 truncate; }
+
+    /* Accordion */
+    .accordion { @apply flex flex-col gap-2; }
+    .accordion-item { @apply rounded-lg border border-slate-200 bg-white overflow-hidden transition; }
+    .accordion-item > summary { @apply flex items-center justify-between cursor-pointer px-3.5 py-2.5 text-[13px] font-medium text-slate-800 transition hover:bg-slate-50; }
+    .accordion-item > summary::after { content: '▾'; @apply text-slate-400 text-[10px] transition-transform duration-200; }
+    .accordion-item[open] > summary::after { @apply rotate-180; }
+    .accordion-item[open] > summary { @apply border-b border-slate-100; }
+    .accordion-body { @apply px-3.5 pt-1 pb-3; }
+  }
 </style>
 </head>
-<body>
-<div class="app">
-  <div class="header">
-    <h1>The Bouman Romoser World Cup Pool 2026</h1>
-    <p>Hosted by JB & SD &nbsp;·&nbsp; June 11 – July 19, 2026</p>
+<body class="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased">
+
+<div class="mx-auto max-w-5xl px-4 py-8 md:py-10">
+
+  <!-- Header -->
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold tracking-tight text-slate-900">The Bouman Romoser World Cup Pool 2026</h1>
+    <p class="mt-2 text-sm text-slate-500">Hosted by JB &amp; SD &nbsp;·&nbsp; June 11 – July 19, 2026</p>
+  </header>
+
+  <!-- Progress -->
+  <div class="h-[5px] w-full rounded-full bg-slate-200 mb-8 overflow-hidden">
+    <div id="pbar" class="h-full rounded-full bg-brand transition-all duration-500" style="width:0%"></div>
   </div>
-  <div class="progress-bar"><div class="progress-fill" id="pbar" style="width:0%"></div></div>
 
   <!-- Step 0: Welcome -->
   <div class="step active" id="step-0">
-    <div class="step-label">Welcome</div>
-    <div class="step-title">How the pool works</div>
-    <div class="step-sub">Make your picks before the tournament kicks off on June 11. Points are awarded for every correct prediction — the later the round, the more they're worth.</div>
-    <div class="how-it-works">
-      <p>Pick 3 teams from each group, eliminate 4 third-place teams to get to 32, then fill out the official FIFA bracket round by round. Yes, there are 12 groups now. Yes, FIFA added a Round of 32. We know.</p>
-      <p>Points double each round, so even if your group stage picks are a disaster, there's always a chance to claw it back. That's the beauty of it.</p>
-    </div>
-    <div class="overview-grid">
-      <div class="overview-row"><span class="round-name">Group stage</span><span class="pts">1 pt each</span></div>
-      <div class="overview-row"><span class="round-name">3rd place cut</span><span class="pts">1 pt each</span></div>
-      <div class="overview-row"><span class="round-name">Round of 32</span><span class="pts">2 pts each</span></div>
-      <div class="overview-row"><span class="round-name">Round of 16</span><span class="pts">4 pts each</span></div>
-      <div class="overview-row"><span class="round-name">Quarterfinals</span><span class="pts">8 pts each</span></div>
-      <div class="overview-row"><span class="round-name">Semifinals</span><span class="pts">16 pts each</span></div>
-    </div>
-    <div class="overview-total"><span class="round-name">Winner</span><span class="pts">32 pts</span></div>
-    <div style="font-size:12px;color:#999;margin-bottom:1.5rem;margin-top:0.5rem;">Tiebreaker: closest prediction of total goals scored in the Final.</div>
-    <div style="font-size:13px;color:#555;margin-bottom:1rem;">Enter your name and email to get started.</div>
-    <input class="name-input" id="entrant-name" type="text" placeholder="Your name" />
-    <input class="email-input" id="entrant-email" type="email" placeholder="Your email address" />
-    <div class="nav"><span></span><button class="btn primary" onclick="goNext(0)">Start picking &rarr;</button></div>
-  </div>
+    <div class="eyebrow">Welcome</div>
+    <h2 class="mt-1 text-xl font-semibold">How the pool works</h2>
+    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Make your picks before the tournament kicks off on June 11. Points are awarded for every correctly predicted team that advances. The later the round, the more they're worth.</p>
 
-  <!-- Group steps injected here -->
-  <div id="group-steps"></div>
+    <div class="card mt-6 p-5 space-y-2">
+      <p class="text-[13px] leading-relaxed text-slate-600">You'll draft which 32 teams you think advance out of the group stage: 2 from each group, plus 8 wildcards. Then you whittle that down to 16, 8, 4, 2, and finally a champion.</p>
+      <p class="text-[13px] leading-relaxed text-slate-600">Points double each round, so even a rough group stage can be clawed back. That's the beauty of it.</p>
+    </div>
 
-  <!-- Step 13: Eliminate 4 third-place teams -->
-  <div class="step" id="step-13">
-    <div class="step-label">Group stage — final cut</div>
-    <div class="step-title">Eliminate 4 third-place teams <span class="points-badge">1 pt each correct</span></div>
-    <div class="step-sub">You picked 3 teams from each group — that's 36 teams. The real tournament advances 32, so tap the 4 third-place teams you think go home.</div>
-    <div class="elim-count">Eliminated: <span id="elim-count">0</span> / 4</div>
-    <div class="knockout-pool" id="third-place-pool"></div>
-    <div class="nav">
-      <button class="btn" onclick="goBack(13)">Back</button>
-      <button class="btn primary" id="elim-next" onclick="goNext(13)" disabled>Next &rarr;</button>
+    <div class="mt-4 grid grid-cols-2 gap-2">
+      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-slate-700">Advance to R32</span><span class="text-[13px] font-semibold text-brand-dark">1 pt each</span></div>
+      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-slate-700">Advance to R16</span><span class="text-[13px] font-semibold text-brand-dark">2 pts each</span></div>
+      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-slate-700">Advance to QF</span><span class="text-[13px] font-semibold text-brand-dark">4 pts each</span></div>
+      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-slate-700">Advance to SF</span><span class="text-[13px] font-semibold text-brand-dark">8 pts each</span></div>
+      <div class="card-sm px-3.5 py-3 flex items-center justify-between col-span-2"><span class="text-[13px] text-slate-700">Advance to Final</span><span class="text-[13px] font-semibold text-brand-dark">16 pts each</span></div>
+    </div>
+
+    <div class="mt-3 rounded-xl bg-brand-deep px-4 py-3 flex items-center justify-between">
+      <span class="text-[13px] font-semibold text-brand-light">Winner</span>
+      <span class="text-[13px] font-semibold text-white">32 pts</span>
+    </div>
+
+    <p class="mt-3 text-xs text-slate-400">Tiebreaker: closest prediction of total goals scored in the Final.</p>
+
+    <div class="mt-8">
+      <p class="text-[13px] text-slate-600 mb-3">Enter your name and email to get started.</p>
+      <input class="input mb-3" id="entrant-name" type="text" placeholder="Your name" />
+      <input class="input" id="entrant-email" type="email" placeholder="Your email address" />
+    </div>
+
+    <div class="mt-8 flex items-center justify-end">
+      <button class="btn btn-primary" onclick="goNext(0)">Start picking →</button>
     </div>
   </div>
 
-  <!-- Step 14: Round of 32 bracket -->
-  <div class="step" id="step-14">
-    <div class="step-label">Knockout bracket</div>
-    <div class="step-title">Round of 32 <span class="points-badge">2 pts each</span></div>
-    <div class="live-bracket-label">Your bracket</div>
-    <div class="confirm-bracket bracket-box" id="live-bracket-14"></div>
-    <div class="step-sub" style="margin-top:1.5rem;">Every matchup below is a real, officially scheduled game — your group stage picks determine who shows up in each slot. For the 8 third-place wildcard spots, pick which of your surviving third-place teams sneaks through. No two teams from the same group can meet here, because even FIFA isn't that chaotic.</div>
-    <div class="bracket-progress">Picked: <span id="r32-picked">0</span> / 16</div>
-    <div class="bracket-round" id="r32-bracket"></div>
-    <div class="nav">
-      <button class="btn" onclick="goBack(14)">Back</button>
-      <button class="btn primary" id="r32-next" onclick="goNext(14)" disabled>Next &rarr;</button>
+  <!-- Step 1: Draft 32 -->
+  <div class="step" id="step-1">
+    <div class="eyebrow">Group stage draft</div>
+    <h2 class="mt-1 text-xl font-semibold">Draft your 32 advancing teams <span class="badge">1 pt each</span></h2>
+    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Pick 2 teams from each group, plus 8 wildcards from any group (max 1 per group). Tap a team to cycle: advancing, wildcard, unpicked.</p>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
+      <div id="draft-groups" class="flex flex-col gap-3"></div>
+      <aside id="draft-summary" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
+    </div>
+
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+      <button class="btn" onclick="goBack(1)">← Back</button>
+      <button class="btn btn-primary" id="draft-next" onclick="goNext(1)" disabled>Next →</button>
     </div>
   </div>
 
-  <!-- Step 15: Round of 16 bracket -->
-  <div class="step" id="step-15">
-    <div class="step-label">Knockout bracket</div>
-    <div class="step-title">Round of 16 <span class="points-badge">4 pts each</span></div>
-    <div class="live-bracket-label">Your bracket</div>
-    <div class="confirm-bracket bracket-box" id="live-bracket-15"></div>
-    <div class="step-sub" style="margin-top:1.5rem;">Down to 16. The bracket is tightening, the stakes are doubling, and your group stage gambles are about to pay off — or not. Pick who advances from each matchup.</div>
-    <div class="bracket-progress">Picked: <span id="r16-picked">0</span> / 8</div>
-    <div class="bracket-round" id="r16-bracket"></div>
-    <div class="nav">
-      <button class="btn" onclick="goBack(15)">Back</button>
-      <button class="btn primary" id="r16-next" onclick="goNext(15)" disabled>Next &rarr;</button>
+  <!-- Step 2: R16 cut -->
+  <div class="step" id="step-2">
+    <div class="eyebrow">Knockout stage</div>
+    <h2 class="mt-1 text-xl font-semibold">Pick the 16 that advance <span class="badge">2 pts each</span></h2>
+    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Of your 32 drafted teams, which 16 make it past the Round of 32?</p>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
+      <div id="r16-pool"></div>
+      <aside id="r16-right" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
+    </div>
+
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+      <button class="btn" onclick="goBack(2)">← Back</button>
+      <button class="btn btn-primary" id="r16-next" onclick="goNext(2)" disabled>Next →</button>
     </div>
   </div>
 
-  <!-- Step 16: Quarterfinals -->
-  <div class="step" id="step-16">
-    <div class="step-label">Knockout bracket</div>
-    <div class="step-title">Quarterfinals <span class="points-badge">8 pts each</span></div>
-    <div class="live-bracket-label">Your bracket</div>
-    <div class="confirm-bracket bracket-box" id="live-bracket-16"></div>
-    <div class="step-sub" style="margin-top:1.5rem;">The quarterfinals. Where dark horses die and favorites finally earn their hype. Pick your four survivors.</div>
-    <div class="bracket-progress">Picked: <span id="qf-picked">0</span> / 4</div>
-    <div class="bracket-round" id="qf-bracket"></div>
-    <div class="nav">
-      <button class="btn" onclick="goBack(16)">Back</button>
-      <button class="btn primary" id="qf-next" onclick="goNext(16)" disabled>Next &rarr;</button>
+  <!-- Step 3: QF cut -->
+  <div class="step" id="step-3">
+    <div class="eyebrow">Knockout stage</div>
+    <h2 class="mt-1 text-xl font-semibold">Pick the 8 that advance <span class="badge">4 pts each</span></h2>
+    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Of your 16, which 8 make the quarterfinals?</p>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
+      <div id="qf-pool"></div>
+      <aside id="qf-right" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
+    </div>
+
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+      <button class="btn" onclick="goBack(3)">← Back</button>
+      <button class="btn btn-primary" id="qf-next" onclick="goNext(3)" disabled>Next →</button>
     </div>
   </div>
 
-  <!-- Step 17: Semifinals -->
-  <div class="step" id="step-17">
-    <div class="step-label">Knockout bracket</div>
-    <div class="step-title">Semifinals <span class="points-badge">16 pts each</span></div>
-    <div class="live-bracket-label">Your bracket</div>
-    <div class="confirm-bracket bracket-box" id="live-bracket-17"></div>
-    <div class="step-sub" style="margin-top:1.5rem;">Two matches stand between your picks and glory. Who's going to the Final?</div>
-    <div class="bracket-progress">Picked: <span id="sf-picked">0</span> / 2</div>
-    <div class="bracket-round" id="sf-bracket"></div>
-    <div class="nav">
-      <button class="btn" onclick="goBack(17)">Back</button>
-      <button class="btn primary" id="sf-next" onclick="goNext(17)" disabled>Next &rarr;</button>
+  <!-- Step 4: SF cut -->
+  <div class="step" id="step-4">
+    <div class="eyebrow">Knockout stage</div>
+    <h2 class="mt-1 text-xl font-semibold">Pick the 4 that advance <span class="badge">8 pts each</span></h2>
+    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Of your 8, which 4 reach the semifinals?</p>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
+      <div id="sf-pool"></div>
+      <aside id="sf-right" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
+    </div>
+
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+      <button class="btn" onclick="goBack(4)">← Back</button>
+      <button class="btn btn-primary" id="sf-next" onclick="goNext(4)" disabled>Next →</button>
     </div>
   </div>
 
-  <!-- Step 18: Final -->
-  <div class="step" id="step-18">
-    <div class="step-label">Knockout bracket</div>
-    <div class="step-title">The Final <span class="points-badge">32 pts</span></div>
-    <div class="live-bracket-label">Your bracket</div>
-    <div class="confirm-bracket bracket-box" id="live-bracket-18"></div>
-    <div class="step-sub" style="margin-top:1.5rem;">This is it. One match, one trophy, one champion. Who are you putting your name behind?</div>
-    <div class="bracket-progress">Picked: <span id="final-picked">0</span> / 1</div>
-    <div class="bracket-round" id="final-bracket"></div>
-    <div class="nav">
-      <button class="btn" onclick="goBack(18)">Back</button>
-      <button class="btn primary" id="final-next" onclick="goNext(18)" disabled>Next &rarr;</button>
+  <!-- Step 5: Final cut -->
+  <div class="step" id="step-5">
+    <div class="eyebrow">Knockout stage</div>
+    <h2 class="mt-1 text-xl font-semibold">Pick the 2 finalists <span class="badge">16 pts each</span></h2>
+    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Of your 4, which 2 play for the trophy?</p>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
+      <div id="final-pool"></div>
+      <aside id="final-right" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
+    </div>
+
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+      <button class="btn" onclick="goBack(5)">← Back</button>
+      <button class="btn btn-primary" id="final-next" onclick="goNext(5)" disabled>Next →</button>
     </div>
   </div>
 
-  <!-- Step 19: Tiebreaker -->
-  <div class="step" id="step-19">
-    <div class="step-label">Almost done</div>
-    <div class="step-title">Tiebreaker</div>
-    <div class="live-bracket-label">Your bracket</div>
-    <div class="confirm-bracket bracket-box" id="live-bracket-19"></div>
-    <div class="step-sub" style="margin-top:1rem;">How many total goals will be scored in the Final? Used only to break ties — closest guess wins the tiebreak.</div>
-    <input class="tiebreak-input" id="tiebreak" type="number" min="0" max="20" placeholder="e.g. 3" />
-    <div class="nav">
-      <button class="btn" onclick="goBack(19)">Back</button>
-      <button class="btn primary" onclick="goNext(19)">Review my picks &rarr;</button>
+  <!-- Step 6: Winner -->
+  <div class="step" id="step-6">
+    <div class="eyebrow">Knockout stage</div>
+    <h2 class="mt-1 text-xl font-semibold">Pick the champion <span class="badge">32 pts</span></h2>
+    <p class="mt-1 text-sm text-slate-600 leading-relaxed">One match, one trophy, one champion. Who are you putting your name behind?</p>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
+      <div id="winner-pool"></div>
+      <aside id="winner-right" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
+    </div>
+
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+      <button class="btn" onclick="goBack(6)">← Back</button>
+      <button class="btn btn-primary" id="winner-next" onclick="goNext(6)" disabled>Next →</button>
     </div>
   </div>
 
-  <!-- Step 20: Review -->
-  <div class="step" id="step-20">
-    <div class="step-label">Review</div>
-    <div class="step-title">Double-check your picks</div>
-    <div class="live-bracket-label">Your bracket</div>
-    <div class="confirm-bracket bracket-box" id="live-bracket-20"></div>
-    <div class="step-sub" style="margin-top:1rem;">Everything look good? Hit submit when you're ready.</div>
-    <div class="summary-card" id="summary-content"></div>
-    <div class="nav">
-      <button class="btn" onclick="goBack(20)">Back</button>
-      <button class="btn primary" id="submit-btn" onclick="submitPicks()">Submit my picks</button>
+  <!-- Step 7: Tiebreaker -->
+  <div class="step" id="step-7">
+    <div class="eyebrow">Almost done</div>
+    <h2 class="mt-1 text-xl font-semibold">Tiebreaker</h2>
+    <p class="mt-1 text-sm text-slate-600 leading-relaxed">How many total goals will be scored in the Final? Used only to break ties, closest guess wins.</p>
+
+    <div class="mt-6 card p-5">
+      <label for="tiebreak" class="section-label block mb-2">Total goals in the Final</label>
+      <input class="input max-w-[160px] text-center" id="tiebreak" type="number" min="0" max="20" placeholder="e.g. 3" />
+    </div>
+
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+      <button class="btn" onclick="goBack(7)">← Back</button>
+      <button class="btn btn-primary" onclick="goNext(7)">Review my picks →</button>
     </div>
   </div>
 
-  <!-- Step 21: Success -->
-  <div class="step" id="step-21">
-    <div class="success-header">
-      <div class="success-icon">
-        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Step 8: Review -->
+  <div class="step" id="step-8">
+    <div class="eyebrow">Review</div>
+    <h2 class="mt-1 text-xl font-semibold">Double-check your picks</h2>
+    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Everything look good? Hit submit when you're ready.</p>
+
+    <div id="review-header" class="card p-5 mt-6"></div>
+    <div id="review-r32" class="card p-5 mt-4"></div>
+    <div id="review-ko" class="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"></div>
+    <div id="review-champion" class="mt-4"></div>
+
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+      <button class="btn" onclick="goBack(8)">← Back</button>
+      <button class="btn btn-primary" id="submit-btn" onclick="submitPicks()">Submit my picks</button>
+    </div>
+  </div>
+
+  <!-- Step 9: Success -->
+  <div class="step" id="step-9">
+    <div class="text-center py-6">
+      <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand">
+        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7">
           <path d="M8 14l4 4 8-8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="step-title">You're in, <span id="confirm-name"></span>!</div>
-      <div class="step-sub" style="margin-top:4px;">Here's your bracket. Stay tuned for updates via email as the tournament progresses.</div>
+      <h2 class="text-xl font-semibold">You're in, <span id="confirm-name"></span>!</h2>
+      <p class="mt-1 text-sm text-slate-600">Your picks have been submitted. Stay tuned for updates via email as the tournament progresses.</p>
     </div>
-    <div class="bracket-section-label">Your knockout bracket</div>
-    <div class="confirm-bracket bracket-box" id="confirm-bracket"></div>
-    <div class="bracket-section-label">Group stage picks</div>
-    <div class="groups-summary" id="groups-summary"></div>
-    <div class="stay-tuned">
-      <p>We'll be in touch at <strong id="confirm-email"></strong> with standings updates as the tournament progresses.</p>
-      <div class="shankly">
-        <blockquote>"Some people think football is a matter of life and death. I assure you, it's much more serious than that."</blockquote>
-        <cite>— Bill Shankly, legendary Liverpool FC manager</cite>
+
+    <div id="confirm-r32" class="card p-5 mt-4"></div>
+    <div id="confirm-ko" class="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"></div>
+    <div id="confirm-champion" class="mt-4"></div>
+
+    <div class="mt-6 card p-5">
+      <p class="text-[13px] leading-relaxed text-slate-600">We'll be in touch at <strong id="confirm-email" class="text-slate-900 font-semibold"></strong> with standings updates as the tournament progresses.</p>
+      <div class="mt-4 pt-4 border-t border-slate-100">
+        <blockquote class="text-[13px] italic leading-relaxed text-slate-600">"Some people think football is a matter of life and death. I assure you, it's much more serious than that."</blockquote>
+        <cite class="mt-2 block text-xs not-italic text-slate-400">Bill Shankly, legendary Liverpool FC manager</cite>
       </div>
     </div>
   </div>
+
 </div>
 
 <script>
@@ -327,541 +336,504 @@ var GROUPS = {
 };
 var GK = Object.keys(GROUPS);
 
-// Official R32 bracket structure
-// Each matchup: [matchId, team1src, team2src]
-// src: {type: "winner"|"runner_up"|"third", group: "X"} or {type:"third", groups:["A","B",...]}
-var R32_STRUCTURE = [
-  {id:73, t1:{type:'runner_up',group:'A'}, t2:{type:'runner_up',group:'B'}},
-  {id:74, t1:{type:'winner',group:'E'},    t2:{type:'third',groups:['A','B','C','D','F']}},
-  {id:75, t1:{type:'winner',group:'F'},    t2:{type:'runner_up',group:'C'}},
-  {id:76, t1:{type:'winner',group:'C'},    t2:{type:'runner_up',group:'F'}},
-  {id:77, t1:{type:'winner',group:'I'},    t2:{type:'third',groups:['C','D','F','G','H']}},
-  {id:78, t1:{type:'runner_up',group:'E'}, t2:{type:'runner_up',group:'I'}},
-  {id:79, t1:{type:'winner',group:'A'},    t2:{type:'third',groups:['C','E','F','H','I']}},
-  {id:80, t1:{type:'winner',group:'L'},    t2:{type:'third',groups:['E','H','I','J','K']}},
-  {id:81, t1:{type:'winner',group:'D'},    t2:{type:'third',groups:['B','E','F','I','J']}},
-  {id:82, t1:{type:'winner',group:'G'},    t2:{type:'third',groups:['A','E','H','I','J']}},
-  {id:83, t1:{type:'runner_up',group:'K'}, t2:{type:'runner_up',group:'L'}},
-  {id:84, t1:{type:'winner',group:'H'},    t2:{type:'runner_up',group:'J'}},
-  {id:85, t1:{type:'winner',group:'B'},    t2:{type:'third',groups:['E','F','G','I','J']}},
-  {id:86, t1:{type:'winner',group:'J'},    t2:{type:'runner_up',group:'H'}},
-  {id:87, t1:{type:'winner',group:'K'},    t2:{type:'third',groups:['D','E','I','J','L']}},
-  {id:88, t1:{type:'runner_up',group:'D'}, t2:{type:'runner_up',group:'G'}}
-];
-
-var R16_STRUCTURE = [
-  {id:89, m1:74, m2:77},
-  {id:90, m1:73, m2:75},
-  {id:91, m1:76, m2:78},
-  {id:92, m1:79, m2:80},
-  {id:93, m1:83, m2:84},
-  {id:94, m1:81, m2:82},
-  {id:95, m1:86, m2:88},
-  {id:96, m1:85, m2:87}
-];
-
-var QF_STRUCTURE = [
-  {id:97,  m1:89, m2:90},
-  {id:98,  m1:93, m2:94},
-  {id:99,  m1:91, m2:92},
-  {id:100, m1:95, m2:96}
-];
-
-var SF_STRUCTURE = [
-  {id:101, m1:97,  m2:98},
-  {id:102, m1:99,  m2:100}
-];
-
-var FINAL_STRUCTURE = {id:104, m1:101, m2:102};
-
 var picks = {
-  name:'', email:'',
-  groups:{}, eliminated:[],
-  matchWinners:{},   // matchId -> winning team name
-  wildcards:{},      // matchId -> chosen third-place team
-  tiebreak:''
+  name: '', email: '', tiebreak: '',
+  groups: {},
+  wildcards: [],
+  r16: [], qf: [], sf: [], final: [], winner: ''
 };
+GK.forEach(function(g) { picks.groups[g] = []; });
 
-// ── Group step builder ────────────────────────────────────────────────────────
-function buildGroupSteps() {
-  var container = document.getElementById('group-steps');
-  GK.forEach(function(g, i) {
-    var n = i + 1;
-    var div = document.createElement('div');
-    div.className = 'step'; div.id = 'step-' + n;
-    div.innerHTML =
-      '<div class="step-label">Group stage — Group ' + g + '</div>' +
-      '<div class="step-title">Group ' + g + ' <span class="points-badge">1 pt each</span></div>' +
-      '<div class="step-sub">Pick 3 teams to advance. Your top 2 advance automatically; your 3rd is your third-place prediction.</div>' +
-      '<div class="legend">' +
-        '<div class="legend-item"><div class="legend-dot" style="background:#7B00FF;"></div>1st & 2nd place</div>' +
-        '<div class="legend-item"><div class="legend-dot" style="background:#CC0000;"></div>3rd place</div>' +
-      '</div>' +
-      '<div class="group-card">' +
-        '<div class="group-name">Group ' + g + '</div>' +
-        '<div class="teams-grid" id="group-' + g + '-teams"></div>' +
-        '<div class="warning" id="group-' + g + '-warn">You can only pick 3 teams per group.</div>' +
-      '</div>' +
-      '<div class="nav">' +
-        '<button class="btn" onclick="goBack(' + n + ')">Back</button>' +
-        '<button class="btn primary" id="group-' + g + '-next" onclick="goNext(' + n + ')" disabled>Next &rarr;</button>' +
-      '</div>';
-    container.appendChild(div);
-    picks.groups[g] = [];
-    (function(grp) {
-      setTimeout(function() {
-        var grid = document.getElementById('group-' + grp + '-teams');
-        if (!grid) return;
-        GROUPS[grp].forEach(function(team) {
-          var el = document.createElement('div');
-          el.className = 'team-option';
-          el.dataset.group = grp; el.dataset.team = team;
-          el.innerHTML = '<div class="check"></div>' + team;
-          el.onclick = function() { toggleGroup(grp, team, el); };
-          grid.appendChild(el);
-        });
-      }, 0);
-    })(g);
-  });
-}
-
-function toggleGroup(g, team, el) {
-  var sel = picks.groups[g];
-  var warn = document.getElementById('group-' + g + '-warn');
-  if (el.classList.contains('selected') || el.classList.contains('selected-third')) {
-    el.classList.remove('selected','selected-third');
-    picks.groups[g] = sel.filter(function(t) { return t !== team; });
-  } else {
-    if (sel.length >= 3) { warn.classList.add('show'); return; }
-    warn.classList.remove('show');
-    picks.groups[g].push(team);
-    el.classList.add(picks.groups[g].length === 3 ? 'selected-third' : 'selected');
+var TEAM_TO_GROUP = null;
+function getTeamGroup(team) {
+  if (!TEAM_TO_GROUP) {
+    TEAM_TO_GROUP = {};
+    GK.forEach(function(g) {
+      GROUPS[g].forEach(function(t) { TEAM_TO_GROUP[t] = g; });
+    });
   }
-  refreshGroupColors(g);
-  document.getElementById('group-' + g + '-next').disabled = picks.groups[g].length !== 3;
-  refreshGroupDisabled(g);
+  return TEAM_TO_GROUP[team] || null;
 }
 
-function refreshGroupColors(g) {
-  var sel = picks.groups[g];
-  document.querySelectorAll('.team-option[data-group="' + g + '"]').forEach(function(el) {
-    var idx = sel.indexOf(el.dataset.team);
-    el.classList.remove('selected','selected-third');
-    if (idx === 0 || idx === 1) el.classList.add('selected');
-    else if (idx === 2) el.classList.add('selected-third');
-  });
+function getR32Teams() {
+  var out = [];
+  GK.forEach(function(g) { picks.groups[g].forEach(function(t) { out.push(t); }); });
+  picks.wildcards.forEach(function(t) { out.push(t); });
+  return out;
 }
 
-function refreshGroupDisabled(g) {
-  var sel = picks.groups[g];
-  document.querySelectorAll('.team-option[data-group="' + g + '"]').forEach(function(el) {
-    if (!sel.includes(el.dataset.team) && sel.length >= 3) el.classList.add('disabled');
-    else el.classList.remove('disabled');
-  });
-}
-
-// ── Pick helpers ──────────────────────────────────────────────────────────────
-function groupWinner(g)    { return picks.groups[g] ? picks.groups[g][0] : null; }
-function groupRunnerUp(g)  { return picks.groups[g] ? picks.groups[g][1] : null; }
-function groupThird(g)     { return picks.groups[g] ? picks.groups[g][2] : null; }
-
-function getThirds() {
-  return GK.map(function(g) { return groupThird(g); }).filter(Boolean);
-}
-
-function getSurvivingThirds() {
-  return getThirds().filter(function(t) { return !picks.eliminated.includes(t); });
-}
-
-// wildcards: { matchId_slot: teamName }
-// wildcardByTeam: { teamName: true } — flat set of all claimed teams
-
-function getAllClaimedWildcardTeams(exceptMatchId, exceptSlot) {
-  var claimed = [];
-  Object.keys(picks.wildcards).forEach(function(key) {
-    // key format: matchId + '_' + slot (e.g. "74_wc2")
-    var parts = key.split('_');
-    var mid = parseInt(parts[0]);
-    var sl  = parts[1];
-    if (!(mid === exceptMatchId && sl === exceptSlot)) {
-      claimed.push(picks.wildcards[key]);
-    }
-  });
-  return claimed;
-}
-
-function resolveTeam(src, matchId, slot) {
-  if (!src) return null;
-  if (src.type === 'winner')    return groupWinner(src.group);
-  if (src.type === 'runner_up') return groupRunnerUp(src.group);
-  if (src.type === 'third') {
-    var claimed = getAllClaimedWildcardTeams(matchId, slot);
-    var eligible = src.groups.map(function(g) { return groupThird(g); })
-      .filter(function(t) { return t && !picks.eliminated.includes(t) && !claimed.includes(t); });
-    return eligible.length > 0 ? eligible : [];
+function getTeamOrigin(team) {
+  if (picks.wildcards.indexOf(team) !== -1) return 'wc';
+  for (var i = 0; i < GK.length; i++) {
+    if (picks.groups[GK[i]].indexOf(team) !== -1) return 'adv';
   }
   return null;
 }
 
-function getMatchWinner(matchId) {
-  return picks.matchWinners[matchId] || null;
-}
-
-// ── Elimination step ──────────────────────────────────────────────────────────
-function buildElimStep() {
-  picks.eliminated = [];
-  picks.matchWinners = {};
-  picks.wildcards = {};
-  var container = document.getElementById('third-place-pool');
-  container.innerHTML = '';
-  document.getElementById('elim-count').textContent = '0';
-  document.getElementById('elim-next').disabled = true;
-  getThirds().forEach(function(team) {
-    var el = document.createElement('div');
-    el.className = 'ko-team';
-    el.innerHTML = '<div class="check"></div>' + team + '<span style="font-size:12px;color:#999;margin-left:auto;">3rd place</span>';
-    el.onclick = function() { toggleElim(el, team); };
-    container.appendChild(el);
+function sortByGroup(arr) {
+  return arr.slice().sort(function(a, b) {
+    var ga = getTeamGroup(a) || '~', gb = getTeamGroup(b) || '~';
+    if (ga !== gb) return ga < gb ? -1 : 1;
+    return a < b ? -1 : 1;
   });
 }
 
-function buildElimStepPreserve() {
-  var prevElim = picks.eliminated.slice();
-  var container = document.getElementById('third-place-pool');
-  container.innerHTML = '';
-  document.getElementById('elim-count').textContent = prevElim.length;
-  document.getElementById('elim-next').disabled = prevElim.length !== 4;
-  getThirds().forEach(function(team) {
-    var el = document.createElement('div');
-    el.className = 'ko-team' + (prevElim.includes(team) ? ' to-eliminate' : '');
-    el.innerHTML = '<div class="check"></div>' + team + '<span style="font-size:12px;color:#999;margin-left:auto;">3rd place</span>';
-    el.onclick = function() { toggleElim(el, team); };
-    if (!prevElim.includes(team) && prevElim.length >= 4) el.classList.add('disabled');
-    container.appendChild(el);
-  });
+function filterDownstream() {
+  var r32set = {};
+  getR32Teams().forEach(function(t) { r32set[t] = true; });
+  picks.r16 = picks.r16.filter(function(t) { return r32set[t]; });
+  var r16set = {}; picks.r16.forEach(function(t) { r16set[t] = true; });
+  picks.qf = picks.qf.filter(function(t) { return r16set[t]; });
+  var qfset = {}; picks.qf.forEach(function(t) { qfset[t] = true; });
+  picks.sf = picks.sf.filter(function(t) { return qfset[t]; });
+  var sfset = {}; picks.sf.forEach(function(t) { sfset[t] = true; });
+  picks.final = picks.final.filter(function(t) { return sfset[t]; });
+  if (picks.winner && picks.final.indexOf(picks.winner) === -1) picks.winner = '';
 }
 
-function toggleElim(el, team) {
-  if (el.classList.contains('to-eliminate')) {
-    el.classList.remove('to-eliminate');
-    picks.eliminated = picks.eliminated.filter(function(t) { return t !== team; });
-  } else {
-    if (picks.eliminated.length >= 4) return;
-    picks.eliminated.push(team); el.classList.add('to-eliminate');
+// ── Simple team list (sorted by group, WC badge on wildcards) ────────────────
+function renderTeamList(arr, opts) {
+  opts = opts || {};
+  if (!arr || arr.length === 0) {
+    return '<div class="text-[12px] text-slate-400 italic">No teams yet.</div>';
   }
-  document.getElementById('elim-count').textContent = picks.eliminated.length;
-  document.getElementById('elim-next').disabled = picks.eliminated.length !== 4;
-  document.querySelectorAll('#third-place-pool .ko-team').forEach(function(e) {
-    if (!e.classList.contains('to-eliminate') && picks.eliminated.length >= 4) e.classList.add('disabled');
-    else e.classList.remove('disabled');
+  var teams = sortByGroup(arr);
+  var html = '<div>';
+  teams.forEach(function(t) {
+    var isWc = getTeamOrigin(t) === 'wc';
+    var g = getTeamGroup(t);
+    html += '<div class="team-row">';
+    html += '<span class="team-row-name">' + t + '</span>';
+    html += '<div class="team-row-meta">';
+    if (isWc) html += '<span class="team-row-wc-badge">WC</span>';
+    else if (opts.showTop2Label) html += '<span class="team-row-top2-badge">Top 2</span>';
+    html += '<span class="team-row-group">' + g + '</span>';
+    html += '</div></div>';
   });
+  html += '</div>';
+  return html;
 }
 
-// ── Bracket builder ───────────────────────────────────────────────────────────
-function buildBracketRound(containerId, structure, pickedSpanId, nextBtnId, totalPicks, getPrevWinner) {
-  var container = document.getElementById(containerId);
-  container.innerHTML = '';
-  var pickedCount = 0;
+// ── R32 grouped display (grouped by letter, Top 2 / WC labels per row) ───────
+function renderGroupBlock(g, opts) {
+  opts = opts || {};
+  var top2 = picks.groups[g];
+  var wcs = picks.wildcards.filter(function(t) { return getTeamGroup(t) === g; });
+  if (top2.length === 0 && wcs.length === 0) return '';
+  var cls = opts.asCard ? 'group-block-card' : 'group-block-inline';
+  var html = '<div class="' + cls + '">';
+  html += '<div class="group-block-header">Group ' + g + '</div>';
+  top2.forEach(function(t) {
+    html += '<div class="group-row">' +
+      '<span class="group-row-name">' + t + '</span>' +
+      '<span class="team-row-top2-badge">Top 2</span>' +
+    '</div>';
+  });
+  wcs.forEach(function(t) {
+    html += '<div class="group-row">' +
+      '<span class="group-row-name">' + t + '</span>' +
+      '<span class="team-row-wc-badge">WC</span>' +
+    '</div>';
+  });
+  html += '</div>';
+  return html;
+}
 
-  structure.forEach(function(matchup) {
-    var card = document.createElement('div');
-    card.className = 'matchup-card';
-    card.id = 'matchup-' + matchup.id;
+function renderR32Grouped(opts) {
+  opts = opts || {};
+  var blocks = GK.map(function(g) { return renderGroupBlock(g, { asCard: !!opts.multiColumn }); }).join('');
+  if (!blocks) return '<div class="text-[12px] text-slate-400 italic">No teams yet.</div>';
+  if (opts.multiColumn) {
+    return '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">' + blocks + '</div>';
+  }
+  return '<div>' + blocks + '</div>';
+}
 
-    var isWildcard1 = matchup.t1 && matchup.t1.type === 'third';
-    var isWildcard2 = matchup.t2 && matchup.t2.type === 'third';
-    var label1 = getSlotLabel(matchup.t1, matchup.m1);
-    var label2 = getSlotLabel(matchup.t2, matchup.m2);
+// ── Draft step (step 1) ──────────────────────────────────────────────────────
+function getDraftState(g, team) {
+  if (picks.groups[g].indexOf(team) !== -1) return 'advancing';
+  if (picks.wildcards.indexOf(team) !== -1) return 'wildcard';
+  return null;
+}
 
-    var hdr = document.createElement('div');
-    hdr.className = 'matchup-header';
-    hdr.textContent = 'Match ' + matchup.id;
-    card.appendChild(hdr);
+function groupHasWildcard(g) {
+  for (var i = 0; i < picks.wildcards.length; i++) {
+    if (getTeamGroup(picks.wildcards[i]) === g) return true;
+  }
+  return false;
+}
 
-    var currentWinner = picks.matchWinners[matchup.id] || null;
-    if (currentWinner) pickedCount++;
+function toggleDraftTeam(g, team) {
+  var state = getDraftState(g, team);
+  var groupAdv = picks.groups[g].length;
+  var totalWc = picks.wildcards.length;
+  var hasWc = groupHasWildcard(g);
 
-    function renderMatchup() {
-      var existing = card.querySelectorAll('.matchup-team, .matchup-divider, .wildcard-selector');
-      existing.forEach(function(e) { e.remove(); });
-
-      var t1, t2;
-      if (matchup.t1) {
-        t1 = resolveTeam(matchup.t1, matchup.id, 'wc1');
-        t2 = resolveTeam(matchup.t2, matchup.id, 'wc2');
-      } else {
-        t1 = getPrevWinner(matchup.m1);
-        t2 = getPrevWinner(matchup.m2);
-      }
-
-      var wc1Key = matchup.id + '_wc1';
-      var wc2Key = matchup.id + '_wc2';
-      var wc1 = picks.wildcards[wc1Key];
-      var wc2 = picks.wildcards[wc2Key];
-
-      var team1Name = isWildcard1 ? wc1 : (Array.isArray(t1) ? null : t1);
-      var team2Name = isWildcard2 ? wc2 : (Array.isArray(t2) ? null : t2);
-      currentWinner = picks.matchWinners[matchup.id] || null;
-
-      // Wildcard selector for slot 1
-      if (isWildcard1) {
-        var eligible1 = Array.isArray(t1) ? t1 : [];
-        var ws1 = buildWildcardSelector(matchup.id, wc1Key, eligible1, label1, wc1, renderMatchup);
-        card.appendChild(ws1);
-      }
-
-      // Team 1 row
-      var row1 = document.createElement('div');
-      row1.className = 'matchup-team' + (currentWinner === team1Name && team1Name ? ' selected' : '') + (!team1Name ? ' tbd' : '');
-      var badge1 = label1 ? '<span class="group-badge">' + label1 + '</span>' : '';
-      row1.innerHTML = '<div class="match-check"></div>' + (team1Name || (isWildcard1 ? 'Pick 3rd place above' : (label1 || 'TBD'))) + badge1;
-      if (team1Name) {
-        row1.onclick = function() { selectMatchWinner(matchup.id, team1Name, pickedSpanId, nextBtnId, totalPicks, renderMatchup); };
-      }
-      card.appendChild(row1);
-
-      var divEl = document.createElement('div');
-      divEl.className = 'matchup-divider'; divEl.textContent = 'vs';
-      card.appendChild(divEl);
-
-      // Wildcard selector for slot 2
-      if (isWildcard2) {
-        var eligible2 = Array.isArray(t2) ? t2 : [];
-        var ws2 = buildWildcardSelector(matchup.id, wc2Key, eligible2, label2, wc2, renderMatchup);
-        card.appendChild(ws2);
-      }
-
-      // Team 2 row
-      var row2 = document.createElement('div');
-      row2.className = 'matchup-team' + (currentWinner === team2Name && team2Name ? ' selected' : '') + (!team2Name ? ' tbd' : '');
-      var badge2 = label2 ? '<span class="group-badge">' + label2 + '</span>' : '';
-      row2.innerHTML = '<div class="match-check"></div>' + (team2Name || (isWildcard2 ? 'Pick 3rd place above' : (label2 || 'TBD'))) + badge2;
-      if (team2Name) {
-        row2.onclick = function() { selectMatchWinner(matchup.id, team2Name, pickedSpanId, nextBtnId, totalPicks, renderMatchup); };
-      }
-      card.appendChild(row2);
+  if (state === null) {
+    if (groupAdv < 2) {
+      picks.groups[g].push(team);
+    } else if (!hasWc && totalWc < 8) {
+      picks.wildcards.push(team);
     }
+  } else if (state === 'advancing') {
+    picks.groups[g] = picks.groups[g].filter(function(t) { return t !== team; });
+    if (!hasWc && totalWc < 8) {
+      picks.wildcards.push(team);
+    }
+  } else if (state === 'wildcard') {
+    picks.wildcards = picks.wildcards.filter(function(t) { return t !== team; });
+  }
+  filterDownstream();
+  renderDraftStep();
+}
 
-    renderMatchup();
+function buildDraftStep() { renderDraftStep(); }
+
+function renderDraftStep() {
+  renderDraftGroups();
+  renderDraftSummary();
+  var groupsComplete = GK.every(function(g) { return picks.groups[g].length === 2; });
+  var wcComplete = picks.wildcards.length === 8;
+  document.getElementById('draft-next').disabled = !(groupsComplete && wcComplete);
+}
+
+function renderDraftGroups() {
+  var container = document.getElementById('draft-groups');
+  container.innerHTML = '';
+  GK.forEach(function(g) {
+    var card = document.createElement('div');
+    card.className = 'card p-4';
+    var hasWc = groupHasWildcard(g);
+    var advCount = picks.groups[g].length;
+    var heading = document.createElement('div');
+    heading.className = 'mb-3 flex items-baseline justify-between';
+    heading.innerHTML =
+      '<span class="text-[13px] font-semibold uppercase tracking-[0.05em] text-slate-600">Group ' + g + '</span>' +
+      '<span class="text-[11px] text-slate-400">top 2 ' + advCount + '/2 · wildcard ' + (hasWc ? '1' : '0') + '/1</span>';
+    card.appendChild(heading);
+
+    var grid = document.createElement('div');
+    grid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
+    GROUPS[g].forEach(function(team) {
+      var tile = document.createElement('div');
+      tile.className = 'tile';
+      var state = getDraftState(g, team);
+      if (state === 'advancing') tile.classList.add('selected');
+      else if (state === 'wildcard') tile.classList.add('wildcard');
+      if (state === null && picks.groups[g].length >= 2 && (hasWc || picks.wildcards.length >= 8)) {
+        tile.classList.add('disabled');
+      }
+      tile.innerHTML = '<div class="tile-check"></div><span class="tile-name">' + team + '</span>';
+      tile.onclick = function() { toggleDraftTeam(g, team); };
+      grid.appendChild(tile);
+    });
+    card.appendChild(grid);
     container.appendChild(card);
   });
-
-  document.getElementById(pickedSpanId).textContent = pickedCount;
-  checkNextButton(nextBtnId, pickedCount, totalPicks);
 }
 
-function buildWildcardSelector(matchId, wcKey, eligible, label, chosen, onChange) {
-  var ws = document.createElement('div');
-  ws.className = 'wildcard-selector';
-  var labelText = chosen
-    ? 'Advancing: <strong>' + chosen + '</strong>'
-    : 'This slot belongs to a 3rd-place qualifier — one of those teams FIFA decided deserved another chance. Pick which of yours advances (' + label + ').';
-  ws.innerHTML = '<div class="wildcard-label">' + labelText + '</div><div class="wildcard-options"></div>';
-  var opts = ws.querySelector('.wildcard-options');
+function renderDraftSummary() {
+  var container = document.getElementById('draft-summary');
+  var advCount = 0;
+  GK.forEach(function(g) { advCount += picks.groups[g].length; });
+  var wcCount = picks.wildcards.length;
 
-  if (chosen) {
-    // Show undo button
-    var undo = document.createElement('button');
-    undo.className = 'wildcard-btn';
-    undo.style.cssText = 'background:#f5f5f5;border-color:#ccc;color:#666;';
-    undo.textContent = '✕ Change';
-    undo.onclick = function() {
-      delete picks.wildcards[wcKey];
-      // Also clear match winner for this matchup since team is gone
-      var mid = parseInt(wcKey.split('_')[0]);
-      delete picks.matchWinners[mid];
-      rebuildR32Cards();
-    };
-    opts.appendChild(undo);
-  } else {
-    if (eligible.length === 0) {
-      var msg = document.createElement('span');
-      msg.style.cssText = 'font-size:12px;color:#BA7517;font-style:italic;';
-      msg.textContent = 'All eligible 3rd-place teams already assigned — use Change above to free one up.';
-      opts.appendChild(msg);
+  var advClass = advCount === 24 ? 'text-brand-dark' : 'text-slate-900';
+  var wcClass = wcCount === 8 ? 'text-brand-dark' : 'text-slate-900';
+
+  var html = '<div class="card p-4">';
+  html += '<div class="section-label mb-2">Your R32 draft</div>';
+  html += '<div class="text-[13px] text-slate-600 mb-4">' +
+          'Top 2 per group <span class="font-semibold ' + advClass + '">' + advCount + ' / 24</span>' +
+          ' &nbsp;·&nbsp; Wildcards <span class="font-semibold ' + wcClass + '">' + wcCount + ' / 8</span>' +
+          '</div>';
+
+  html += '<div>';
+  html += '<div class="section-label mb-1.5">Advancing</div>';
+  html += '<div class="divide-y divide-slate-100">';
+  GK.forEach(function(g) {
+    var top2 = picks.groups[g];
+    var wcInGroup = picks.wildcards.filter(function(t) { return getTeamGroup(t) === g; });
+    html += '<div class="flex items-baseline gap-3 py-1.5 text-[12px]">';
+    html += '<span class="font-semibold text-brand-dark min-w-[14px]">' + g + '</span>';
+    if (top2.length === 0 && wcInGroup.length === 0) {
+      html += '<span class="text-slate-400 italic">pick 2</span>';
+    } else {
+      var parts = [];
+      top2.forEach(function(t) { parts.push('<span>' + t + '</span>'); });
+      wcInGroup.forEach(function(t) {
+        parts.push('<span>' + t + ' <span class="text-[10px] font-semibold uppercase tracking-wider text-wc-dark">(WC)</span></span>');
+      });
+      html += '<span class="text-slate-700 leading-relaxed">' + parts.join(', ') + '</span>';
     }
-    eligible.forEach(function(team) {
-      var btn = document.createElement('button');
-      btn.className = 'wildcard-btn';
-      btn.textContent = team;
-      btn.onclick = function() {
-        picks.wildcards[wcKey] = team;
-        rebuildR32Cards();
-      };
-      opts.appendChild(btn);
-    });
-  }
-  return ws;
-}
-
-function getSlotLabel(src, prevMatchId) {
-  if (!src) return prevMatchId ? 'W' + prevMatchId : '';
-  if (src.type === 'winner')    return '1st Grp ' + src.group;
-  if (src.type === 'runner_up') return '2nd Grp ' + src.group;
-  if (src.type === 'third')     return '3rd ' + src.groups.join('/');
-  return '';
-}
-
-function renderLiveBracket(containerId) {
-  var el = document.getElementById(containerId);
-  if (!el) return;
-  el.innerHTML = '';
-
-  var r32w = R32_STRUCTURE.map(function(m) { return picks.matchWinners[m.id] || null; });
-  var r16w = R16_STRUCTURE.map(function(m) { return picks.matchWinners[m.id] || null; });
-  var qfw  = QF_STRUCTURE.map(function(m)  { return picks.matchWinners[m.id] || null; });
-  var sfw  = SF_STRUCTURE.map(function(m)  { return picks.matchWinners[m.id] || null; });
-  var fw   = picks.matchWinners[FINAL_STRUCTURE.id] || null;
-
-  var rounds = [
-    { label:'R32', teams: r32w, cls:'r32' },
-    { label:'R16', teams: r16w, cls:'r16' },
-    { label:'QF',  teams: qfw,  cls:'qf'  },
-    { label:'SF',  teams: sfw,  cls:'sf'  },
-    { label:'Champion', teams: [fw], cls:'champ' }
-  ];
-
-  rounds.forEach(function(r) {
-    var col = document.createElement('div'); col.className = 'confirm-col';
-    col.innerHTML = '<div class="confirm-col-header">' + r.label + '</div>';
-    var td = document.createElement('div'); td.className = 'confirm-teams';
-    r.teams.forEach(function(team) {
-      var teamEl = document.createElement('div');
-      teamEl.className = 'confirm-team ' + (team ? r.cls : 'empty');
-      teamEl.textContent = team || '—';
-      td.appendChild(teamEl);
-    });
-    col.appendChild(td);
-    el.appendChild(col);
+    html += '</div>';
   });
+  html += '</div></div>';
+
+  html += '<div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap gap-3 text-[11px] text-slate-500">';
+  html += '<span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-full bg-brand"></span>Top 2</span>';
+  html += '<span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-full bg-wc"></span>Wildcard</span>';
+  html += '</div>';
+  html += '</div>';
+  container.innerHTML = html;
 }
 
-function selectMatchWinner(matchId, team, pickedSpanId, nextBtnId, totalPicks, renderFn) {
-  var prev = picks.matchWinners[matchId];
-  picks.matchWinners[matchId] = team;
-  if (!prev) {
-    var cur = parseInt(document.getElementById(pickedSpanId).textContent) + 1;
-    document.getElementById(pickedSpanId).textContent = cur;
-    checkNextButton(nextBtnId, cur, totalPicks);
+// ── Cut rounds (steps 2–6) ───────────────────────────────────────────────────
+function getSource(stepNum) {
+  if (stepNum === 2) return getR32Teams();
+  if (stepNum === 3) return picks.r16.slice();
+  if (stepNum === 4) return picks.qf.slice();
+  if (stepNum === 5) return picks.sf.slice();
+  if (stepNum === 6) return picks.final.slice();
+  return [];
+}
+
+function getTarget(stepNum) {
+  if (stepNum === 2) return picks.r16;
+  if (stepNum === 3) return picks.qf;
+  if (stepNum === 4) return picks.sf;
+  if (stepNum === 5) return picks.final;
+  return [];
+}
+
+function setTarget(stepNum, arr) {
+  if (stepNum === 2) picks.r16 = arr;
+  else if (stepNum === 3) picks.qf = arr;
+  else if (stepNum === 4) picks.sf = arr;
+  else if (stepNum === 5) picks.final = arr;
+}
+
+function getCutConfig(stepNum) {
+  if (stepNum === 2) return { poolId:'r16-pool',   rightId:'r16-right',   nextId:'r16-next',   target:16, label:'Round of 16' };
+  if (stepNum === 3) return { poolId:'qf-pool',    rightId:'qf-right',    nextId:'qf-next',    target:8,  label:'Quarterfinals' };
+  if (stepNum === 4) return { poolId:'sf-pool',    rightId:'sf-right',    nextId:'sf-next',    target:4,  label:'Semifinals' };
+  if (stepNum === 5) return { poolId:'final-pool', rightId:'final-right', nextId:'final-next', target:2,  label:'Finals' };
+  if (stepNum === 6) return { poolId:'winner-pool',rightId:'winner-right',nextId:'winner-next',target:1,  label:'Champion' };
+  return null;
+}
+
+function buildCutStep(stepNum) {
+  var cfg = getCutConfig(stepNum);
+  var source = stepNum === 6 ? picks.final.slice() : getSource(stepNum);
+  var target = stepNum === 6 ? (picks.winner ? [picks.winner] : []) : getTarget(stepNum);
+  var pool = document.getElementById(cfg.poolId);
+  pool.innerHTML = '';
+
+  var counter = document.createElement('div');
+  counter.className = 'mb-3 md:hidden text-[13px] text-slate-600';
+  var mobileCount = target.length === cfg.target ? 'text-brand-dark' : 'text-slate-900';
+  counter.innerHTML = 'Selected <span class="font-semibold ' + mobileCount + '">' + target.length + ' / ' + cfg.target + '</span>';
+  pool.appendChild(counter);
+
+  if (stepNum === 2) {
+    var advTeams = source.filter(function(t) { return getTeamOrigin(t) === 'adv'; });
+    var wcTeams = source.filter(function(t) { return getTeamOrigin(t) === 'wc'; });
+
+    var sec1 = document.createElement('div'); sec1.className = 'mb-5';
+    sec1.innerHTML = '<div class="section-label mb-2">Top 2 (24)</div>';
+    var grid1 = document.createElement('div'); grid1.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
+    advTeams.forEach(function(t) { grid1.appendChild(makeCutTile(t, stepNum, target, cfg)); });
+    sec1.appendChild(grid1); pool.appendChild(sec1);
+
+    var sec2 = document.createElement('div');
+    sec2.innerHTML = '<div class="section-label mb-2">Wildcards (8)</div>';
+    var grid2 = document.createElement('div'); grid2.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
+    wcTeams.forEach(function(t) { grid2.appendChild(makeCutTile(t, stepNum, target, cfg)); });
+    sec2.appendChild(grid2); pool.appendChild(sec2);
+  } else {
+    var grid = document.createElement('div'); grid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
+    source.forEach(function(t) { grid.appendChild(makeCutTile(t, stepNum, target, cfg)); });
+    pool.appendChild(grid);
   }
-  renderFn();
-  // Update live bracket on current visible step
-  var stepMap = {'r32-picked':'live-bracket-14','r16-picked':'live-bracket-15','qf-picked':'live-bracket-16','sf-picked':'live-bracket-17','final-picked':'live-bracket-18'};
-  if (stepMap[pickedSpanId]) {
-    renderLiveBracket(stepMap[pickedSpanId]);
-    renderLiveBracket('live-bracket-19');
-    renderLiveBracket('live-bracket-20');
+
+  renderCutRight(stepNum);
+  updateCutNextButton(stepNum);
+}
+
+function makeCutTile(team, stepNum, target, cfg) {
+  var tile = document.createElement('div');
+  tile.className = 'tile';
+  var isSelected = target.indexOf(team) !== -1;
+  if (isSelected) tile.classList.add('selected');
+  if (!isSelected && target.length >= cfg.target) tile.classList.add('disabled');
+
+  var origin = getTeamOrigin(team);
+  var groupBadge = '<span class="origin-badge origin-group">' + getTeamGroup(team) + '</span>';
+  var originBadge = '';
+  if (origin === 'adv') originBadge = '<span class="origin-badge origin-adv">Top 2</span>';
+  else if (origin === 'wc') originBadge = '<span class="origin-badge origin-wc">WC</span>';
+
+  tile.innerHTML =
+    '<div class="tile-check"></div>' +
+    '<span class="tile-name">' + team + '</span>' +
+    '<div class="flex items-center gap-1 shrink-0">' + groupBadge + originBadge + '</div>';
+  tile.onclick = function() { toggleCutTeam(stepNum, team); };
+  return tile;
+}
+
+function toggleCutTeam(stepNum, team) {
+  var cfg = getCutConfig(stepNum);
+  if (stepNum === 6) {
+    picks.winner = (picks.winner === team) ? '' : team;
+  } else {
+    var target = getTarget(stepNum);
+    var idx = target.indexOf(team);
+    if (idx !== -1) {
+      setTarget(stepNum, target.filter(function(t) { return t !== team; }));
+    } else if (target.length < cfg.target) {
+      target.push(team);
+    }
   }
+  filterDownstream();
+  buildCutStep(stepNum);
 }
 
-function checkNextButton(btnId, picked, total) {
-  document.getElementById(btnId).disabled = picked < total;
+function updateCutNextButton(stepNum) {
+  var cfg = getCutConfig(stepNum);
+  var count = stepNum === 6 ? (picks.winner ? 1 : 0) : getTarget(stepNum).length;
+  document.getElementById(cfg.nextId).disabled = count !== cfg.target;
 }
 
-// ── Specific round builders ───────────────────────────────────────────────────
-function buildR32() {
-  picks.matchWinners = {};
-  picks.wildcards = {};
-  buildBracketRound('r32-bracket', R32_STRUCTURE, 'r32-picked', 'r32-next', 16, null);
-  renderLiveBracket('live-bracket-14');
+function renderCutRight(stepNum) {
+  var cfg = getCutConfig(stepNum);
+  var target = stepNum === 6 ? (picks.winner ? [picks.winner] : []) : getTarget(stepNum);
+  var countClass = target.length === cfg.target ? 'text-brand-dark' : 'text-slate-900';
+
+  var html = '';
+  html += '<div class="card p-4 mb-4">';
+  html += '<div class="section-label mb-1.5">Your ' + cfg.label + '</div>';
+  html += '<div class="text-[13px] text-slate-600 mb-3">Selected <span class="font-semibold ' + countClass + '">' + target.length + ' / ' + cfg.target + '</span></div>';
+  html += renderTeamList(target);
+  html += '</div>';
+
+  html += '<div class="accordion">';
+  html += accordionItem('Your R32 draft', '32 teams', renderR32Grouped());
+  if (stepNum >= 3) html += accordionItem('Round of 16', picks.r16.length + ' teams', renderTeamList(picks.r16));
+  if (stepNum >= 4) html += accordionItem('Quarterfinalists', picks.qf.length + ' teams', renderTeamList(picks.qf));
+  if (stepNum >= 5) html += accordionItem('Semifinalists', picks.sf.length + ' teams', renderTeamList(picks.sf));
+  if (stepNum >= 6) html += accordionItem('Finalists', picks.final.length + ' teams', renderTeamList(picks.final));
+  html += '</div>';
+
+  document.getElementById(cfg.rightId).innerHTML = html;
 }
 
-function rebuildR32Cards() {
-  buildBracketRound('r32-bracket', R32_STRUCTURE, 'r32-picked', 'r32-next', 16, null);
-  renderLiveBracket('live-bracket-14');
+function accordionItem(title, subtitle, bodyHtml) {
+  return '<details class="accordion-item">' +
+    '<summary><span>' + title + ' <span class="text-slate-400 font-normal ml-1">' + subtitle + '</span></span></summary>' +
+    '<div class="accordion-body">' + bodyHtml + '</div>' +
+    '</details>';
 }
 
-function buildR16() {
-  buildBracketRound('r16-bracket', R16_STRUCTURE, 'r16-picked', 'r16-next', 8, getMatchWinner);
-  renderLiveBracket('live-bracket-15');
-}
-
-function buildQF() {
-  buildBracketRound('qf-bracket', QF_STRUCTURE, 'qf-picked', 'qf-next', 4, getMatchWinner);
-  renderLiveBracket('live-bracket-16');
-}
-
-function buildSF() {
-  buildBracketRound('sf-bracket', SF_STRUCTURE, 'sf-picked', 'sf-next', 2, getMatchWinner);
-  renderLiveBracket('live-bracket-17');
-}
-
-function buildFinal() {
-  buildBracketRound('final-bracket', [FINAL_STRUCTURE], 'final-picked', 'final-next', 1, getMatchWinner);
-  renderLiveBracket('live-bracket-18');
-}
-
-// ── Summary & Confirmation ────────────────────────────────────────────────────
-function buildSummary() {
-  var r32winners = R32_STRUCTURE.map(function(m) { return picks.matchWinners[m.id] || ''; });
-  var r16winners = R16_STRUCTURE.map(function(m) { return picks.matchWinners[m.id] || ''; });
-  var qfwinners  = QF_STRUCTURE.map(function(m)  { return picks.matchWinners[m.id] || ''; });
-  var sfwinners  = SF_STRUCTURE.map(function(m)  { return picks.matchWinners[m.id] || ''; });
-  var finalwinner = picks.matchWinners[FINAL_STRUCTURE.id] || '';
-
-  var html = '<div class="summary-section"><div class="summary-label">Name</div><div style="font-size:15px;font-weight:600;">' + picks.name + '</div></div>';
-  html += '<div class="summary-section"><div class="summary-label">Email</div><div style="font-size:14px;color:#555;">' + picks.email + '</div></div>';
-  html += '<div class="summary-section"><div class="summary-label">Group stage — top 2 per group</div><div class="summary-teams">';
-  GK.forEach(function(g) { picks.groups[g].slice(0,2).forEach(function(t) { html += '<span class="summary-tag">' + t + '</span>'; }); });
-  html += '</div></div>';
-  html += '<div class="summary-section"><div class="summary-label">3rd place advancers</div><div class="summary-teams">';
-  getSurvivingThirds().forEach(function(t) { html += '<span class="summary-tag">' + t + '</span>'; });
-  html += '</div></div>';
-  html += '<div class="summary-section"><div class="summary-label">Eliminated</div><div class="summary-teams">';
-  picks.eliminated.forEach(function(t) { html += '<span class="summary-tag out">' + t + '</span>'; });
-  html += '</div></div>';
-  html += '<div class="summary-section"><div class="summary-label">Round of 32 winners</div><div class="summary-teams">' + r32winners.map(function(t) { return '<span class="summary-tag">' + t + '</span>'; }).join('') + '</div></div>';
-  html += '<div class="summary-section"><div class="summary-label">Round of 16 winners</div><div class="summary-teams">' + r16winners.map(function(t) { return '<span class="summary-tag">' + t + '</span>'; }).join('') + '</div></div>';
-  html += '<div class="summary-section"><div class="summary-label">Quarterfinal winners</div><div class="summary-teams">' + qfwinners.map(function(t) { return '<span class="summary-tag">' + t + '</span>'; }).join('') + '</div></div>';
-  html += '<div class="summary-section"><div class="summary-label">Semifinal winners</div><div class="summary-teams">' + sfwinners.map(function(t) { return '<span class="summary-tag">' + t + '</span>'; }).join('') + '</div></div>';
-  html += '<div class="summary-section"><div class="summary-label">World Cup winner</div><div class="summary-teams"><span class="summary-tag winner-tag">' + finalwinner + '</span></div></div>';
-  html += '<div class="summary-section"><div class="summary-label">Tiebreaker</div><div style="font-size:15px;font-weight:600;">' + picks.tiebreak + ' goals</div></div>';
-  document.getElementById('summary-content').innerHTML = html;
+// ── Review & submit ──────────────────────────────────────────────────────────
+function buildReview() {
+  document.getElementById('review-header').innerHTML = renderEntrantCard();
+  document.getElementById('review-r32').innerHTML = renderR32ReviewPanel();
+  document.getElementById('review-ko').innerHTML = renderKnockoutColumns();
+  document.getElementById('review-champion').innerHTML = renderChampionCard();
 }
 
 function buildConfirmation() {
   document.getElementById('confirm-name').textContent = picks.name;
   document.getElementById('confirm-email').textContent = picks.email;
+  document.getElementById('confirm-r32').innerHTML = renderR32ReviewPanel();
+  document.getElementById('confirm-ko').innerHTML = renderKnockoutColumns();
+  document.getElementById('confirm-champion').innerHTML = renderChampionCard();
+}
 
-  var gs = document.getElementById('groups-summary');
-  gs.innerHTML = '';
-  GK.forEach(function(g) {
-    var t = picks.groups[g];
-    var pill = document.createElement('div'); pill.className = 'group-pill';
-    pill.innerHTML = '<div class="group-pill-label">Group ' + g + '</div><div class="group-pill-teams">' + (t[0]||'') + '<br>' + (t[1]||'') + '<br><span class="third">' + (t[2]||'') + '</span></div>';
-    gs.appendChild(pill);
-  });
+function renderEntrantCard() {
+  return '<div>' +
+    '<div class="section-label mb-0.5">Entrant</div>' +
+    '<div class="text-[17px] font-semibold">' + escapeHtml(picks.name) + '</div>' +
+    '<div class="text-sm text-slate-500">' + escapeHtml(picks.email) + '</div>' +
+  '</div>';
+}
 
-  var r32w = R32_STRUCTURE.map(function(m) { return picks.matchWinners[m.id] || ''; });
-  var r16w = R16_STRUCTURE.map(function(m) { return picks.matchWinners[m.id] || ''; });
-  var qfw  = QF_STRUCTURE.map(function(m)  { return picks.matchWinners[m.id] || ''; });
-  var sfw  = SF_STRUCTURE.map(function(m)  { return picks.matchWinners[m.id] || ''; });
-  var fw   = picks.matchWinners[FINAL_STRUCTURE.id] || '';
+function renderR32ReviewPanel() {
+  var html = '';
+  html += '<div class="flex items-baseline justify-between mb-3 pb-3 border-b border-slate-100">';
+  html += '<div class="text-[13px] font-semibold">Round of 32</div>';
+  html += '<div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">1 pt × 32</div>';
+  html += '</div>';
+  html += renderR32Grouped({ multiColumn: true });
+  return html;
+}
 
-  var rounds = [
-    {label:'R32 (16)', teams:r32w, cls:'r32'},
-    {label:'R16 (8)',  teams:r16w, cls:'r16'},
-    {label:'QF (4)',   teams:qfw,  cls:'qf'},
-    {label:'SF (2)',   teams:sfw,  cls:'sf'},
-    {label:'Champion', teams:[fw], cls:'champ'}
-  ];
-  var bv = document.getElementById('confirm-bracket'); bv.innerHTML = '';
-  rounds.forEach(function(r) {
-    var col = document.createElement('div'); col.className = 'confirm-col';
-    col.innerHTML = '<div class="confirm-col-header">' + r.label + '</div>';
-    var td = document.createElement('div'); td.className = 'confirm-teams';
-    r.teams.forEach(function(team) {
-      var el = document.createElement('div');
-      el.className = 'confirm-team ' + r.cls; el.textContent = team;
-      td.appendChild(el);
-    });
-    col.appendChild(td); bv.appendChild(col);
+function renderKnockoutColumns() {
+  return (
+    reviewColumn('Round of 16', '2 pts × 16', picks.r16) +
+    reviewColumn('Quarterfinals', '4 pts × 8', picks.qf) +
+    reviewColumn('Semifinals', '8 pts × 4', picks.sf) +
+    reviewColumn('Finals', '16 pts × 2', picks.final)
+  );
+}
+
+function reviewColumn(title, badge, teams) {
+  var html = '<div class="card p-4">';
+  html += '<div class="flex items-baseline justify-between mb-2 pb-2 border-b border-slate-100">';
+  html += '<div class="text-[13px] font-semibold">' + title + '</div>';
+  html += '<div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">' + badge + '</div>';
+  html += '</div>';
+  html += renderTeamList(teams);
+  html += '</div>';
+  return html;
+}
+
+function renderChampionCard() {
+  var html = '<div class="card overflow-hidden">';
+  html += '<div class="bg-brand-bg px-5 py-6 text-center">';
+  html += '<div class="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-dark mb-2">Champion · 32 pts</div>';
+  if (picks.winner) {
+    html += '<div class="text-3xl font-bold text-brand-deep">' + escapeHtml(picks.winner) + '</div>';
+    html += '<div class="text-xs text-slate-500 mt-1.5">Group ' + getTeamGroup(picks.winner) + '</div>';
+  } else {
+    html += '<div class="text-slate-400 italic">None selected</div>';
+  }
+  html += '</div>';
+  html += '<div class="px-5 py-4 border-t border-slate-100 flex items-baseline justify-between gap-3">';
+  html += '<div class="section-label">Tiebreaker</div>';
+  html += '<div class="text-[14px] font-semibold">' + escapeHtml(picks.tiebreak || '—') + ' goals in the Final</div>';
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function(c) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
   });
 }
 
-// ── Progress ──────────────────────────────────────────────────────────────────
+function submitPicks() {
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+
+  var payload = {
+    name: picks.name,
+    email: picks.email,
+    tiebreak: picks.tiebreak,
+    groups: picks.groups,
+    wildcards: picks.wildcards.slice(),
+    r16: picks.r16.slice(),
+    qf: picks.qf.slice(),
+    sf: picks.sf.slice(),
+    final: picks.final.slice(),
+    winner: picks.winner
+  };
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  })
+  .then(function() { buildConfirmation(); showStep(9); })
+  .catch(function() { buildConfirmation(); showStep(9); });
+}
+
+// ── Progress / navigation ────────────────────────────────────────────────────
 function updateProgress(n) {
-  document.getElementById('pbar').style.width = Math.round((n/21)*100) + '%';
+  var pct = Math.min(100, Math.round((n / 8) * 100));
+  document.getElementById('pbar').style.width = pct + '%';
 }
 
 function showStep(n) {
@@ -871,87 +843,43 @@ function showStep(n) {
   updateProgress(n);
 }
 
-// ── Navigation ────────────────────────────────────────────────────────────────
 function goNext(cur) {
   if (cur === 0) {
     picks.name = document.getElementById('entrant-name').value.trim();
     picks.email = document.getElementById('entrant-email').value.trim();
     if (!picks.name) { alert('Please enter your name.'); return; }
-    showStep(1);
-  } else if (cur >= 1 && cur <= 11) {
-    showStep(cur + 1);
-  } else if (cur === 12) {
-    buildElimStep(); showStep(13);
-  } else if (cur === 13) {
-    buildR32(); showStep(14);
-  } else if (cur === 14) {
-    buildR16(); showStep(15);
-  } else if (cur === 15) {
-    buildQF(); showStep(16);
-  } else if (cur === 16) {
-    buildSF(); showStep(17);
-  } else if (cur === 17) {
-    buildFinal(); showStep(18);
-  } else if (cur === 18) {
-    renderLiveBracket('live-bracket-19');
-    showStep(19);
-  } else if (cur === 19) {
+    if (!picks.email) { alert('Please enter your email.'); return; }
+    buildDraftStep(); showStep(1);
+  } else if (cur === 1) {
+    buildCutStep(2); showStep(2);
+  } else if (cur === 2) {
+    buildCutStep(3); showStep(3);
+  } else if (cur === 3) {
+    buildCutStep(4); showStep(4);
+  } else if (cur === 4) {
+    buildCutStep(5); showStep(5);
+  } else if (cur === 5) {
+    buildCutStep(6); showStep(6);
+  } else if (cur === 6) {
+    showStep(7);
+  } else if (cur === 7) {
     picks.tiebreak = document.getElementById('tiebreak').value;
     if (!picks.tiebreak) { alert('Please enter a tiebreaker number.'); return; }
-    renderLiveBracket('live-bracket-20');
-    buildSummary();
-    showStep(20);
+    buildReview(); showStep(8);
   }
 }
 
 function goBack(cur) {
   if (cur === 1) showStep(0);
-  else if (cur >= 2 && cur <= 12) showStep(cur - 1);
-  else if (cur === 13) showStep(12);
-  else if (cur === 14) { buildElimStepPreserve(); showStep(13); }
-  else if (cur === 15) { rebuildR32Cards(); showStep(14); }
-  else if (cur === 16) { buildR16(); showStep(15); }
-  else if (cur === 17) { buildQF(); showStep(16); }
-  else if (cur === 18) { buildSF(); showStep(17); }
-  else if (cur === 19) showStep(18);
-  else if (cur === 20) showStep(19);
+  else if (cur === 2) { renderDraftStep(); showStep(1); }
+  else if (cur === 3) { buildCutStep(2); showStep(2); }
+  else if (cur === 4) { buildCutStep(3); showStep(3); }
+  else if (cur === 5) { buildCutStep(4); showStep(4); }
+  else if (cur === 6) { buildCutStep(5); showStep(5); }
+  else if (cur === 7) { buildCutStep(6); showStep(6); }
+  else if (cur === 8) showStep(7);
 }
 
-// ── Submit ────────────────────────────────────────────────────────────────────
-function submitPicks() {
-  var btn = document.getElementById('submit-btn');
-  btn.disabled = true; btn.textContent = 'Submitting...';
-
-  var r32w = R32_STRUCTURE.map(function(m) { return picks.matchWinners[m.id] || ''; });
-  var r16w = R16_STRUCTURE.map(function(m) { return picks.matchWinners[m.id] || ''; });
-  var qfw  = QF_STRUCTURE.map(function(m)  { return picks.matchWinners[m.id] || ''; });
-  var sfw  = SF_STRUCTURE.map(function(m)  { return picks.matchWinners[m.id] || ''; });
-  var fw   = picks.matchWinners[FINAL_STRUCTURE.id] || '';
-
-  var payload = {
-    name: picks.name,
-    email: picks.email,
-    groups: picks.groups,
-    eliminated: picks.eliminated,
-    r32: r32w,
-    r16: r16w,
-    qf: qfw,
-    sf: sfw,
-    winner: fw,
-    tiebreak: picks.tiebreak
-  };
-
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
-  })
-  .then(function() { renderLiveBracket('confirm-bracket'); buildConfirmation(); showStep(21); })
-  .catch(function() { renderLiveBracket('confirm-bracket'); buildConfirmation(); showStep(21); });
-}
-
-buildGroupSteps();
 showStep(0);
 </script>
 </body>
