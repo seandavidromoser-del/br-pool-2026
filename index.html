@@ -183,7 +183,47 @@
 </head>
 <body class="min-h-screen text-chalk font-sans antialiased">
 
-<div class="mx-auto max-w-5xl px-4 py-10 md:py-14">
+<!-- Passcode gate -->
+<div id="gate" class="min-h-screen flex items-center justify-center px-4 py-10">
+  <div class="w-full max-w-md">
+    <div class="eyebrow mb-3">Bouman · Romoser</div>
+    <h1 class="font-display-outline uppercase leading-[0.95] tracking-tight text-chalk text-[clamp(2rem,7vw,3.5rem)] mb-1">
+      World Cup<br/><span class="text-turf">Pool '26</span>
+    </h1>
+    <p class="mt-5 text-[14px] text-chalk-dim leading-relaxed">Enter the passcode to draft your picks. Ask JB or SD if you don't have it.</p>
+
+    <div class="mt-7">
+      <div class="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-chalk-mute mb-2">Kickoff in</div>
+      <div class="grid grid-cols-4 gap-2">
+        <div class="card-sm px-2 py-3 text-center">
+          <div id="cd-d" class="font-mono text-2xl sm:text-3xl font-bold text-turf tabular-nums leading-none">00</div>
+          <div class="font-mono text-[9px] uppercase tracking-wider text-chalk-mute mt-1.5">Days</div>
+        </div>
+        <div class="card-sm px-2 py-3 text-center">
+          <div id="cd-h" class="font-mono text-2xl sm:text-3xl font-bold text-turf tabular-nums leading-none">00</div>
+          <div class="font-mono text-[9px] uppercase tracking-wider text-chalk-mute mt-1.5">Hours</div>
+        </div>
+        <div class="card-sm px-2 py-3 text-center">
+          <div id="cd-m" class="font-mono text-2xl sm:text-3xl font-bold text-turf tabular-nums leading-none">00</div>
+          <div class="font-mono text-[9px] uppercase tracking-wider text-chalk-mute mt-1.5">Min</div>
+        </div>
+        <div class="card-sm px-2 py-3 text-center">
+          <div id="cd-s" class="font-mono text-2xl sm:text-3xl font-bold text-turf tabular-nums leading-none">00</div>
+          <div class="font-mono text-[9px] uppercase tracking-wider text-chalk-mute mt-1.5">Sec</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-7 p-5">
+      <label for="gate-input" class="section-label block mb-2">Passcode</label>
+      <input id="gate-input" class="input font-mono tracking-widest" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" />
+      <p id="gate-error" class="hidden mt-3 font-mono text-[11px] uppercase tracking-wider text-amber">Nope. Try again.</p>
+      <button id="gate-btn" class="btn btn-primary mt-4 w-full">Unlock →</button>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="mx-auto max-w-5xl px-4 py-10 md:py-14" style="display:none">
 
   <!-- Header -->
   <header class="mb-10">
@@ -235,8 +275,10 @@
 
     <div class="mt-8">
       <p class="text-[13px] text-chalk-dim mb-3">Enter your name and email to get started.</p>
-      <input class="input mb-3" id="entrant-name" type="text" placeholder="Your name" />
-      <input class="input" id="entrant-email" type="email" placeholder="Your email address" />
+      <input class="input" id="entrant-name" type="text" placeholder="Your name" autocomplete="name" />
+      <p id="entrant-name-error" class="hidden mt-1.5 mb-1 font-mono text-[11px] uppercase tracking-wider text-amber"></p>
+      <input class="input mt-3" id="entrant-email" type="email" placeholder="Your email address" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" />
+      <p id="entrant-email-error" class="hidden mt-1.5 font-mono text-[11px] uppercase tracking-wider text-amber"></p>
     </div>
 
     <div class="mt-8 flex items-center justify-end">
@@ -381,6 +423,11 @@
       <div class="capture-only text-center font-mono text-[11px] uppercase tracking-wider text-chalk-mute mt-4 pb-3">June 11 – July 19, 2026</div>
     </div>
 
+    <div id="submit-error" class="hidden mt-6 rounded-md border border-amber/40 bg-amber/10 p-4">
+      <div class="font-mono text-[11px] uppercase tracking-wider text-amber font-bold mb-1">Submission failed</div>
+      <p id="submit-error-msg" class="text-[13px] text-chalk-dim leading-relaxed">Something went wrong. Check your connection and try again.</p>
+    </div>
+
     <div class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-ink-500">
       <button class="btn" onclick="goBack(8)">← Back</button>
       <div class="flex items-center gap-2">
@@ -430,6 +477,88 @@
 </div>
 
 <script>
+// ── Passcode gate ────────────────────────────────────────────────────────────
+var GATE_HASH = '81ef421cf1dc1fc42f154ade26483aebe34cdbce933f70b9f0cc5f9591afd138';
+var GATE_KEY = 'br-pool-2026-unlocked';
+
+function sha256Hex(s) {
+  var bytes = new TextEncoder().encode(s);
+  return crypto.subtle.digest('SHA-256', bytes).then(function(buf) {
+    var arr = Array.from(new Uint8Array(buf));
+    return arr.map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+  });
+}
+
+function revealApp() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = '';
+  if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+}
+
+// ── Kickoff countdown ────────────────────────────────────────────────────────
+var KICKOFF = new Date(2026, 5, 11, 0, 0, 0); // June 11, 2026 at 00:00 local
+var countdownTimer = null;
+
+function pad(n, w) { return String(Math.max(0, n | 0)).padStart(w, '0'); }
+
+function tickCountdown() {
+  var diff = KICKOFF.getTime() - Date.now();
+  if (diff < 0) diff = 0;
+  var s = Math.floor(diff / 1000);
+  var d = Math.floor(s / 86400); s -= d * 86400;
+  var h = Math.floor(s / 3600);  s -= h * 3600;
+  var m = Math.floor(s / 60);    s -= m * 60;
+  var dEl = document.getElementById('cd-d');
+  var hEl = document.getElementById('cd-h');
+  var mEl = document.getElementById('cd-m');
+  var sEl = document.getElementById('cd-s');
+  if (dEl) dEl.textContent = pad(d, 2);
+  if (hEl) hEl.textContent = pad(h, 2);
+  if (mEl) mEl.textContent = pad(m, 2);
+  if (sEl) sEl.textContent = pad(s, 2);
+}
+
+function startCountdown() {
+  tickCountdown();
+  countdownTimer = setInterval(tickCountdown, 1000);
+}
+
+function checkGate() {
+  var input = document.getElementById('gate-input');
+  var err = document.getElementById('gate-error');
+  var val = (input.value || '').trim().toLowerCase();
+  if (!val) { input.focus(); return; }
+  sha256Hex(val).then(function(hash) {
+    if (hash === GATE_HASH) {
+      try { sessionStorage.setItem(GATE_KEY, '1'); } catch (e) {}
+      revealApp();
+    } else {
+      err.classList.remove('hidden');
+      input.value = '';
+      input.focus();
+    }
+  });
+}
+
+(function initGate() {
+  try {
+    if (sessionStorage.getItem(GATE_KEY) === '1') { revealApp(); return; }
+  } catch (e) {}
+  var input = document.getElementById('gate-input');
+  var btn = document.getElementById('gate-btn');
+  if (btn) btn.addEventListener('click', checkGate);
+  if (input) {
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); checkGate(); }
+    });
+    input.addEventListener('input', function() {
+      document.getElementById('gate-error').classList.add('hidden');
+    });
+    input.focus();
+  }
+  startCountdown();
+})();
+
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-5XOSNW5OzQFbezL3SOhS_iSl9_-aZWTv9QR3V60v4XcQfjX_BztLXqJz_696lGHY/exec';
 
 var GROUPS = {
@@ -973,7 +1102,11 @@ function escapeHtml(s) {
 
 function submitPicks() {
   var btn = document.getElementById('submit-btn');
-  btn.disabled = true; btn.textContent = 'Submitting...';
+  var errBox = document.getElementById('submit-error');
+  var errMsg = document.getElementById('submit-error-msg');
+  errBox.classList.add('hidden');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
 
   var payload = {
     name: picks.name,
@@ -990,12 +1123,28 @@ function submitPicks() {
 
   fetch(SCRIPT_URL, {
     method: 'POST',
-    mode: 'no-cors',
-    headers: {'Content-Type':'application/json'},
+    headers: {'Content-Type':'text/plain;charset=utf-8'},
     body: JSON.stringify(payload)
   })
-  .then(function() { buildConfirmation(); showStep(9); })
-  .catch(function() { buildConfirmation(); showStep(9); });
+  .then(function(res) {
+    if (!res.ok) throw new Error('Server returned ' + res.status);
+    return res.json();
+  })
+  .then(function(data) {
+    if (!data || data.ok !== true) {
+      throw new Error((data && data.error) || 'Server rejected the submission.');
+    }
+    buildConfirmation();
+    showStep(9);
+  })
+  .catch(function(err) {
+    var msg = (err && err.message) ? err.message : 'Could not reach the server.';
+    errMsg.textContent = msg + ' Check your connection and try again, or contact JB or SD if it keeps failing.';
+    errBox.classList.remove('hidden');
+    btn.disabled = false;
+    btn.textContent = 'Submit my picks';
+    errBox.scrollIntoView({behavior:'smooth', block:'center'});
+  });
 }
 
 // ── Progress / navigation ────────────────────────────────────────────────────
@@ -1015,12 +1164,30 @@ function showStep(n) {
   updateProgress(n);
 }
 
+var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function setFieldError(id, msg) {
+  var el = document.getElementById(id + '-error');
+  if (!el) return;
+  if (msg) { el.textContent = msg; el.classList.remove('hidden'); }
+  else { el.classList.add('hidden'); }
+}
+
+document.addEventListener('input', function(e) {
+  if (e.target && (e.target.id === 'entrant-name' || e.target.id === 'entrant-email')) {
+    setFieldError(e.target.id, '');
+  }
+});
+
 function goNext(cur) {
   if (cur === 0) {
     picks.name = document.getElementById('entrant-name').value.trim();
     picks.email = document.getElementById('entrant-email').value.trim();
-    if (!picks.name) { alert('Please enter your name.'); return; }
-    if (!picks.email) { alert('Please enter your email.'); return; }
+    var hasError = false;
+    if (!picks.name) { setFieldError('entrant-name', 'Please enter your name.'); hasError = true; }
+    if (!picks.email) { setFieldError('entrant-email', 'Please enter your email.'); hasError = true; }
+    else if (!EMAIL_RE.test(picks.email)) { setFieldError('entrant-email', 'That doesn\'t look like a valid email.'); hasError = true; }
+    if (hasError) return;
     buildDraftStep(); showStep(1);
   } else if (cur === 1) {
     buildCutStep(2); showStep(2);
