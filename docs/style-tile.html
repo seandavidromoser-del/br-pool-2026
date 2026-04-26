@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BR Pool 2026 · Style Tile</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Outline&family=Google+Sans+Code:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: {
+            900: '#0a0e17',  // page bg
+            800: '#0f1421',  // base surface
+            700: '#151b2b',  // raised card
+            600: '#1c2236',  // hover / pressed
+            500: '#252b40',  // border
+            400: '#3a4260',  // strong border
+          },
+          turf:   { DEFAULT: '#22ff88', dim: '#14a85c', deep: '#0c5e35', soft: '#0f3322' },
+          amber:  { DEFAULT: '#ffb547', dim: '#b87a1f', deep: '#5e3d10', soft: '#33240b' },
+          chalk:  { DEFAULT: '#f4f6fb', dim: '#c8cfdd', mute: '#8b94ad', faint: '#5b6480' },
+        },
+        fontFamily: {
+          sans: ['Inter','-apple-system','BlinkMacSystemFont','"Segoe UI"','Roboto','system-ui','sans-serif'],
+          display: ['Bungee','Impact','sans-serif'],
+          'display-outline': ['"Bungee Outline"','Impact','sans-serif'],
+          mono: ['"Google Sans Code"','"JetBrains Mono"','ui-monospace','monospace'],
+        },
+        boxShadow: {
+          'turf-glow': '0 0 0 1px rgba(34,255,136,0.6), 0 0 24px -4px rgba(34,255,136,0.45)',
+          'amber-glow': '0 0 0 1px rgba(255,181,71,0.6), 0 0 24px -4px rgba(255,181,71,0.45)',
+        },
+      },
+    },
+  };
+</script>
+<style type="text/tailwindcss">
+  @layer base {
+    body {
+      background-color: #0a0e17;
+      background-image:
+        radial-gradient(circle at 20% 0%, rgba(34,255,136,0.06), transparent 50%),
+        radial-gradient(circle at 90% 10%, rgba(255,181,71,0.05), transparent 45%),
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: auto, auto, 56px 56px, 56px 56px;
+      background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+    }
+  }
+  @layer components {
+    .eyebrow {
+      @apply inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-chalk-mute;
+    }
+    .eyebrow::before {
+      content: '';
+      @apply inline-block h-px w-6 bg-chalk-mute/50;
+    }
+    .display {
+      @apply font-display uppercase leading-[0.95] tracking-tight text-chalk;
+    }
+    .swatch {
+      @apply rounded-lg border border-ink-500 p-3 flex flex-col gap-1;
+    }
+    .swatch-chip { @apply h-12 w-full rounded-md border border-white/5; }
+    .swatch-name { @apply text-[12px] font-semibold text-chalk; }
+    .swatch-hex  { @apply text-[10px] font-mono text-chalk-mute; }
+
+    .btn {
+      @apply inline-flex items-center justify-center gap-2 rounded-md
+             border border-ink-500 bg-ink-700 px-4 py-2.5
+             text-[13px] font-semibold uppercase tracking-wider text-chalk
+             transition hover:bg-ink-600 hover:border-ink-400
+             focus:outline-none focus:ring-2 focus:ring-turf/40
+             disabled:opacity-30 disabled:cursor-not-allowed;
+    }
+    .btn-primary {
+      @apply border-turf bg-turf text-ink-900
+             hover:bg-turf hover:border-turf hover:shadow-turf-glow
+             focus:ring-turf/50;
+    }
+    .btn-ghost {
+      @apply bg-transparent border-transparent text-chalk-dim hover:bg-ink-700 hover:text-chalk;
+    }
+
+    .card {
+      @apply rounded-xl border border-ink-500 bg-ink-800/80 backdrop-blur-sm;
+    }
+
+    /* Tile (the picks) */
+    .tile {
+      @apply relative flex items-center gap-2.5 rounded-md
+             border border-ink-500 bg-ink-700 px-3 py-2.5
+             text-[13px] font-medium text-chalk-dim cursor-pointer select-none
+             transition hover:border-ink-400 hover:bg-ink-600 hover:text-chalk;
+    }
+    .tile-flag { @apply text-base leading-none; }
+    .tile-name { @apply flex-1 truncate; }
+    .tile-meta { @apply text-[10px] font-mono uppercase tracking-wider text-chalk-faint; }
+
+    .tile.selected {
+      @apply bg-turf-soft border-turf text-chalk;
+      box-shadow: inset 3px 0 0 0 #22ff88, 0 0 18px -4px rgba(34,255,136,0.35);
+    }
+    .tile.selected .tile-meta { @apply text-turf; }
+
+    .tile.wildcard {
+      @apply bg-amber-soft border-amber text-chalk;
+      box-shadow: inset 3px 0 0 0 #ffb547, 0 0 18px -4px rgba(255,181,71,0.35);
+    }
+    .tile.wildcard .tile-meta { @apply text-amber; }
+
+    .tile.disabled { @apply opacity-30 pointer-events-none; }
+
+    /* Round header (tournament feel) */
+    .round-bar {
+      @apply flex items-end justify-between border-b border-ink-500 pb-2 mb-3;
+    }
+    .round-bar-label {
+      @apply font-display uppercase text-2xl tracking-wide text-chalk;
+    }
+    .round-bar-meta {
+      @apply font-mono text-[11px] uppercase tracking-wider text-chalk-mute;
+    }
+
+    .group-block {
+      @apply rounded-lg border border-ink-500 bg-ink-800 p-4;
+    }
+    .group-block-header {
+      @apply flex items-center justify-between mb-3 pb-2 border-b border-ink-500;
+    }
+    .group-block-title {
+      @apply font-display text-xl text-turf;
+    }
+    .group-block-counter {
+      @apply font-mono text-[11px] uppercase tracking-wider text-chalk-mute;
+    }
+
+    /* Progress / fixture ticker */
+    .ticker {
+      @apply relative h-1.5 w-full overflow-hidden rounded-full bg-ink-600;
+    }
+    .ticker > .fill {
+      @apply absolute inset-y-0 left-0 rounded-full;
+      background: linear-gradient(90deg, #14a85c, #22ff88);
+      box-shadow: 0 0 16px rgba(34,255,136,0.55);
+    }
+
+    .badge-pts {
+      @apply inline-flex items-center gap-1 rounded
+             border border-turf/40 bg-turf/10 px-2 py-0.5
+             font-mono text-[10px] font-bold uppercase tracking-wider text-turf;
+    }
+    .badge-wc {
+      @apply inline-flex items-center gap-1 rounded
+             border border-amber/40 bg-amber/10 px-2 py-0.5
+             font-mono text-[10px] font-bold uppercase tracking-wider text-amber;
+    }
+  }
+</style>
+</head>
+<body class="min-h-screen text-chalk font-sans antialiased">
+
+<div class="mx-auto max-w-6xl px-6 py-12">
+
+  <!-- ────────── Hero ────────── -->
+  <header class="mb-16 border-b border-ink-500 pb-12">
+    <div class="eyebrow mb-4">Style Tile · v0.1</div>
+    <h1 class="font-display-outline uppercase leading-[0.95] tracking-tight text-chalk text-[clamp(3rem,9vw,7.5rem)]">
+      Bouman<br/>Romoser<br/><span class="text-turf">Pool '26</span>
+    </h1>
+    <div class="mt-6 flex flex-wrap items-center gap-3 text-[12px] font-mono uppercase tracking-wider text-chalk-mute">
+      <span>USA · CAN · MEX</span>
+      <span class="text-ink-400">/</span>
+      <span>11 JUN → 19 JUL 2026</span>
+      <span class="text-ink-400">/</span>
+      <span>48 TEAMS · 104 MATCHES</span>
+    </div>
+  </header>
+
+  <!-- ────────── Color ────────── -->
+  <section class="mb-16">
+    <div class="mb-6 flex items-end justify-between">
+      <h2 class="display text-3xl">01 · Color</h2>
+      <span class="round-bar-meta">Dark base. One loud accent. One warm sibling.</span>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+      <div class="swatch"><div class="swatch-chip bg-ink-900"></div><span class="swatch-name">ink/900 page</span><span class="swatch-hex">#0A0E17</span></div>
+      <div class="swatch"><div class="swatch-chip bg-ink-800"></div><span class="swatch-name">ink/800 surface</span><span class="swatch-hex">#0F1421</span></div>
+      <div class="swatch"><div class="swatch-chip bg-ink-700"></div><span class="swatch-name">ink/700 raised</span><span class="swatch-hex">#151B2B</span></div>
+      <div class="swatch"><div class="swatch-chip bg-ink-600"></div><span class="swatch-name">ink/600 hover</span><span class="swatch-hex">#1C2236</span></div>
+      <div class="swatch"><div class="swatch-chip bg-ink-500"></div><span class="swatch-name">ink/500 border</span><span class="swatch-hex">#252B40</span></div>
+      <div class="swatch"><div class="swatch-chip bg-ink-400"></div><span class="swatch-name">ink/400 strong</span><span class="swatch-hex">#3A4260</span></div>
+
+      <div class="swatch"><div class="swatch-chip bg-turf"></div><span class="swatch-name">turf · accent</span><span class="swatch-hex">#22FF88</span></div>
+      <div class="swatch"><div class="swatch-chip bg-turf-dim"></div><span class="swatch-name">turf/dim</span><span class="swatch-hex">#14A85C</span></div>
+      <div class="swatch"><div class="swatch-chip bg-turf-soft"></div><span class="swatch-name">turf/soft fill</span><span class="swatch-hex">#0F3322</span></div>
+      <div class="swatch"><div class="swatch-chip bg-amber"></div><span class="swatch-name">amber · wildcard</span><span class="swatch-hex">#FFB547</span></div>
+      <div class="swatch"><div class="swatch-chip bg-amber-dim"></div><span class="swatch-name">amber/dim</span><span class="swatch-hex">#B87A1F</span></div>
+      <div class="swatch"><div class="swatch-chip bg-chalk"></div><span class="swatch-name">chalk · text</span><span class="swatch-hex">#F4F6FB</span></div>
+    </div>
+  </section>
+
+  <!-- ────────── Typography ────────── -->
+  <section class="mb-16">
+    <div class="mb-6 flex items-end justify-between">
+      <h2 class="display text-3xl">02 · Type</h2>
+      <span class="round-bar-meta">Bungee Outline · Inter · Google Sans Code</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="card p-6">
+        <span class="eyebrow mb-4">Display · Bungee + Bungee Outline</span>
+        <p class="font-display-outline uppercase leading-none text-6xl mt-3">Pool '26</p>
+        <p class="display text-3xl mt-5 text-turf">Round of 32</p>
+        <p class="display text-xl mt-3 text-chalk-mute">Final Stretch</p>
+        <p class="mt-6 text-[12px] text-chalk-mute leading-relaxed">
+          Bungee Outline reserved for the page H1 only — too hard to read at smaller sizes. Solid Bungee for round headers (R32 / R16 / QF / SF / FINAL), section titles, and score moments. Never below 16px. Never on body copy.
+        </p>
+      </div>
+
+      <div class="card p-6">
+        <span class="eyebrow mb-4">Body · Inter</span>
+        <p class="text-2xl font-bold mt-3">Pick 2 from each group, plus 8 wildcards.</p>
+        <p class="mt-3 text-[15px] text-chalk-dim leading-relaxed">
+          Tap a team to cycle through its states: advancing from group, wildcard pick, or unpicked. Points double every round, so even a rough group stage can be clawed back.
+        </p>
+        <p class="mt-2 text-[13px] text-chalk-mute leading-relaxed">
+          Smaller helper text sits one tier down on the chalk scale. Mute on muted, never on muted.
+        </p>
+        <p class="mt-6 text-[12px] text-chalk-mute leading-relaxed">
+          Inter as the workhorse. Google Sans Flex is a fine swap if you want it more "Material" — Inter feels closer to ESPN/scoreboard chrome.
+        </p>
+      </div>
+
+      <div class="card p-6 lg:col-span-2">
+        <span class="eyebrow mb-4">Numerals & meta · Google Sans Code</span>
+        <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div>
+            <p class="font-mono text-4xl font-bold text-turf">3 / 8</p>
+            <p class="mt-1 font-mono text-[10px] uppercase tracking-wider text-chalk-mute">Wildcards picked</p>
+          </div>
+          <div>
+            <p class="font-mono text-4xl font-bold text-chalk">192</p>
+            <p class="mt-1 font-mono text-[10px] uppercase tracking-wider text-chalk-mute">Max points</p>
+          </div>
+          <div>
+            <p class="font-mono text-4xl font-bold text-amber">04 : 17</p>
+            <p class="mt-1 font-mono text-[10px] uppercase tracking-wider text-chalk-mute">Days · hours to KO</p>
+          </div>
+          <div>
+            <p class="font-mono text-4xl font-bold text-chalk">R32</p>
+            <p class="mt-1 font-mono text-[10px] uppercase tracking-wider text-chalk-mute">Current round</p>
+          </div>
+        </div>
+        <p class="mt-6 text-[12px] text-chalk-mute leading-relaxed">
+          Monospace for any countable thing. Tabular figures keep the scoreboard feel and stop numbers from twitching as they update.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────── Buttons ────────── -->
+  <section class="mb-16">
+    <div class="mb-6 flex items-end justify-between">
+      <h2 class="display text-3xl">03 · Buttons</h2>
+      <span class="round-bar-meta">Primary stamps in turf. Secondary fades back.</span>
+    </div>
+
+    <div class="card p-6 flex flex-wrap items-center gap-3">
+      <button class="btn btn-primary">Lock in picks →</button>
+      <button class="btn">← Back</button>
+      <button class="btn btn-ghost">Skip for now</button>
+      <button class="btn btn-primary" disabled>Lock in picks →</button>
+      <button class="btn">Download image</button>
+    </div>
+  </section>
+
+  <!-- ────────── Tile component ────────── -->
+  <section class="mb-16">
+    <div class="mb-6 flex items-end justify-between">
+      <h2 class="display text-3xl">04 · Pick tile</h2>
+      <span class="round-bar-meta">The most-touched component. Make selection feel like a stamp.</span>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="tile"><span class="tile-flag">🇧🇷</span><span class="tile-name">Brazil</span><span class="tile-meta">A</span></div>
+      <div class="tile selected"><span class="tile-flag">🇦🇷</span><span class="tile-name">Argentina</span><span class="tile-meta">ADV</span></div>
+      <div class="tile wildcard"><span class="tile-flag">🇲🇦</span><span class="tile-name">Morocco</span><span class="tile-meta">WC</span></div>
+      <div class="tile disabled"><span class="tile-flag">🇮🇸</span><span class="tile-name">Iceland</span><span class="tile-meta">D</span></div>
+    </div>
+
+    <p class="mt-3 text-[12px] text-chalk-mute leading-relaxed max-w-2xl">
+      Default tiles stay flat and quiet. Selection adds an inset accent rule on the left edge plus a soft outer glow — reads as "stamped" without the heavy fill that the current light theme uses. Wildcards use the same treatment in amber so the two tiers are obviously different but visually parallel.
+    </p>
+  </section>
+
+  <!-- ────────── Round header + progress ────────── -->
+  <section class="mb-16">
+    <div class="mb-6 flex items-end justify-between">
+      <h2 class="display text-3xl">05 · Round header</h2>
+      <span class="round-bar-meta">Per-step banner + global progress ticker</span>
+    </div>
+
+    <div class="card p-6">
+      <div class="round-bar">
+        <div>
+          <span class="eyebrow">Step 02 of 06</span>
+          <p class="round-bar-label mt-1">Round of 32 <span class="text-turf">·</span> Group Draft</p>
+        </div>
+        <span class="round-bar-meta">1 PT EACH · 32 PICKS</span>
+      </div>
+
+      <p class="text-[14px] text-chalk-dim max-w-2xl">
+        Pick 2 teams from each group, plus 8 wildcards from any group (max 1 per group). Tap a team to cycle: advancing, wildcard, unpicked.
+      </p>
+
+      <div class="mt-6 flex items-center gap-3">
+        <span class="font-mono text-[10px] uppercase tracking-wider text-chalk-mute">02 / 06</span>
+        <div class="ticker flex-1"><div class="fill" style="width:34%"></div></div>
+        <span class="font-mono text-[10px] uppercase tracking-wider text-chalk-mute">34%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────── Sample group block ────────── -->
+  <section class="mb-16">
+    <div class="mb-6 flex items-end justify-between">
+      <h2 class="display text-3xl">06 · Group draft block</h2>
+      <span class="round-bar-meta">Real component — composed</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="group-block">
+        <div class="group-block-header">
+          <span class="group-block-title">Group A</span>
+          <span class="group-block-counter">2 / 2 PICKED</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="tile selected"><span class="tile-flag">🇲🇽</span><span class="tile-name">Mexico</span><span class="tile-meta">ADV</span></div>
+          <div class="tile selected"><span class="tile-flag">🇪🇸</span><span class="tile-name">Spain</span><span class="tile-meta">ADV</span></div>
+          <div class="tile"><span class="tile-flag">🇿🇦</span><span class="tile-name">South Africa</span><span class="tile-meta"></span></div>
+          <div class="tile"><span class="tile-flag">🇸🇦</span><span class="tile-name">Saudi Arabia</span><span class="tile-meta"></span></div>
+        </div>
+      </div>
+
+      <div class="group-block">
+        <div class="group-block-header">
+          <span class="group-block-title">Group B</span>
+          <span class="group-block-counter">1 / 2 PICKED</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="tile selected"><span class="tile-flag">🇨🇦</span><span class="tile-name">Canada</span><span class="tile-meta">ADV</span></div>
+          <div class="tile wildcard"><span class="tile-flag">🇪🇨</span><span class="tile-name">Ecuador</span><span class="tile-meta">WC</span></div>
+          <div class="tile"><span class="tile-flag">🇮🇹</span><span class="tile-name">Italy</span><span class="tile-meta"></span></div>
+          <div class="tile"><span class="tile-flag">🇨🇮</span><span class="tile-name">Côte d'Ivoire</span><span class="tile-meta"></span></div>
+        </div>
+      </div>
+
+      <div class="group-block">
+        <div class="group-block-header">
+          <span class="group-block-title">Group C</span>
+          <span class="group-block-counter">0 / 2 PICKED</span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="tile"><span class="tile-flag">🇺🇸</span><span class="tile-name">USA</span><span class="tile-meta"></span></div>
+          <div class="tile"><span class="tile-flag">🇩🇪</span><span class="tile-name">Germany</span><span class="tile-meta"></span></div>
+          <div class="tile"><span class="tile-flag">🇯🇵</span><span class="tile-name">Japan</span><span class="tile-meta"></span></div>
+          <div class="tile"><span class="tile-flag">🇨🇲</span><span class="tile-name">Cameroon</span><span class="tile-meta"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────── Scoring panel ────────── -->
+  <section class="mb-16">
+    <div class="mb-6 flex items-end justify-between">
+      <h2 class="display text-3xl">07 · Scoring panel</h2>
+      <span class="round-bar-meta">Welcome screen recap, dark</span>
+    </div>
+
+    <div class="card p-6">
+      <span class="eyebrow mb-4">How points work</span>
+      <p class="mt-2 text-[14px] text-chalk-dim max-w-2xl leading-relaxed">
+        Points double every round, so even a rough group stage can be clawed back.
+      </p>
+
+      <div class="mt-6 grid grid-cols-2 gap-2">
+        <div class="rounded-md border border-ink-500 bg-ink-700 px-4 py-3 flex items-center justify-between">
+          <span class="text-[13px] text-chalk-dim">Advance to R32</span>
+          <span class="badge-pts">1 PT</span>
+        </div>
+        <div class="rounded-md border border-ink-500 bg-ink-700 px-4 py-3 flex items-center justify-between">
+          <span class="text-[13px] text-chalk-dim">Advance to R16</span>
+          <span class="badge-pts">2 PTS</span>
+        </div>
+        <div class="rounded-md border border-ink-500 bg-ink-700 px-4 py-3 flex items-center justify-between">
+          <span class="text-[13px] text-chalk-dim">Advance to QF</span>
+          <span class="badge-pts">4 PTS</span>
+        </div>
+        <div class="rounded-md border border-ink-500 bg-ink-700 px-4 py-3 flex items-center justify-between">
+          <span class="text-[13px] text-chalk-dim">Advance to SF</span>
+          <span class="badge-pts">8 PTS</span>
+        </div>
+        <div class="rounded-md border border-ink-500 bg-ink-700 px-4 py-3 flex items-center justify-between col-span-2">
+          <span class="text-[13px] text-chalk-dim">Advance to Final</span>
+          <span class="badge-pts">16 PTS</span>
+        </div>
+      </div>
+
+      <div class="mt-3 rounded-md border border-turf/40 bg-turf-soft px-4 py-3.5 flex items-center justify-between">
+        <span class="font-display text-lg text-turf">Winner</span>
+        <span class="badge-pts text-base px-3 py-1">32 PTS</span>
+      </div>
+
+      <p class="mt-4 font-mono text-[10px] uppercase tracking-wider text-chalk-mute">
+        Tiebreaker · Closest guess of total goals in the Final
+      </p>
+    </div>
+  </section>
+
+  <!-- ────────── Footer note ────────── -->
+  <footer class="border-t border-ink-500 pt-6 pb-12">
+    <p class="text-[12px] text-chalk-mute">
+      Style tile only. Not wired to the form. Open <span class="font-mono text-chalk-dim">docs/style-tile.html</span> directly in a browser to view.
+    </p>
+  </footer>
+
+</div>
+
+</body>
+</html>

@@ -6,28 +6,28 @@
 <title>The Bouman Romoser World Cup Pool 2026</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Outline&family=Google+Sans+Code:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script>
   tailwind.config = {
     theme: {
       extend: {
         colors: {
-          brand: {
-            DEFAULT: '#16a34a',
-            dark: '#15803d',
-            deep: '#14532d',
-            light: '#dcfce7',
-            bg: '#f0fdf4',
-          },
-          wc: {
-            DEFAULT: '#64748b',
-            dark: '#475569',
-            deep: '#334155',
-            light: '#e2e8f0',
-            bg: '#f1f5f9',
-          },
+          ink:   { 900:'#0a0e17', 800:'#0f1421', 700:'#151b2b', 600:'#1c2236', 500:'#252b40', 400:'#3a4260' },
+          turf:  { DEFAULT:'#22ff88', dim:'#14a85c', deep:'#0c5e35', soft:'#0f3322' },
+          amber: { DEFAULT:'#ffb547', dim:'#b87a1f', deep:'#5e3d10', soft:'#33240b' },
+          chalk: { DEFAULT:'#f4f6fb', dim:'#c8cfdd', mute:'#8b94ad', faint:'#5b6480' },
         },
         fontFamily: {
-          sans: ['-apple-system','BlinkMacSystemFont','"Segoe UI"','Roboto','system-ui','sans-serif'],
+          sans: ['Inter','-apple-system','BlinkMacSystemFont','"Segoe UI"','Roboto','system-ui','sans-serif'],
+          display: ['Bungee','Impact','sans-serif'],
+          'display-outline': ['"Bungee Outline"','Impact','sans-serif'],
+          mono: ['"Google Sans Code"','"JetBrains Mono"','ui-monospace','monospace'],
+        },
+        boxShadow: {
+          'turf-glow':  '0 0 0 1px rgba(34,255,136,0.6), 0 0 24px -4px rgba(34,255,136,0.45)',
+          'amber-glow': '0 0 0 1px rgba(255,181,71,0.6), 0 0 24px -4px rgba(255,181,71,0.45)',
         },
       },
     },
@@ -35,6 +35,17 @@
 </script>
 <style type="text/tailwindcss">
   @layer base {
+    body {
+      background-color: #0a0e17;
+      background-image:
+        radial-gradient(circle at 20% 0%, rgba(34,255,136,0.06), transparent 50%),
+        radial-gradient(circle at 90% 10%, rgba(255,181,71,0.05), transparent 45%),
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: auto, auto, 56px 56px, 56px 56px;
+      background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+      background-attachment: fixed;
+    }
     summary::-webkit-details-marker { display: none; }
     summary { list-style: none; }
   }
@@ -42,64 +53,127 @@
     .step { @apply hidden; }
     .step.active { @apply block; }
 
-    .btn { @apply inline-flex items-center justify-center gap-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none; }
-    .btn-primary { @apply border-brand bg-brand text-white hover:bg-brand-dark hover:border-brand-dark focus:ring-brand/30; }
+    /* Display utilities */
+    .display { @apply font-display uppercase tracking-tight text-chalk; }
 
-    .card { @apply rounded-xl border border-slate-200 bg-white; }
-    .card-sm { @apply rounded-lg border border-slate-200 bg-white; }
+    /* Buttons */
+    .btn {
+      @apply inline-flex items-center justify-center gap-2 rounded-md
+             border border-ink-500 bg-ink-700 px-4 py-2.5
+             text-[13px] font-semibold uppercase tracking-wider text-chalk
+             transition hover:bg-ink-600 hover:border-ink-400
+             focus:outline-none focus:ring-2 focus:ring-turf/40
+             disabled:opacity-30 disabled:cursor-not-allowed disabled:pointer-events-none;
+    }
+    .btn-primary {
+      @apply border-turf bg-turf text-ink-900
+             hover:bg-turf hover:border-turf hover:shadow-turf-glow
+             focus:ring-turf/50;
+    }
 
-    .input { @apply block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-[15px] text-slate-900 placeholder:text-slate-400 transition focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20; }
+    /* Cards */
+    .card    { @apply rounded-xl border border-ink-500 bg-ink-800/80 backdrop-blur-sm; }
+    .card-sm { @apply rounded-md border border-ink-500 bg-ink-700; }
 
-    .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500; }
-    .section-label { @apply text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500; }
+    /* Input */
+    .input {
+      @apply block w-full rounded-md border border-ink-500 bg-ink-700 px-4 py-2.5
+             text-[15px] text-chalk placeholder:text-chalk-faint transition
+             focus:outline-none focus:border-turf focus:ring-2 focus:ring-turf/30;
+    }
 
-    .badge { @apply inline-block rounded-full border border-brand/30 bg-brand-light px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-brand-dark; }
+    /* Eyebrow + section label */
+    .eyebrow {
+      @apply inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-chalk-mute;
+    }
+    .eyebrow::before {
+      content: '';
+      @apply inline-block h-px w-6 bg-chalk-mute/50;
+    }
+    .section-label {
+      @apply text-[10px] font-bold uppercase tracking-[0.12em] text-chalk-mute font-mono;
+    }
+
+    /* Round-points badges */
+    .badge {
+      @apply inline-flex items-center gap-1 rounded
+             border border-turf/40 bg-turf/10 px-2 py-0.5
+             font-mono text-[10px] font-bold uppercase tracking-wider text-turf;
+    }
 
     /* Selectable team tile */
-    .tile { @apply relative flex items-center gap-2.5 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 cursor-pointer select-none transition hover:border-slate-300 hover:bg-slate-50; }
-    .tile.selected { @apply border-brand bg-brand text-white hover:bg-brand-dark hover:border-brand-dark; }
-    .tile.wildcard { @apply border-wc bg-wc text-white hover:bg-wc-dark hover:border-wc-dark; }
-    .tile.disabled { @apply opacity-40 pointer-events-none; }
-    .tile-check { @apply h-4 w-4 shrink-0 rounded-full border-[1.5px] border-slate-300 transition; }
-    .tile.selected .tile-check, .tile.wildcard .tile-check { @apply border-white bg-white/30; }
+    .tile {
+      @apply relative flex items-center gap-2.5 rounded-md
+             border border-ink-500 bg-ink-700 px-3 py-2.5
+             text-[13px] font-medium text-chalk-dim cursor-pointer select-none
+             transition hover:border-ink-400 hover:bg-ink-600 hover:text-chalk;
+    }
+    .tile.selected {
+      @apply bg-turf-soft border-turf text-chalk;
+      box-shadow: inset 3px 0 0 0 #22ff88, 0 0 18px -4px rgba(34,255,136,0.35);
+    }
+    .tile.wildcard {
+      @apply bg-amber-soft border-amber text-chalk;
+      box-shadow: inset 3px 0 0 0 #ffb547, 0 0 18px -4px rgba(255,181,71,0.35);
+    }
+    .tile.disabled { @apply opacity-30 pointer-events-none; }
+    .tile-check { @apply h-4 w-4 shrink-0 rounded-full border-[1.5px] border-ink-400 transition; }
+    .tile.selected .tile-check { @apply border-turf bg-turf/40; }
+    .tile.wildcard .tile-check { @apply border-amber bg-amber/40; }
     .tile-name { @apply flex-1 truncate; }
 
-    .origin-badge { @apply inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide; }
-    .origin-group { @apply bg-slate-100 text-slate-500 normal-case tracking-normal font-normal; }
-    .origin-adv { @apply bg-brand-light text-brand-dark; }
-    .origin-wc { @apply bg-wc-light text-wc-dark; }
-    .tile.selected .origin-group,
-    .tile.selected .origin-adv,
-    .tile.selected .origin-wc,
-    .tile.wildcard .origin-group,
-    .tile.wildcard .origin-adv,
-    .tile.wildcard .origin-wc { @apply bg-white/20 text-white; }
+    /* Origin badges (group letter + ADV/WC tag inside tiles) */
+    .origin-badge {
+      @apply inline-flex items-center rounded px-1.5 py-0.5
+             font-mono text-[10px] font-bold uppercase tracking-wider;
+    }
+    .origin-group { @apply bg-ink-600 text-chalk-mute; }
+    .origin-adv   { @apply bg-turf/10 text-turf border border-turf/30; }
+    .origin-wc    { @apply bg-amber/10 text-amber border border-amber/30; }
+    .tile.selected .origin-group { @apply bg-turf/20 text-turf; }
+    .tile.wildcard .origin-group { @apply bg-amber/20 text-amber; }
 
-    /* Team list row (replaces pills for read-only displays) */
+    /* Team list row */
     .team-row { @apply flex items-center justify-between gap-3 py-2 text-[13px] leading-5; }
-    .team-row + .team-row { @apply border-t border-slate-100; }
-    .team-row-name { @apply text-slate-800 truncate leading-5; }
+    .team-row + .team-row { @apply border-t border-ink-500/60; }
+    .team-row-name { @apply text-chalk truncate leading-5; }
     .team-row-meta { @apply flex items-center gap-2 shrink-0; }
-    .team-row-wc-badge { @apply text-[10px] font-semibold uppercase tracking-wider text-wc-dark leading-5; }
-    .team-row-top2-badge { @apply text-[10px] font-semibold uppercase tracking-wider text-slate-400 leading-5; }
-    .team-row-group { @apply text-[11px] font-medium text-slate-400 w-4 text-right leading-5; }
+    .team-row-wc-badge   { @apply font-mono text-[10px] font-bold uppercase tracking-wider text-amber leading-5; }
+    .team-row-top2-badge { @apply font-mono text-[10px] font-bold uppercase tracking-wider text-chalk-mute leading-5; }
+    .team-row-group      { @apply font-mono text-[11px] font-bold text-chalk-mute w-4 text-right leading-5; }
 
-    /* Grouped list (for R32 display: group header + rows) */
+    /* Grouped list */
     .group-block-inline { @apply py-2; }
-    .group-block-inline + .group-block-inline { @apply border-t border-slate-100; }
-    .group-block-card { @apply rounded-lg border border-slate-200 p-3 min-h-[8rem]; }
-    .group-block-header { @apply text-[11px] font-semibold text-brand-dark mb-1 leading-5; }
-    .group-row { @apply flex items-center justify-between gap-2 text-[13px] py-1 leading-5; }
-    .group-row-name { @apply text-slate-800 truncate leading-5; }
+    .group-block-inline + .group-block-inline { @apply border-t border-ink-500/60; }
+    .group-block-card   { @apply rounded-lg border border-ink-500 bg-ink-800 p-3 min-h-[8rem]; }
+    .group-block-header { @apply font-display text-[13px] text-turf mb-1.5 leading-5; }
+    .group-row          { @apply flex items-center justify-between gap-2 text-[13px] py-1 leading-5; }
+    .group-row-name     { @apply text-chalk truncate leading-5; }
 
     /* Accordion */
     .accordion { @apply flex flex-col gap-2; }
-    .accordion-item { @apply rounded-lg border border-slate-200 bg-white overflow-hidden transition; }
-    .accordion-item > summary { @apply flex items-center justify-between cursor-pointer px-3.5 py-2.5 text-[13px] font-medium text-slate-800 transition hover:bg-slate-50; }
-    .accordion-item > summary::after { content: '▾'; @apply text-slate-400 text-[10px] transition-transform duration-200; }
+    .accordion-item { @apply rounded-md border border-ink-500 bg-ink-800 overflow-hidden transition; }
+    .accordion-item > summary {
+      @apply flex items-center justify-between cursor-pointer px-3.5 py-2.5
+             text-[13px] font-semibold text-chalk transition hover:bg-ink-700;
+    }
+    .accordion-item > summary::after {
+      content: '▾';
+      @apply text-chalk-mute text-[10px] transition-transform duration-200;
+    }
     .accordion-item[open] > summary::after { @apply rotate-180; }
-    .accordion-item[open] > summary { @apply border-b border-slate-100; }
+    .accordion-item[open] > summary { @apply border-b border-ink-500; }
     .accordion-body { @apply px-3.5 pt-1 pb-3; }
+
+    /* Progress ticker */
+    .ticker {
+      @apply relative h-1.5 w-full overflow-hidden rounded-full bg-ink-600;
+    }
+    .ticker > .fill {
+      @apply absolute inset-y-0 left-0 rounded-full transition-all duration-500;
+      background: linear-gradient(90deg, #14a85c, #22ff88);
+      box-shadow: 0 0 16px rgba(34,255,136,0.55);
+    }
 
     /* Shown only while html2canvas is capturing */
     .capture-only { display: none; }
@@ -107,49 +181,60 @@
   }
 </style>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased">
+<body class="min-h-screen text-chalk font-sans antialiased">
 
-<div class="mx-auto max-w-5xl px-4 py-8 md:py-10">
+<div class="mx-auto max-w-5xl px-4 py-10 md:py-14">
 
   <!-- Header -->
-  <header class="mb-8">
-    <h1 class="text-3xl font-bold tracking-tight text-slate-900">The Bouman Romoser World Cup Pool 2026</h1>
-    <p class="mt-2 text-sm text-slate-500">Hosted by JB &amp; SD &nbsp;·&nbsp; June 11 – July 19, 2026</p>
+  <header class="mb-10">
+    <div class="eyebrow mb-3">Bouman · Romoser</div>
+    <h1 class="font-display-outline uppercase leading-[0.95] tracking-tight text-chalk text-[clamp(2.25rem,7vw,5rem)]">
+      World Cup<br/><span class="text-turf">Pool '26</span>
+    </h1>
+    <div class="mt-5 flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-wider text-chalk-mute">
+      <span>Hosted by JB &amp; SD</span>
+      <span class="text-ink-400">/</span>
+      <span>11 JUN → 19 JUL 2026</span>
+      <span class="text-ink-400">/</span>
+      <span>USA · CAN · MEX</span>
+    </div>
   </header>
 
   <!-- Progress -->
-  <div class="h-[5px] w-full rounded-full bg-slate-200 mb-8 overflow-hidden">
-    <div id="pbar" class="h-full rounded-full bg-brand transition-all duration-500" style="width:0%"></div>
+  <div class="mb-10 flex items-center gap-3">
+    <span id="pbar-step" class="font-mono text-[10px] uppercase tracking-wider text-chalk-mute">00 / 08</span>
+    <div class="ticker flex-1"><div id="pbar" class="fill" style="width:0%"></div></div>
+    <span id="pbar-pct" class="font-mono text-[10px] uppercase tracking-wider text-chalk-mute">0%</span>
   </div>
 
   <!-- Step 0: Welcome -->
   <div class="step active" id="step-0">
     <div class="eyebrow">Welcome</div>
-    <h2 class="mt-1 text-xl font-semibold">How the pool works</h2>
-    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Make your picks before the tournament kicks off on June 11. Points are awarded for every correctly predicted team that advances. The later the round, the more they're worth.</p>
+    <h2 class="mt-2 display text-3xl">How the pool works</h2>
+    <p class="mt-3 text-[15px] text-chalk-dim leading-relaxed">Make your picks before the tournament kicks off on June 11. Points are awarded for every correctly predicted team that advances. The later the round, the more they're worth.</p>
 
     <div class="card mt-6 p-5 space-y-2">
-      <p class="text-[13px] leading-relaxed text-slate-600">You'll draft which 32 teams you think advance out of the group stage: 2 from each group, plus 8 wildcards. Then you whittle that down to 16, 8, 4, 2, and finally a champion.</p>
-      <p class="text-[13px] leading-relaxed text-slate-600">Points double each round, so even a rough group stage can be clawed back. That's the beauty of it.</p>
+      <p class="text-[13px] leading-relaxed text-chalk-dim">You'll draft which 32 teams you think advance out of the group stage: 2 from each group, plus 8 wildcards. Then you whittle that down to 16, 8, 4, 2, and finally a champion.</p>
+      <p class="text-[13px] leading-relaxed text-chalk-dim">Points double each round, so even a rough group stage can be clawed back. That's the beauty of it.</p>
     </div>
 
     <div class="mt-4 grid grid-cols-2 gap-2">
-      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-slate-700">Advance to R32</span><span class="text-[13px] font-semibold text-brand-dark">1 pt each</span></div>
-      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-slate-700">Advance to R16</span><span class="text-[13px] font-semibold text-brand-dark">2 pts each</span></div>
-      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-slate-700">Advance to QF</span><span class="text-[13px] font-semibold text-brand-dark">4 pts each</span></div>
-      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-slate-700">Advance to SF</span><span class="text-[13px] font-semibold text-brand-dark">8 pts each</span></div>
-      <div class="card-sm px-3.5 py-3 flex items-center justify-between col-span-2"><span class="text-[13px] text-slate-700">Advance to Final</span><span class="text-[13px] font-semibold text-brand-dark">16 pts each</span></div>
+      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-chalk-dim">Advance to R32</span><span class="badge">1 PT</span></div>
+      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-chalk-dim">Advance to R16</span><span class="badge">2 PTS</span></div>
+      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-chalk-dim">Advance to QF</span><span class="badge">4 PTS</span></div>
+      <div class="card-sm px-3.5 py-3 flex items-center justify-between"><span class="text-[13px] text-chalk-dim">Advance to SF</span><span class="badge">8 PTS</span></div>
+      <div class="card-sm px-3.5 py-3 flex items-center justify-between col-span-2"><span class="text-[13px] text-chalk-dim">Advance to Final</span><span class="badge">16 PTS</span></div>
     </div>
 
-    <div class="mt-3 rounded-xl bg-brand-deep px-4 py-3 flex items-center justify-between">
-      <span class="text-[13px] font-semibold text-brand-light">Winner</span>
-      <span class="text-[13px] font-semibold text-white">32 pts</span>
+    <div class="mt-3 rounded-md border border-turf/40 bg-turf-soft px-4 py-3.5 flex items-center justify-between">
+      <span class="font-display text-lg text-turf">Winner</span>
+      <span class="badge text-base px-3 py-1">32 PTS</span>
     </div>
 
-    <p class="mt-3 text-xs text-slate-400">Tiebreaker: closest prediction of total goals scored in the Final.</p>
+    <p class="mt-4 font-mono text-[10px] uppercase tracking-wider text-chalk-mute">Tiebreaker · Closest guess of total goals in the Final</p>
 
     <div class="mt-8">
-      <p class="text-[13px] text-slate-600 mb-3">Enter your name and email to get started.</p>
+      <p class="text-[13px] text-chalk-dim mb-3">Enter your name and email to get started.</p>
       <input class="input mb-3" id="entrant-name" type="text" placeholder="Your name" />
       <input class="input" id="entrant-email" type="email" placeholder="Your email address" />
     </div>
@@ -162,15 +247,15 @@
   <!-- Step 1: Draft 32 -->
   <div class="step" id="step-1">
     <div class="eyebrow">Group stage draft</div>
-    <h2 class="mt-1 text-xl font-semibold">Draft your 32 advancing teams <span class="badge">1 pt each</span></h2>
-    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Pick 2 teams from each group, plus 8 wildcards from any group (max 1 per group). Tap a team to cycle: advancing, wildcard, unpicked.</p>
+    <h2 class="mt-2 display text-3xl">Draft your 32 advancing teams <span class="badge ml-2 align-middle">1 PT EACH</span></h2>
+    <p class="mt-3 text-[15px] text-chalk-dim leading-relaxed">Pick 2 teams from each group, plus 8 wildcards from any group (max 1 per group). Tap a team to cycle: advancing, wildcard, unpicked.</p>
 
     <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
       <div id="draft-groups" class="flex flex-col gap-3"></div>
       <aside id="draft-summary" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
     </div>
 
-    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-ink-500">
       <button class="btn" onclick="goBack(1)">← Back</button>
       <button class="btn btn-primary" id="draft-next" onclick="goNext(1)" disabled>Next →</button>
     </div>
@@ -179,15 +264,15 @@
   <!-- Step 2: R16 cut -->
   <div class="step" id="step-2">
     <div class="eyebrow">Knockout stage</div>
-    <h2 class="mt-1 text-xl font-semibold">Pick the 16 that advance <span class="badge">2 pts each</span></h2>
-    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Of your 32 drafted teams, which 16 make it past the Round of 32?</p>
+    <h2 class="mt-2 display text-3xl">Pick the 16 that advance <span class="badge ml-2 align-middle">2 PTS EACH</span></h2>
+    <p class="mt-3 text-[15px] text-chalk-dim leading-relaxed">Of your 32 drafted teams, which 16 make it past the Round of 32?</p>
 
     <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
       <div id="r16-pool"></div>
       <aside id="r16-right" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
     </div>
 
-    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-ink-500">
       <button class="btn" onclick="goBack(2)">← Back</button>
       <button class="btn btn-primary" id="r16-next" onclick="goNext(2)" disabled>Next →</button>
     </div>
@@ -196,15 +281,15 @@
   <!-- Step 3: QF cut -->
   <div class="step" id="step-3">
     <div class="eyebrow">Knockout stage</div>
-    <h2 class="mt-1 text-xl font-semibold">Pick the 8 that advance <span class="badge">4 pts each</span></h2>
-    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Of your 16, which 8 make the quarterfinals?</p>
+    <h2 class="mt-2 display text-3xl">Pick the 8 that advance <span class="badge ml-2 align-middle">4 PTS EACH</span></h2>
+    <p class="mt-3 text-[15px] text-chalk-dim leading-relaxed">Of your 16, which 8 make the quarterfinals?</p>
 
     <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
       <div id="qf-pool"></div>
       <aside id="qf-right" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
     </div>
 
-    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-ink-500">
       <button class="btn" onclick="goBack(3)">← Back</button>
       <button class="btn btn-primary" id="qf-next" onclick="goNext(3)" disabled>Next →</button>
     </div>
@@ -213,15 +298,15 @@
   <!-- Step 4: SF cut -->
   <div class="step" id="step-4">
     <div class="eyebrow">Knockout stage</div>
-    <h2 class="mt-1 text-xl font-semibold">Pick the 4 that advance <span class="badge">8 pts each</span></h2>
-    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Of your 8, which 4 reach the semifinals?</p>
+    <h2 class="mt-2 display text-3xl">Pick the 4 that advance <span class="badge ml-2 align-middle">8 PTS EACH</span></h2>
+    <p class="mt-3 text-[15px] text-chalk-dim leading-relaxed">Of your 8, which 4 reach the semifinals?</p>
 
     <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
       <div id="sf-pool"></div>
       <aside id="sf-right" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
     </div>
 
-    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-ink-500">
       <button class="btn" onclick="goBack(4)">← Back</button>
       <button class="btn btn-primary" id="sf-next" onclick="goNext(4)" disabled>Next →</button>
     </div>
@@ -230,15 +315,15 @@
   <!-- Step 5: Final cut -->
   <div class="step" id="step-5">
     <div class="eyebrow">Knockout stage</div>
-    <h2 class="mt-1 text-xl font-semibold">Pick the 2 finalists <span class="badge">16 pts each</span></h2>
-    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Of your 4, which 2 play for the trophy?</p>
+    <h2 class="mt-2 display text-3xl">Pick the 2 finalists <span class="badge ml-2 align-middle">16 PTS EACH</span></h2>
+    <p class="mt-3 text-[15px] text-chalk-dim leading-relaxed">Of your 4, which 2 play for the trophy?</p>
 
     <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
       <div id="final-pool"></div>
       <aside id="final-right" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
     </div>
 
-    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-ink-500">
       <button class="btn" onclick="goBack(5)">← Back</button>
       <button class="btn btn-primary" id="final-next" onclick="goNext(5)" disabled>Next →</button>
     </div>
@@ -247,15 +332,15 @@
   <!-- Step 6: Winner -->
   <div class="step" id="step-6">
     <div class="eyebrow">Knockout stage</div>
-    <h2 class="mt-1 text-xl font-semibold">Pick the champion <span class="badge">32 pts</span></h2>
-    <p class="mt-1 text-sm text-slate-600 leading-relaxed">One match, one trophy, one champion. Who are you putting your name behind?</p>
+    <h2 class="mt-2 display text-3xl">Pick the champion <span class="badge ml-2 align-middle">32 PTS</span></h2>
+    <p class="mt-3 text-[15px] text-chalk-dim leading-relaxed">One match, one trophy, one champion. Who are you putting your name behind?</p>
 
     <div class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_340px] gap-6 items-start">
       <div id="winner-pool"></div>
       <aside id="winner-right" class="md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto"></aside>
     </div>
 
-    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-ink-500">
       <button class="btn" onclick="goBack(6)">← Back</button>
       <button class="btn btn-primary" id="winner-next" onclick="goNext(6)" disabled>Next →</button>
     </div>
@@ -264,15 +349,15 @@
   <!-- Step 7: Tiebreaker -->
   <div class="step" id="step-7">
     <div class="eyebrow">Almost done</div>
-    <h2 class="mt-1 text-xl font-semibold">Tiebreaker</h2>
-    <p class="mt-1 text-sm text-slate-600 leading-relaxed">How many total goals will be scored in the Final? Used only to break ties, closest guess wins.</p>
+    <h2 class="mt-2 display text-3xl">Tiebreaker</h2>
+    <p class="mt-3 text-[15px] text-chalk-dim leading-relaxed">How many total goals will be scored in the Final? Used only to break ties, closest guess wins.</p>
 
     <div class="mt-6 card p-5">
       <label for="tiebreak" class="section-label block mb-2">Total goals in the Final</label>
-      <input class="input max-w-[160px] text-center" id="tiebreak" type="number" min="0" max="20" placeholder="e.g. 3" />
+      <input class="input max-w-[160px] text-center font-mono text-2xl" id="tiebreak" type="number" min="0" max="20" placeholder="3" />
     </div>
 
-    <div class="mt-8 flex items-center justify-between pt-4 border-t border-slate-200">
+    <div class="mt-8 flex items-center justify-between pt-4 border-t border-ink-500">
       <button class="btn" onclick="goBack(7)">← Back</button>
       <button class="btn btn-primary" onclick="goNext(7)">Review my picks →</button>
     </div>
@@ -281,22 +366,22 @@
   <!-- Step 8: Review -->
   <div class="step" id="step-8">
     <div class="eyebrow">Review</div>
-    <h2 class="mt-1 text-xl font-semibold">Double-check your picks</h2>
-    <p class="mt-1 text-sm text-slate-600 leading-relaxed">Everything look good? Hit submit when you're ready.</p>
+    <h2 class="mt-2 display text-3xl">Double-check your picks</h2>
+    <p class="mt-3 text-[15px] text-chalk-dim leading-relaxed">Everything look good? Hit submit when you're ready.</p>
 
-    <div id="review-capture" class="bg-slate-50">
+    <div id="review-capture" class="bg-ink-900 p-1">
       <div class="capture-only px-5 pt-5 pb-4 text-center">
-        <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-dark">Bouman Romoser World Cup Pool 2026</div>
-        <div class="text-lg font-bold mt-1">My picks</div>
+        <div class="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-turf">Bouman Romoser World Cup Pool 2026</div>
+        <div class="font-display text-2xl text-chalk mt-2">My Picks</div>
       </div>
       <div id="review-header" class="card p-5 mt-6"></div>
       <div id="review-r32" class="card p-5 mt-4"></div>
       <div id="review-ko" class="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"></div>
       <div id="review-champion" class="mt-4"></div>
-      <div class="capture-only text-center text-[11px] text-slate-400 mt-4 pb-2">June 11 – July 19, 2026</div>
+      <div class="capture-only text-center font-mono text-[11px] uppercase tracking-wider text-chalk-mute mt-4 pb-3">June 11 – July 19, 2026</div>
     </div>
 
-    <div class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-slate-200">
+    <div class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-ink-500">
       <button class="btn" onclick="goBack(8)">← Back</button>
       <div class="flex items-center gap-2">
         <button class="btn" onclick="downloadPicks('review-capture', this)">Save as image</button>
@@ -308,24 +393,25 @@
   <!-- Step 9: Success -->
   <div class="step" id="step-9">
     <div class="text-center py-6">
-      <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand">
-        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7">
-          <path d="M8 14l4 4 8-8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-turf-soft border border-turf shadow-turf-glow">
+        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8">
+          <path d="M8 14l4 4 8-8" stroke="#22ff88" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <h2 class="text-xl font-semibold">You're in, <span id="confirm-name"></span>!</h2>
-      <p class="mt-1 text-sm text-slate-600">Your picks have been submitted. Stay tuned for updates via email as the tournament progresses.</p>
+      <div class="eyebrow justify-center">Submitted</div>
+      <h2 class="mt-2 display text-4xl">You're in, <span class="text-turf" id="confirm-name"></span>!</h2>
+      <p class="mt-3 text-[15px] text-chalk-dim leading-relaxed">Your picks have been submitted. Stay tuned for updates via email as the tournament progresses.</p>
     </div>
 
-    <div id="confirm-capture" class="bg-slate-50">
+    <div id="confirm-capture" class="bg-ink-900 p-1">
       <div class="capture-only px-5 pt-5 pb-4 text-center">
-        <div class="text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-dark">Bouman Romoser World Cup Pool 2026</div>
-        <div class="text-lg font-bold mt-1">My picks</div>
+        <div class="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-turf">Bouman Romoser World Cup Pool 2026</div>
+        <div class="font-display text-2xl text-chalk mt-2">My Picks</div>
       </div>
       <div id="confirm-r32" class="card p-5 mt-4"></div>
       <div id="confirm-ko" class="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"></div>
       <div id="confirm-champion" class="mt-4"></div>
-      <div class="capture-only text-center text-[11px] text-slate-400 mt-4 pb-2">June 11 – July 19, 2026</div>
+      <div class="capture-only text-center font-mono text-[11px] uppercase tracking-wider text-chalk-mute mt-4 pb-3">June 11 – July 19, 2026</div>
     </div>
 
     <div class="mt-4 text-center">
@@ -333,10 +419,10 @@
     </div>
 
     <div class="mt-6 card p-5">
-      <p class="text-[13px] leading-relaxed text-slate-600">We'll be in touch at <strong id="confirm-email" class="text-slate-900 font-semibold"></strong> with standings updates as the tournament progresses.</p>
-      <div class="mt-4 pt-4 border-t border-slate-100">
-        <blockquote class="text-[13px] italic leading-relaxed text-slate-600">"Some people think football is a matter of life and death. I assure you, it's much more serious than that."</blockquote>
-        <cite class="mt-2 block text-xs not-italic text-slate-400">Bill Shankly, legendary Liverpool FC manager</cite>
+      <p class="text-[13px] leading-relaxed text-chalk-dim">We'll be in touch at <strong id="confirm-email" class="text-chalk font-semibold"></strong> with standings updates as the tournament progresses.</p>
+      <div class="mt-4 pt-4 border-t border-ink-500">
+        <blockquote class="text-[13px] italic leading-relaxed text-chalk-dim">"Some people think football is a matter of life and death. I assure you, it's much more serious than that."</blockquote>
+        <cite class="mt-2 block font-mono text-[10px] uppercase tracking-wider not-italic text-chalk-mute">Bill Shankly · Legendary Liverpool FC Manager</cite>
       </div>
     </div>
   </div>
@@ -421,7 +507,7 @@ function filterDownstream() {
 function renderTeamList(arr, opts) {
   opts = opts || {};
   if (!arr || arr.length === 0) {
-    return '<div class="text-[12px] text-slate-400 italic">No teams yet.</div>';
+    return '<div class="text-[12px] text-chalk-mute italic">No teams yet.</div>';
   }
   var teams = sortByGroup(arr);
   var html = '<div>';
@@ -468,7 +554,7 @@ function renderGroupBlock(g, opts) {
 function renderR32Grouped(opts) {
   opts = opts || {};
   var blocks = GK.map(function(g) { return renderGroupBlock(g, { asCard: !!opts.multiColumn }); }).join('');
-  if (!blocks) return '<div class="text-[12px] text-slate-400 italic">No teams yet.</div>';
+  if (!blocks) return '<div class="text-[12px] text-chalk-mute italic">No teams yet.</div>';
   if (opts.multiColumn) {
     return '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">' + blocks + '</div>';
   }
@@ -532,10 +618,10 @@ function renderDraftGroups() {
     var hasWc = groupHasWildcard(g);
     var advCount = picks.groups[g].length;
     var heading = document.createElement('div');
-    heading.className = 'mb-3 flex items-baseline justify-between';
+    heading.className = 'mb-3 flex items-baseline justify-between pb-2 border-b border-ink-500';
     heading.innerHTML =
-      '<span class="text-[13px] font-semibold uppercase tracking-[0.05em] text-slate-600">Group ' + g + '</span>' +
-      '<span class="text-[11px] text-slate-400">top 2 ' + advCount + '/2 · wildcard ' + (hasWc ? '1' : '0') + '/1</span>';
+      '<span class="font-display text-lg text-turf">Group ' + g + '</span>' +
+      '<span class="font-mono text-[10px] uppercase tracking-wider text-chalk-mute">TOP 2 ' + advCount + '/2 · WC ' + (hasWc ? '1' : '0') + '/1</span>';
     card.appendChild(heading);
 
     var grid = document.createElement('div');
@@ -564,41 +650,41 @@ function renderDraftSummary() {
   GK.forEach(function(g) { advCount += picks.groups[g].length; });
   var wcCount = picks.wildcards.length;
 
-  var advClass = advCount === 24 ? 'text-brand-dark' : 'text-slate-900';
-  var wcClass = wcCount === 8 ? 'text-brand-dark' : 'text-slate-900';
+  var advClass = advCount === 24 ? 'text-turf' : 'text-chalk';
+  var wcClass = wcCount === 8 ? 'text-amber' : 'text-chalk';
 
   var html = '<div class="card p-4">';
   html += '<div class="section-label mb-2">Your R32 draft</div>';
-  html += '<div class="text-[13px] text-slate-600 mb-4">' +
-          'Top 2 per group <span class="font-semibold ' + advClass + '">' + advCount + ' / 24</span>' +
-          ' &nbsp;·&nbsp; Wildcards <span class="font-semibold ' + wcClass + '">' + wcCount + ' / 8</span>' +
+  html += '<div class="text-[13px] text-chalk-dim mb-4 font-mono uppercase tracking-wider">' +
+          'TOP 2 <span class="font-bold ' + advClass + '">' + advCount + ' / 24</span>' +
+          ' &nbsp;·&nbsp; WC <span class="font-bold ' + wcClass + '">' + wcCount + ' / 8</span>' +
           '</div>';
 
   html += '<div>';
   html += '<div class="section-label mb-1.5">Advancing</div>';
-  html += '<div class="divide-y divide-slate-100">';
+  html += '<div class="divide-y divide-ink-500/60">';
   GK.forEach(function(g) {
     var top2 = picks.groups[g];
     var wcInGroup = picks.wildcards.filter(function(t) { return getTeamGroup(t) === g; });
     html += '<div class="flex items-baseline gap-3 py-1.5 text-[12px]">';
-    html += '<span class="font-semibold text-brand-dark min-w-[14px]">' + g + '</span>';
+    html += '<span class="font-mono font-bold text-turf min-w-[14px]">' + g + '</span>';
     if (top2.length === 0 && wcInGroup.length === 0) {
-      html += '<span class="text-slate-400 italic">pick 2</span>';
+      html += '<span class="text-chalk-mute italic">pick 2</span>';
     } else {
       var parts = [];
-      top2.forEach(function(t) { parts.push('<span>' + t + '</span>'); });
+      top2.forEach(function(t) { parts.push('<span class="text-chalk">' + t + '</span>'); });
       wcInGroup.forEach(function(t) {
-        parts.push('<span>' + t + ' <span class="text-[10px] font-semibold uppercase tracking-wider text-wc-dark">(WC)</span></span>');
+        parts.push('<span class="text-chalk">' + t + ' <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-amber">(WC)</span></span>');
       });
-      html += '<span class="text-slate-700 leading-relaxed">' + parts.join(', ') + '</span>';
+      html += '<span class="leading-relaxed">' + parts.join(', ') + '</span>';
     }
     html += '</div>';
   });
   html += '</div></div>';
 
-  html += '<div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap gap-3 text-[11px] text-slate-500">';
-  html += '<span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-full bg-brand"></span>Top 2</span>';
-  html += '<span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-full bg-wc"></span>Wildcard</span>';
+  html += '<div class="mt-4 pt-3 border-t border-ink-500 flex flex-wrap gap-3 font-mono text-[10px] uppercase tracking-wider text-chalk-mute">';
+  html += '<span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-full bg-turf"></span>Top 2</span>';
+  html += '<span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-full bg-amber"></span>Wildcard</span>';
   html += '</div>';
   html += '</div>';
   container.innerHTML = html;
@@ -646,9 +732,9 @@ function buildCutStep(stepNum) {
   pool.innerHTML = '';
 
   var counter = document.createElement('div');
-  counter.className = 'mb-3 md:hidden text-[13px] text-slate-600';
-  var mobileCount = target.length === cfg.target ? 'text-brand-dark' : 'text-slate-900';
-  counter.innerHTML = 'Selected <span class="font-semibold ' + mobileCount + '">' + target.length + ' / ' + cfg.target + '</span>';
+  counter.className = 'mb-3 md:hidden font-mono text-[11px] uppercase tracking-wider text-chalk-mute';
+  var mobileCount = target.length === cfg.target ? 'text-turf' : 'text-chalk';
+  counter.innerHTML = 'SELECTED <span class="font-bold ' + mobileCount + '">' + target.length + ' / ' + cfg.target + '</span>';
   pool.appendChild(counter);
 
   if (stepNum === 2) {
@@ -723,12 +809,12 @@ function updateCutNextButton(stepNum) {
 function renderCutRight(stepNum) {
   var cfg = getCutConfig(stepNum);
   var target = stepNum === 6 ? (picks.winner ? [picks.winner] : []) : getTarget(stepNum);
-  var countClass = target.length === cfg.target ? 'text-brand-dark' : 'text-slate-900';
+  var countClass = target.length === cfg.target ? 'text-turf' : 'text-chalk';
 
   var html = '';
   html += '<div class="card p-4 mb-4">';
   html += '<div class="section-label mb-1.5">Your ' + cfg.label + '</div>';
-  html += '<div class="text-[13px] text-slate-600 mb-3">Selected <span class="font-semibold ' + countClass + '">' + target.length + ' / ' + cfg.target + '</span></div>';
+  html += '<div class="font-mono text-[11px] uppercase tracking-wider text-chalk-mute mb-3">SELECTED <span class="font-bold ' + countClass + '">' + target.length + ' / ' + cfg.target + '</span></div>';
   html += renderTeamList(target);
   html += '</div>';
 
@@ -745,7 +831,7 @@ function renderCutRight(stepNum) {
 
 function accordionItem(title, subtitle, bodyHtml) {
   return '<details class="accordion-item">' +
-    '<summary><span>' + title + ' <span class="text-slate-400 font-normal ml-1">' + subtitle + '</span></span></summary>' +
+    '<summary><span>' + title + ' <span class="text-chalk-mute font-normal ml-1 font-mono text-[11px] uppercase tracking-wider">' + subtitle + '</span></span></summary>' +
     '<div class="accordion-body">' + bodyHtml + '</div>' +
     '</details>';
 }
@@ -769,16 +855,16 @@ function buildConfirmation() {
 function renderEntrantCard() {
   return '<div>' +
     '<div class="section-label mb-0.5">Entrant</div>' +
-    '<div class="text-[17px] font-semibold">' + escapeHtml(picks.name) + '</div>' +
-    '<div class="text-sm text-slate-500">' + escapeHtml(picks.email) + '</div>' +
+    '<div class="text-[17px] font-semibold text-chalk">' + escapeHtml(picks.name) + '</div>' +
+    '<div class="font-mono text-[11px] uppercase tracking-wider text-chalk-mute">' + escapeHtml(picks.email) + '</div>' +
   '</div>';
 }
 
 function renderR32ReviewPanel() {
   var html = '';
-  html += '<div class="flex items-baseline justify-between mb-3 pb-3 border-b border-slate-100">';
-  html += '<div class="text-[13px] font-semibold">Round of 32</div>';
-  html += '<div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">1 pt × 32</div>';
+  html += '<div class="flex items-baseline justify-between mb-3 pb-3 border-b border-ink-500">';
+  html += '<div class="font-display text-xl text-chalk">Round of 32</div>';
+  html += '<div class="badge">1 PT</div>';
   html += '</div>';
   html += renderR32Grouped({ multiColumn: true });
   return html;
@@ -786,18 +872,18 @@ function renderR32ReviewPanel() {
 
 function renderKnockoutColumns() {
   return (
-    reviewColumn('Round of 16', '2 pts × 16', picks.r16) +
-    reviewColumn('Quarterfinals', '4 pts × 8', picks.qf) +
-    reviewColumn('Semifinals', '8 pts × 4', picks.sf) +
-    reviewColumn('Finals', '16 pts × 2', picks.final)
+    reviewColumn('Round of 16', '2 PTS', picks.r16) +
+    reviewColumn('Quarterfinals', '4 PTS', picks.qf) +
+    reviewColumn('Semifinals', '8 PTS', picks.sf) +
+    reviewColumn('Finals', '16 PTS', picks.final)
   );
 }
 
 function reviewColumn(title, badge, teams) {
   var html = '<div class="card p-4">';
-  html += '<div class="flex items-baseline justify-between mb-2 pb-2 border-b border-slate-100">';
-  html += '<div class="text-[13px] font-semibold">' + title + '</div>';
-  html += '<div class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">' + badge + '</div>';
+  html += '<div class="flex items-baseline justify-between mb-2 pb-2 border-b border-ink-500">';
+  html += '<div class="font-display text-base text-chalk">' + title + '</div>';
+  html += '<div class="badge">' + badge + '</div>';
   html += '</div>';
   html += renderTeamList(teams);
   html += '</div>';
@@ -806,18 +892,18 @@ function reviewColumn(title, badge, teams) {
 
 function renderChampionCard() {
   var html = '<div class="card overflow-hidden">';
-  html += '<div class="bg-brand-bg px-5 py-6 text-center">';
-  html += '<div class="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-dark mb-2">Champion · 32 pts</div>';
+  html += '<div class="px-5 py-6 text-center" style="background: radial-gradient(circle at center, rgba(34,255,136,0.18), transparent 70%), #0f3322;">';
+  html += '<div class="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-turf mb-3">Champion · 32 PTS</div>';
   if (picks.winner) {
-    html += '<div class="text-3xl font-bold text-brand-deep">' + escapeHtml(picks.winner) + '</div>';
-    html += '<div class="text-xs text-slate-500 mt-1.5">Group ' + getTeamGroup(picks.winner) + '</div>';
+    html += '<div class="font-display text-4xl text-chalk">' + escapeHtml(picks.winner) + '</div>';
+    html += '<div class="font-mono text-[11px] uppercase tracking-wider text-turf mt-2">Group ' + getTeamGroup(picks.winner) + '</div>';
   } else {
-    html += '<div class="text-slate-400 italic">None selected</div>';
+    html += '<div class="text-chalk-mute italic">None selected</div>';
   }
   html += '</div>';
-  html += '<div class="px-5 py-4 border-t border-slate-100 flex items-baseline justify-between gap-3">';
+  html += '<div class="px-5 py-4 border-t border-ink-500 flex items-baseline justify-between gap-3 bg-ink-800">';
   html += '<div class="section-label">Tiebreaker</div>';
-  html += '<div class="text-[14px] font-semibold">' + escapeHtml(picks.tiebreak || '—') + ' goals in the Final</div>';
+  html += '<div class="font-mono text-[14px] font-bold text-chalk">' + escapeHtml(picks.tiebreak || '—') + ' goals in the Final</div>';
   html += '</div>';
   html += '</div>';
   return html;
@@ -843,7 +929,7 @@ function downloadPicks(containerId, btn) {
   setTimeout(function() {
     var el = document.getElementById(containerId);
     html2canvas(el, {
-      backgroundColor: '#f8fafc',
+      backgroundColor: '#0a0e17',
       scale: 2,
       useCORS: true,
       logging: false,
@@ -916,6 +1002,10 @@ function submitPicks() {
 function updateProgress(n) {
   var pct = Math.min(100, Math.round((n / 8) * 100));
   document.getElementById('pbar').style.width = pct + '%';
+  var stepEl = document.getElementById('pbar-step');
+  var pctEl = document.getElementById('pbar-pct');
+  if (stepEl) stepEl.textContent = String(Math.min(n, 8)).padStart(2, '0') + ' / 08';
+  if (pctEl) pctEl.textContent = pct + '%';
 }
 
 function showStep(n) {
