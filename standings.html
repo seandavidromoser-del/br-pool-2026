@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Standings · Bouman Romoser World Cup Pool 2026</title>
+<meta name="description" content="Live standings and bracket picks for the Bouman Romoser World Cup Pool 2026." />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://seandavidromoser-del.github.io/br-pool-2026/standings.html" />
+<meta property="og:title" content="Standings · Bouman Romoser World Cup Pool 2026" />
+<meta property="og:description" content="Live standings and bracket picks for the Bouman Romoser World Cup Pool 2026." />
+<meta property="og:image" content="https://seandavidromoser-del.github.io/br-pool-2026/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Standings · Bouman Romoser World Cup Pool 2026" />
+<meta name="twitter:description" content="Live standings and bracket picks for the Bouman Romoser Pool 2026." />
+<meta name="twitter:image" content="https://seandavidromoser-del.github.io/br-pool-2026/og-image.png" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Outline&family=Google+Sans+Code:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:   { 900:'#0a0e17', 800:'#0f1421', 700:'#151b2b', 600:'#1c2236', 500:'#252b40', 400:'#3a4260' },
+          turf:  { DEFAULT:'#22ff88', dim:'#14a85c', deep:'#0c5e35', soft:'#0f3322' },
+          amber: { DEFAULT:'#ffb547', dim:'#b87a1f', deep:'#5e3d10', soft:'#33240b' },
+          chalk: { DEFAULT:'#f4f6fb', dim:'#c8cfdd', mute:'#8b94ad', faint:'#5b6480' },
+          bronze:{ DEFAULT:'#c97a2b', dim:'#7a4615', soft:'#2a1809' },
+          silver:{ DEFAULT:'#cdd4e3', dim:'#7a8298', soft:'#1d2231' },
+        },
+        fontFamily: {
+          sans: ['Inter','-apple-system','BlinkMacSystemFont','"Segoe UI"','Roboto','system-ui','sans-serif'],
+          display: ['Bungee','Impact','sans-serif'],
+          'display-outline': ['"Bungee Outline"','Impact','sans-serif'],
+          mono: ['"Google Sans Code"','"JetBrains Mono"','ui-monospace','monospace'],
+        },
+        boxShadow: {
+          'turf-glow':   '0 0 0 1px rgba(34,255,136,0.6), 0 0 24px -4px rgba(34,255,136,0.45)',
+          'amber-glow':  '0 0 0 1px rgba(255,181,71,0.7), 0 0 28px -4px rgba(255,181,71,0.5)',
+          'silver-glow': '0 0 0 1px rgba(205,212,227,0.6), 0 0 22px -4px rgba(205,212,227,0.35)',
+          'bronze-glow': '0 0 0 1px rgba(201,122,43,0.7), 0 0 24px -4px rgba(201,122,43,0.4)',
+        },
+      },
+    },
+  };
+</script>
+
+<style type="text/tailwindcss">
+  @layer base {
+    body {
+      background-color: #0a0e17;
+      background-image:
+        radial-gradient(circle at 18% -8%, rgba(34,255,136,0.10), transparent 55%),
+        radial-gradient(circle at 92% 8%, rgba(255,181,71,0.07), transparent 50%),
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: auto, auto, 56px 56px, 56px 56px;
+      background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+      background-attachment: fixed;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary { list-style: none; }
+  }
+  @layer components {
+    .btn {
+      @apply inline-flex items-center justify-center gap-2 rounded-md
+             border border-ink-500 bg-ink-700 px-3.5 py-2
+             text-[12px] font-semibold uppercase tracking-wider text-chalk
+             transition hover:bg-ink-600 hover:border-ink-400
+             focus:outline-none focus:ring-2 focus:ring-turf/40
+             disabled:opacity-30 disabled:cursor-not-allowed;
+    }
+    .btn-primary {
+      @apply border-turf bg-turf text-ink-900
+             hover:bg-turf hover:border-turf hover:shadow-turf-glow
+             focus:ring-turf/50;
+    }
+
+    .card    { @apply rounded-xl border border-ink-500 bg-ink-800/80 backdrop-blur-sm; }
+    .card-sm { @apply rounded-md border border-ink-500 bg-ink-700; }
+
+    .display       { @apply font-display uppercase tracking-tight text-chalk; }
+    .eyebrow       { @apply inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-chalk-mute; }
+    .eyebrow::before { content: ''; @apply inline-block h-px w-6 bg-chalk-mute/50; }
+    .section-label { @apply text-[10px] font-bold uppercase tracking-[0.12em] text-chalk-mute font-mono; }
+
+    .badge {
+      @apply inline-flex items-center gap-1 rounded
+             border border-turf/40 bg-turf/10 px-2 py-0.5
+             font-mono text-[10px] font-bold uppercase tracking-wider text-turf;
+    }
+
+    /* Live pulse */
+    .live-dot {
+      @apply relative inline-block h-2 w-2 rounded-full bg-turf;
+      box-shadow: 0 0 0 0 rgba(34,255,136,0.55);
+      animation: livePulse 1.6s cubic-bezier(0,0,0.2,1) infinite;
+    }
+    @keyframes livePulse {
+      0%   { box-shadow: 0 0 0 0 rgba(34,255,136,0.55); }
+      70%  { box-shadow: 0 0 0 9px rgba(34,255,136,0); }
+      100% { box-shadow: 0 0 0 0 rgba(34,255,136,0); }
+    }
+
+    /* Scoreboard banner */
+    .scoreboard {
+      @apply relative overflow-hidden rounded-2xl border border-ink-500
+             bg-ink-800/90 px-5 py-6 sm:px-8 sm:py-8;
+      background-image:
+        radial-gradient(circle at 10% 50%, rgba(34,255,136,0.10), transparent 60%),
+        radial-gradient(circle at 92% 30%, rgba(255,181,71,0.08), transparent 55%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 18px);
+    }
+    .scoreboard-title {
+      @apply font-display-outline text-4xl sm:text-6xl text-chalk leading-none tracking-tight;
+      text-shadow: 0 0 24px rgba(34,255,136,0.25);
+    }
+    .scoreboard-title .accent { color: #22ff88; }
+
+    /* Podium cards */
+    .podium { @apply grid gap-3 sm:gap-4; grid-template-columns: 1fr; }
+    @media (min-width: 640px) { .podium { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .podium { grid-template-columns: repeat(4, 1fr); } }
+
+    .podium-card {
+      @apply relative rounded-xl p-4 sm:p-5 overflow-hidden flex flex-col gap-2;
+      min-height: 9rem;
+    }
+    .podium-rank {
+      @apply font-display text-3xl sm:text-4xl leading-none tracking-tight;
+    }
+    .podium-label {
+      @apply font-mono text-[10px] font-bold uppercase tracking-[0.18em];
+    }
+    .podium-name {
+      @apply font-semibold text-[15px] sm:text-[16px] text-chalk truncate;
+    }
+    .podium-pts {
+      @apply font-display text-2xl sm:text-3xl text-chalk leading-none mt-auto;
+    }
+    .podium-pts-sub {
+      @apply font-mono text-[10px] uppercase tracking-wider text-chalk-mute;
+    }
+
+    .podium-1 {
+      @apply border bg-amber-soft/60;
+      border-color: rgba(255,181,71,0.55);
+      box-shadow: 0 0 0 1px rgba(255,181,71,0.5), 0 0 30px -6px rgba(255,181,71,0.45);
+      background-image: radial-gradient(circle at 80% -10%, rgba(255,181,71,0.25), transparent 60%);
+    }
+    .podium-1 .podium-rank, .podium-1 .podium-label { color: #ffb547; }
+    .podium-2 {
+      @apply border bg-silver-soft/70;
+      border-color: rgba(205,212,227,0.45);
+      box-shadow: 0 0 0 1px rgba(205,212,227,0.35), 0 0 22px -6px rgba(205,212,227,0.25);
+      background-image: radial-gradient(circle at 80% -10%, rgba(205,212,227,0.16), transparent 60%);
+    }
+    .podium-2 .podium-rank, .podium-2 .podium-label { color: #cdd4e3; }
+    .podium-3 {
+      @apply border bg-bronze-soft/70;
+      border-color: rgba(201,122,43,0.55);
+      box-shadow: 0 0 0 1px rgba(201,122,43,0.45), 0 0 22px -6px rgba(201,122,43,0.35);
+      background-image: radial-gradient(circle at 80% -10%, rgba(201,122,43,0.22), transparent 60%);
+    }
+    .podium-3 .podium-rank, .podium-3 .podium-label { color: #d8893a; }
+    .podium-4 {
+      @apply border bg-turf-soft/70;
+      border-color: rgba(34,255,136,0.45);
+      box-shadow: 0 0 0 1px rgba(34,255,136,0.35), 0 0 22px -6px rgba(34,255,136,0.3);
+      background-image: radial-gradient(circle at 80% -10%, rgba(34,255,136,0.18), transparent 60%);
+    }
+    .podium-4 .podium-rank, .podium-4 .podium-label { color: #22ff88; }
+
+    .podium-card.empty {
+      @apply opacity-50 grayscale;
+    }
+
+    /* Leaderboard rows (accordions) */
+    .lb-list { @apply flex flex-col gap-2; }
+    .lb-row {
+      @apply rounded-md border border-ink-500 bg-ink-800/80 overflow-hidden transition;
+    }
+    .lb-row[open] { @apply border-ink-400 shadow-turf-glow; }
+    .lb-row > summary {
+      @apply grid items-center gap-3 cursor-pointer px-3 sm:px-4 py-3
+             text-[14px] text-chalk transition hover:bg-ink-700;
+      grid-template-columns: 44px 1fr auto auto;
+    }
+    .lb-row > summary:hover { @apply bg-ink-700; }
+    .lb-rank {
+      @apply font-display text-lg sm:text-xl text-chalk-dim leading-none text-center;
+    }
+    .lb-row.top-1 .lb-rank { color: #ffb547; }
+    .lb-row.top-2 .lb-rank { color: #cdd4e3; }
+    .lb-row.top-3 .lb-rank { color: #d8893a; }
+    .lb-row.top-4 .lb-rank { color: #22ff88; }
+    .lb-name-block { @apply min-w-0 flex flex-col gap-0.5; }
+    .lb-name { @apply font-semibold text-[15px] sm:text-[16px] text-chalk truncate; }
+    .lb-champ-pick {
+      @apply font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.12em]
+             text-chalk-mute truncate;
+    }
+    .lb-champ-pick .label { @apply text-chalk-faint; }
+    .lb-champ-pick .team  { @apply text-chalk-dim; }
+    .lb-row.champ-correct .lb-champ-pick .team { @apply text-turf; }
+    .lb-row.champ-wrong .lb-champ-pick .team { @apply text-chalk-faint line-through; }
+    .lb-pts {
+      @apply font-display text-xl sm:text-2xl text-chalk leading-none;
+    }
+    .lb-pts-sub { @apply font-mono text-[10px] uppercase tracking-wider text-chalk-mute hidden sm:block; }
+    .lb-caret {
+      @apply text-chalk-mute text-[11px] transition-transform duration-200;
+    }
+    .lb-row[open] > summary .lb-caret { @apply rotate-180; }
+    .lb-row[open] > summary { @apply border-b border-ink-500 bg-ink-700/60; }
+
+    .lb-body { @apply p-3 sm:p-4 bg-ink-900/40; }
+
+    /* Pick layout inside accordion */
+    .picks-grid-r32 { @apply grid gap-2; grid-template-columns: 1fr; }
+    @media (min-width: 640px) { .picks-grid-r32 { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .picks-grid-r32 { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1280px) { .picks-grid-r32 { grid-template-columns: repeat(4, 1fr); } }
+
+    .picks-grid-ko { @apply grid gap-2; grid-template-columns: 1fr; }
+    @media (min-width: 640px) { .picks-grid-ko { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .picks-grid-ko { grid-template-columns: repeat(4, 1fr); } }
+
+    .pick-card {
+      @apply rounded-md border border-ink-500 bg-ink-800 p-2.5;
+    }
+    .pick-card-head {
+      @apply flex items-center justify-between mb-1.5 pb-1.5 border-b border-ink-500/60;
+    }
+    .pick-card-title {
+      @apply font-display text-[12px] text-chalk leading-none;
+    }
+    .pick-card-pts {
+      @apply font-mono text-[9px] font-bold uppercase tracking-wider text-chalk-mute;
+    }
+
+    .pick-row {
+      @apply flex items-center justify-start gap-2 py-0.5 text-[12.5px] leading-5 text-left;
+    }
+    .pick-name { @apply text-chalk-dim truncate text-left; }
+    .pick-tag  { @apply font-mono text-[9px] font-bold uppercase tracking-wider text-chalk-mute shrink-0 ml-auto; }
+    .pick-tag-wc { @apply text-amber; }
+    .pick-tag-top2 { @apply text-chalk-mute; }
+
+    /* Status: alive/eliminated/pending */
+    .pick-row.alive .pick-name { @apply text-turf font-semibold; }
+    .pick-row.alive::before {
+      content: '';
+      @apply inline-block h-1.5 w-1.5 rounded-full bg-turf shrink-0 mr-1;
+      box-shadow: 0 0 6px rgba(34,255,136,0.6);
+    }
+    .pick-row.dead .pick-name { @apply text-chalk-faint line-through; }
+    .pick-row.dead::before {
+      content: '';
+      @apply inline-block h-1.5 w-1.5 rounded-full bg-ink-400 shrink-0 mr-1;
+    }
+    .pick-row.pending::before {
+      content: '';
+      @apply inline-block h-1.5 w-1.5 rounded-full bg-ink-400/70 shrink-0 mr-1;
+    }
+
+    /* Champion strip */
+    .champ-strip {
+      @apply mt-3 rounded-md border p-3 flex flex-wrap items-center justify-between gap-3;
+      border-color: rgba(34,255,136,0.35);
+      background:
+        radial-gradient(circle at 12% 50%, rgba(34,255,136,0.18), transparent 60%),
+        rgba(15,51,34,0.5);
+    }
+    .champ-strip.dead {
+      border-color: rgba(91,100,128,0.4);
+      background: rgba(28,34,54,0.55);
+    }
+    .champ-block { @apply flex items-baseline gap-2; }
+    .champ-label { @apply font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-turf; }
+    .champ-strip.dead .champ-label { color: #5b6480; }
+    .champ-team  { @apply font-display text-lg sm:text-xl text-chalk; }
+    .champ-strip.dead .champ-team { @apply text-chalk-faint line-through; }
+
+    .tb-block { @apply flex items-baseline gap-2 ml-auto; }
+    .tb-label { @apply font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-chalk-mute; }
+    .tb-val   { @apply font-mono text-[13px] font-bold text-chalk-dim; }
+
+    /* Skeleton + state messages */
+    .skeleton-row {
+      @apply rounded-md border border-ink-500 bg-ink-800/60 px-4 py-4 animate-pulse;
+    }
+
+    /* Status pill (round in progress, etc) */
+    .status-pill {
+      @apply inline-flex items-center gap-1.5 rounded-full
+             border border-turf/40 bg-turf/10 px-2.5 py-1
+             font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-turf;
+    }
+    .status-pill.idle { @apply border-chalk-mute/40 bg-chalk-mute/10 text-chalk-mute; }
+  }
+</style>
+</head>
+<body class="min-h-screen text-chalk font-sans antialiased">
+
+<main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+
+  <!-- Header -->
+  <header class="mb-6 sm:mb-8 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <div class="eyebrow mb-2">Bouman Romoser Pool 2026</div>
+      <h1 class="font-display text-xl sm:text-2xl text-chalk leading-tight">
+        Standings <span class="text-chalk-mute">·</span> <span class="text-turf">Live</span>
+      </h1>
+      <p class="mt-1 text-sm text-chalk-mute">Hosted by JB &amp; SD &nbsp;·&nbsp; June 11 to July 19, 2026</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="btn" id="refresh-btn" type="button">Refresh</button>
+    </div>
+  </header>
+
+  <!-- Scoreboard -->
+  <section class="scoreboard mb-6 sm:mb-8">
+    <div class="flex flex-wrap items-baseline justify-between gap-3 mb-4">
+      <div class="scoreboard-title">
+        Score<span class="accent">board</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="status-pill" id="round-status">
+          <span class="live-dot"></span>
+          <span id="round-status-text">Loading</span>
+        </span>
+      </div>
+    </div>
+    <div class="text-[12px] font-mono text-chalk-mute mb-5" id="updated-text">&nbsp;</div>
+
+    <!-- Podium -->
+    <div class="podium" id="podium">
+      <div class="skeleton-row" style="height:9rem;"></div>
+      <div class="skeleton-row" style="height:9rem;"></div>
+      <div class="skeleton-row" style="height:9rem;"></div>
+      <div class="skeleton-row" style="height:9rem;"></div>
+    </div>
+    <div class="mt-3 text-[11px] font-mono uppercase tracking-[0.12em] text-chalk-mute">
+      Top 4 finishers take home prizes
+    </div>
+  </section>
+
+  <!-- Full leaderboard -->
+  <section>
+    <div class="flex items-baseline justify-between mb-3">
+      <h2 class="font-display text-lg sm:text-xl text-chalk">Full Leaderboard</h2>
+      <div class="section-label">Tap a row to see picks</div>
+    </div>
+    <div class="lb-list" id="leaderboard">
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+    </div>
+  </section>
+
+  <!-- Error state -->
+  <section id="error-state" class="hidden mt-6 card p-5">
+    <div class="font-display text-base text-amber mb-2">Couldn't load standings</div>
+    <div class="text-sm text-chalk-dim" id="error-message"></div>
+    <div class="mt-3"><button class="btn btn-primary" onclick="loadStandings()">Try again</button></div>
+  </section>
+
+</main>
+
+<script>
+// ─── Config ────────────────────────────────────────────────────────────────
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-5XOSNW5OzQFbezL3SOhS_iSl9_-aZWTv9QR3V60v4XcQfjX_BztLXqJz_696lGHY/exec';
+
+var GROUP_ORDER = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+var TEAMS_BY_GROUP = {
+  A: ['Mexico','South Korea','South Africa','Czechia'],
+  B: ['Canada','Switzerland','Qatar','Bosnia & Herzegovina'],
+  C: ['Brazil','Morocco','Scotland','Haiti'],
+  D: ['USA','Paraguay','Australia','Türkiye'],
+  E: ['Germany','Curaçao','Ivory Coast','Ecuador'],
+  F: ['Netherlands','Japan','Sweden','Tunisia'],
+  G: ['Belgium','Egypt','Iran','New Zealand'],
+  H: ['Spain','Cape Verde','Saudi Arabia','Uruguay'],
+  I: ['France','Senegal','Iraq','Norway'],
+  J: ['Argentina','Algeria','Austria','Jordan'],
+  K: ['Portugal','DR Congo','Uzbekistan','Colombia'],
+  L: ['England','Croatia','Ghana','Panama']
+};
+var TEAM_TO_GROUP = null;
+function getTeamGroup(team) {
+  if (!TEAM_TO_GROUP) {
+    TEAM_TO_GROUP = {};
+    GROUP_ORDER.forEach(function(g) {
+      TEAMS_BY_GROUP[g].forEach(function(t) { TEAM_TO_GROUP[t] = g; });
+    });
+  }
+  return TEAM_TO_GROUP[team] || '';
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+// ─── State ─────────────────────────────────────────────────────────────────
+var standings = null; // { players, actuals, updated }
+
+// ─── Load ──────────────────────────────────────────────────────────────────
+function loadStandings() {
+  document.getElementById('error-state').classList.add('hidden');
+
+  var btn = document.getElementById('refresh-btn');
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
+
+  var url = SCRIPT_URL + '?route=standings&t=' + Date.now();
+  fetch(url, { method: 'GET', cache: 'no-store' })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data || data.ok === false) {
+        throw new Error((data && data.error) || 'Unknown error');
+      }
+      standings = data;
+      render();
+    })
+    .catch(function(err) {
+      document.getElementById('error-message').textContent = String(err && err.message || err);
+      document.getElementById('error-state').classList.remove('hidden');
+    })
+    .finally(function() {
+      btn.disabled = false;
+      btn.textContent = 'Refresh';
+    });
+}
+
+// ─── Render ────────────────────────────────────────────────────────────────
+function render() {
+  renderRoundStatus();
+  renderUpdated();
+  renderPodium();
+  renderLeaderboard();
+}
+
+function currentRoundLabel() {
+  var a = standings.actuals;
+  if (a.winner) return 'Champion crowned';
+  if (a.final.length > 0) return 'Final';
+  if (a.sf.length > 0) return 'Semifinals';
+  if (a.qf.length > 0) return 'Quarterfinals';
+  if (a.r16.length > 0) return 'Round of 16';
+  if (a.r32.length > 0) return 'Round of 32';
+  return 'Awaiting kickoff';
+}
+
+function renderRoundStatus() {
+  var label = currentRoundLabel();
+  var pill = document.getElementById('round-status');
+  var text = document.getElementById('round-status-text');
+  text.textContent = label;
+  if (label === 'Awaiting kickoff') {
+    pill.classList.add('idle');
+  } else {
+    pill.classList.remove('idle');
+  }
+}
+
+function renderUpdated() {
+  var el = document.getElementById('updated-text');
+  if (!standings.updated) {
+    // No actuals entered yet — nothing meaningful to show
+    el.textContent = '';
+    return;
+  }
+  el.textContent = 'Last result entered ' + formatRelativeTime(standings.updated);
+}
+
+function formatRelativeTime(iso) {
+  var then = new Date(iso);
+  var now = new Date();
+  var seconds = Math.max(0, Math.round((now - then) / 1000));
+
+  if (seconds < 45) return 'just now';
+  if (seconds < 90) return '1 minute ago';
+
+  var minutes = Math.round(seconds / 60);
+  if (minutes < 60) return minutes + ' minutes ago';
+
+  var hours = Math.round(minutes / 60);
+  if (hours < 24) return hours + (hours === 1 ? ' hour ago' : ' hours ago');
+
+  var days = Math.round(hours / 24);
+  if (days < 7) return days + (days === 1 ? ' day ago' : ' days ago');
+
+  // Fall back to an absolute date for older edits
+  var hh = then.getHours();
+  var mm = then.getMinutes();
+  var ampm = hh >= 12 ? 'PM' : 'AM';
+  var hh12 = ((hh + 11) % 12) + 1;
+  var mmStr = mm < 10 ? ('0' + mm) : mm;
+  var date = then.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  return 'on ' + date + ' at ' + hh12 + ':' + mmStr + ' ' + ampm;
+}
+
+function renderPodium() {
+  var host = document.getElementById('podium');
+  var labels = ['Champion', 'Runner-up', 'Third', 'In the money'];
+  var classes = ['podium-1','podium-2','podium-3','podium-4'];
+  var ranks = ['1st', '2nd', '3rd', '4th'];
+
+  var html = '';
+  for (var i = 0; i < 4; i++) {
+    var p = standings.players[i];
+    if (!p) {
+      html += '<div class="podium-card podium-' + (i+1) + ' empty">' +
+                '<div class="flex items-baseline justify-between">' +
+                  '<div class="podium-rank">' + ranks[i] + '</div>' +
+                  '<div class="podium-label">' + labels[i] + '</div>' +
+                '</div>' +
+                '<div class="podium-name text-chalk-mute italic">Awaiting picks</div>' +
+                '<div class="podium-pts">—</div>' +
+                '<div class="podium-pts-sub">No score yet</div>' +
+              '</div>';
+      continue;
+    }
+    html += '<div class="podium-card ' + classes[i] + '">' +
+              '<div class="flex items-baseline justify-between">' +
+                '<div class="podium-rank">' + ranks[i] + '</div>' +
+                '<div class="podium-label">' + labels[i] + '</div>' +
+              '</div>' +
+              '<div class="podium-name">' + escapeHtml(p.name) + '</div>' +
+              '<div class="podium-pts">' + p.total + '</div>' +
+              '<div class="podium-pts-sub">' + (p.total === 1 ? 'point' : 'points') + ' · max 192</div>' +
+            '</div>';
+  }
+  host.innerHTML = html;
+}
+
+function renderLeaderboard() {
+  var host = document.getElementById('leaderboard');
+  if (!standings.players.length) {
+    host.innerHTML =
+      '<div class="card p-5 text-center text-chalk-mute italic">' +
+        'No picks submitted yet. Check back soon.' +
+      '</div>';
+    return;
+  }
+
+  var html = '';
+  // Compute display rank with ties: same total → same rank.
+  var lastTotal = null;
+  var lastDisplayRank = 0;
+  for (var i = 0; i < standings.players.length; i++) {
+    var p = standings.players[i];
+    var displayRank;
+    if (p.total === lastTotal) {
+      displayRank = lastDisplayRank;
+    } else {
+      displayRank = i + 1;
+      lastDisplayRank = displayRank;
+      lastTotal = p.total;
+    }
+
+    var topClass = displayRank <= 4 ? ' top-' + displayRank : '';
+    var champClass = '';
+    if (standings.actuals.winner && p.picks.winner) {
+      champClass = (p.picks.winner === standings.actuals.winner) ? ' champ-correct' : ' champ-wrong';
+    }
+
+    var champTeam = p.picks.winner ? escapeHtml(p.picks.winner) : '—';
+    var champLine =
+      '<div class="lb-champ-pick">' +
+        '<span class="label">Pick to win:</span> ' +
+        '<span class="team">' + champTeam + '</span>' +
+      '</div>';
+
+    html += '<details class="lb-row' + topClass + champClass + '">' +
+              '<summary>' +
+                '<div class="lb-rank">' + displayRank + '</div>' +
+                '<div class="lb-name-block">' +
+                  '<div class="lb-name">' + escapeHtml(p.name) + '</div>' +
+                  champLine +
+                '</div>' +
+                '<div class="lb-pts">' + p.total +
+                  ' <span class="lb-pts-sub">PTS</span>' +
+                '</div>' +
+                '<div class="lb-caret">▾</div>' +
+              '</summary>' +
+              '<div class="lb-body">' + renderPicksBody(p) + '</div>' +
+            '</details>';
+  }
+  host.innerHTML = html;
+}
+
+// ─── Picks body (condensed multi-column) ───────────────────────────────────
+function renderPicksBody(player) {
+  var pi = player.picks;
+  var act = standings.actuals;
+
+  var r32Set = new Set(act.r32);
+  var r16Set = new Set(act.r16);
+  var qfSet  = new Set(act.qf);
+  var sfSet  = new Set(act.sf);
+  var fSet   = new Set(act.final);
+
+  // A round is treated as "scored" only when its actuals are fully entered.
+  // This avoids flashing false eliminations while Sean enters advancers one
+  // at a time after a round wraps.
+  var r32Scored = act.r32.length >= 32;
+  var r16Scored = act.r16.length >= 16;
+  var qfScored  = act.qf.length  >= 8;
+  var sfScored  = act.sf.length  >= 4;
+  var fScored   = act.final.length >= 2;
+
+  // R32: 12 group cards
+  var r32Html = '<div class="picks-grid-r32">';
+  GROUP_ORDER.forEach(function(g) {
+    var top2 = (pi.groups && pi.groups[g]) || ['',''];
+    var wcs = (pi.wildcards || []).filter(function(t) { return t && getTeamGroup(t) === g; });
+    r32Html += '<div class="pick-card">' +
+                 '<div class="pick-card-head">' +
+                   '<div class="pick-card-title">Group ' + g + '</div>' +
+                   '<div class="pick-card-pts">1 PT</div>' +
+                 '</div>';
+    top2.forEach(function(t) {
+      r32Html += pickRow(t, r32Set, r32Scored, 'TOP 2', 'pick-tag-top2');
+    });
+    wcs.forEach(function(t) {
+      r32Html += pickRow(t, r32Set, r32Scored, 'WC', 'pick-tag-wc');
+    });
+    r32Html += '</div>';
+  });
+  r32Html += '</div>';
+
+  // KO: 4 columns
+  var koHtml = '<div class="mt-3 picks-grid-ko">' +
+    pickKoCard('Round of 16', '2 PTS', pi.r16, r16Set, r16Scored) +
+    pickKoCard('Quarterfinals', '4 PTS', pi.qf, qfSet, qfScored) +
+    pickKoCard('Semifinals', '8 PTS', pi.sf, sfSet, sfScored) +
+    pickKoCard('Finals', '16 PTS', pi.final, fSet, fScored) +
+  '</div>';
+
+  // Champion + tiebreak
+  var winnerCorrect = pi.winner && act.winner && pi.winner === act.winner;
+  var winnerWrong = pi.winner && act.winner && pi.winner !== act.winner;
+  var champClass = winnerWrong ? 'champ-strip dead' : 'champ-strip';
+  var winnerDisplay = pi.winner
+    ? escapeHtml(pi.winner) + (getTeamGroup(pi.winner)
+        ? ' <span class="font-mono text-[11px] uppercase tracking-wider text-chalk-mute ml-1">Group ' + getTeamGroup(pi.winner) + '</span>'
+        : '')
+    : '<span class="text-chalk-mute italic font-sans">—</span>';
+  var champLabel = winnerCorrect ? 'Champion · 32 PTS · Correct'
+                  : winnerWrong   ? 'Champion · 0 PTS'
+                  :                 'Champion · 32 PTS';
+
+  var actualWinnerLine = act.winner
+    ? '<div class="font-mono text-[10px] uppercase tracking-wider text-chalk-mute mt-1">Actual: ' + escapeHtml(act.winner) + '</div>'
+    : '';
+
+  var tbVal = pi.tiebreak !== '' && pi.tiebreak != null ? pi.tiebreak : '—';
+  var tbActual = act.tiebreak !== '' && act.tiebreak != null
+    ? ' <span class="text-chalk-mute"> · actual ' + escapeHtml(act.tiebreak) + '</span>'
+    : '';
+
+  var champHtml = '<div class="' + champClass + '">' +
+    '<div class="champ-block">' +
+      '<div>' +
+        '<div class="champ-label">' + champLabel + '</div>' +
+        '<div class="champ-team">' + winnerDisplay + '</div>' +
+        actualWinnerLine +
+      '</div>' +
+    '</div>' +
+    '<div class="tb-block">' +
+      '<span class="tb-label">Tiebreaker</span>' +
+      '<span class="tb-val">' + escapeHtml(tbVal) + ' goals' + tbActual + '</span>' +
+    '</div>' +
+  '</div>';
+
+  return r32Html + koHtml + champHtml;
+}
+
+function pickRow(team, actualSet, hasActuals, tag, tagClass) {
+  if (!team) {
+    return '<div class="pick-row pending">' +
+      '<span class="pick-name text-chalk-mute italic">—</span>' +
+      '<span class="pick-tag ' + tagClass + '">' + tag + '</span>' +
+    '</div>';
+  }
+  var status;
+  if (!hasActuals) status = 'pending';
+  else status = actualSet.has(team) ? 'alive' : 'dead';
+  return '<div class="pick-row ' + status + '">' +
+    '<span class="pick-name">' + escapeHtml(team) + '</span>' +
+    '<span class="pick-tag ' + tagClass + '">' + tag + '</span>' +
+  '</div>';
+}
+
+function pickKoCard(title, pts, teams, actualSet, hasActuals) {
+  var rows = '';
+  if (!teams || teams.length === 0) {
+    rows = '<div class="pick-row pending"><span class="pick-name text-chalk-mute italic">No picks</span></div>';
+  } else {
+    teams.forEach(function(t) {
+      if (!t) {
+        rows += '<div class="pick-row pending"><span class="pick-name text-chalk-mute italic">—</span></div>';
+        return;
+      }
+      var g = getTeamGroup(t);
+      var status = !hasActuals ? 'pending' : (actualSet.has(t) ? 'alive' : 'dead');
+      rows += '<div class="pick-row ' + status + '">' +
+        '<span class="pick-name">' + escapeHtml(t) + '</span>' +
+        (g ? '<span class="pick-tag pick-tag-top2">' + g + '</span>' : '') +
+      '</div>';
+    });
+  }
+  return '<div class="pick-card">' +
+    '<div class="pick-card-head">' +
+      '<div class="pick-card-title">' + title + '</div>' +
+      '<div class="pick-card-pts">' + pts + '</div>' +
+    '</div>' +
+    rows +
+  '</div>';
+}
+
+// ─── Wire up ──────────────────────────────────────────────────────────────
+document.getElementById('refresh-btn').addEventListener('click', loadStandings);
+loadStandings();
+</script>
+</body>
+</html>

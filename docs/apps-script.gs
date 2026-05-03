@@ -18,6 +18,31 @@
 
 var SHEET_NAME = 'Picks';
 var GROUP_ORDER = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+var TEAMS_BY_GROUP = {
+  A: ['Mexico','South Korea','South Africa','Czechia'],
+  B: ['Canada','Switzerland','Qatar','Bosnia & Herzegovina'],
+  C: ['Brazil','Morocco','Scotland','Haiti'],
+  D: ['USA','Paraguay','Australia','Türkiye'],
+  E: ['Germany','Curaçao','Ivory Coast','Ecuador'],
+  F: ['Netherlands','Japan','Sweden','Tunisia'],
+  G: ['Belgium','Egypt','Iran','New Zealand'],
+  H: ['Spain','Cape Verde','Saudi Arabia','Uruguay'],
+  I: ['France','Senegal','Iraq','Norway'],
+  J: ['Argentina','Algeria','Austria','Jordan'],
+  K: ['Portugal','DR Congo','Uzbekistan','Colombia'],
+  L: ['England','Croatia','Ghana','Panama']
+};
+
+var TEAM_TO_GROUP_ = null;
+function getTeamGroup(team) {
+  if (!TEAM_TO_GROUP_) {
+    TEAM_TO_GROUP_ = {};
+    GROUP_ORDER.forEach(function(g) {
+      TEAMS_BY_GROUP[g].forEach(function(t) { TEAM_TO_GROUP_[t] = g; });
+    });
+  }
+  return TEAM_TO_GROUP_[team] || '';
+}
 
 function doPost(e) {
   try {
@@ -25,14 +50,149 @@ function doPost(e) {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
     if (!sheet) throw new Error('Sheet "' + SHEET_NAME + '" not found');
     sheet.appendRow(buildRow(payload));
+    // Email is best-effort — never let an email failure fail the submission
+    try { sendPicksEmail(payload); } catch (mailErr) { Logger.log('Email failed: ' + mailErr); }
     return jsonResponse({ ok: true });
   } catch (err) {
     return jsonResponse({ ok: false, error: String(err) });
   }
 }
 
-function doGet() {
+function doGet(e) {
+  var route = (e && e.parameter && e.parameter.route) || '';
+  if (route === 'standings') {
+    return jsonResponse(getStandings());
+  }
   return jsonResponse({ ok: true, message: 'BR Pool 2026 endpoint is alive' });
+}
+
+// ─── Simple trigger: track when actuals were last edited ───────────────────
+// Fires on any user edit. We record a timestamp only when the edit lands in
+// Pool Grid!B5:B68 (the Actual-advancers column) so the standings page can
+// show a real "Updated X minutes ago" instead of the current server time.
+//
+// Simple triggers can't call services that require auth, but PropertiesService
+// is allowed — that's all this needs.
+function onEdit(e) {
+  try {
+    if (!e || !e.range) return;
+    var sheet = e.range.getSheet();
+    if (sheet.getName() !== 'Pool Grid') return;
+    var col = e.range.getColumn();
+    var startRow = e.range.getRow();
+    var endRow = startRow + e.range.getNumRows() - 1;
+    // Actuals: column B (col 2), rows 5..68
+    if (col !== 2) return;
+    if (endRow < 5 || startRow > 68) return;
+    PropertiesService.getScriptProperties().setProperty(
+      'POOL_GRID_LAST_UPDATED', new Date().toISOString()
+    );
+  } catch (err) {
+    // Simple triggers must never throw
+  }
+}
+
+// ─── Standings endpoint ─────────────────────────────────────────────────────
+// Reads the Pool Grid tab and returns a JSON snapshot of every player's picks,
+// their total points, their rank, and the actual round-by-round advancers.
+// The standings page hits this on load via fetch.
+function getStandings() {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var grid = ss.getSheetByName('Pool Grid');
+    if (!grid) {
+      return { ok: false, error: 'Pool Grid sheet not found. Run buildPoolGrid() first.' };
+    }
+
+    var lastCol = grid.getLastColumn();
+    if (lastCol < 3) {
+      return { ok: true, players: [], actuals: emptyActuals_(), updated: new Date().toISOString() };
+    }
+    var numPlayers = lastCol - 2;
+
+    // Rows 2/3/4 of player columns: name, total points, rank
+    var meta = grid.getRange(2, 3, 3, numPlayers).getValues();
+    var nameRow  = meta[0];
+    var totalRow = meta[1];
+    var rankRow  = meta[2];
+
+    // Actual advancers in column B, rows 5..68 (64 slots: 32 R32, 16 R16, 8 QF,
+    // 4 SF, 2 Final, 1 Winner, 1 Tiebreak goals).
+    var actualsCol = grid.getRange(5, 2, 64, 1).getValues().map(function(r) {
+      return String(r[0] || '').trim();
+    });
+
+    // All player picks for those same 64 rows.
+    var picksBlock = grid.getRange(5, 3, 64, numPlayers).getValues();
+
+    function nonEmpty(arr) { return arr.filter(function(s) { return s !== ''; }); }
+
+    var actuals = {
+      r32:      nonEmpty(actualsCol.slice(0, 32)),
+      r16:      nonEmpty(actualsCol.slice(32, 48)),
+      qf:       nonEmpty(actualsCol.slice(48, 56)),
+      sf:       nonEmpty(actualsCol.slice(56, 60)),
+      final:    nonEmpty(actualsCol.slice(60, 62)),
+      winner:   actualsCol[62] || '',
+      tiebreak: actualsCol[63] || ''
+    };
+
+    var players = [];
+    for (var i = 0; i < numPlayers; i++) {
+      var name = String(nameRow[i] || '').trim();
+      if (!name) continue;
+      var col = picksBlock.map(function(r) { return String(r[i] || '').trim(); });
+
+      // Group picks: rows 0..23 are A1, A2, B1, B2, …, L1, L2
+      var groups = {};
+      GROUP_ORDER.forEach(function(g, gi) {
+        groups[g] = [col[gi * 2], col[gi * 2 + 1]];
+      });
+
+      players.push({
+        name:   name,
+        total:  Number(totalRow[i]) || 0,
+        rank:   Number(rankRow[i])  || 0,
+        picks: {
+          groups:    groups,
+          wildcards: col.slice(24, 32),
+          r16:       col.slice(32, 48),
+          qf:        col.slice(48, 56),
+          sf:        col.slice(56, 60),
+          final:     col.slice(60, 62),
+          winner:    col[62] || '',
+          tiebreak:  col[63] || ''
+        }
+      });
+    }
+
+    // Sort by total desc, then alpha so ties are stable.
+    players.sort(function(a, b) {
+      if (b.total !== a.total) return b.total - a.total;
+      return a.name.localeCompare(b.name);
+    });
+
+    // "Updated" reflects the last time an actual advancer was entered into
+    // Pool Grid!B5:B68 (recorded by the onEdit trigger). If that property
+    // hasn't been set yet (e.g. before any actuals are filled in), return
+    // null so the page can hide the timestamp instead of showing a misleading
+    // "now".
+    var lastUpdated = PropertiesService.getScriptProperties()
+      .getProperty('POOL_GRID_LAST_UPDATED') || null;
+
+    return {
+      ok: true,
+      players: players,
+      actuals: actuals,
+      updated: lastUpdated
+    };
+  } catch (err) {
+    return { ok: false, error: String(err) };
+  }
+}
+
+function emptyActuals_() {
+  return { r32: [], r16: [], qf: [], sf: [], final: [], winner: '', tiebreak: '' };
 }
 
 function buildRow(p) {
@@ -68,6 +228,149 @@ function jsonResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ─── Confirmation email ─────────────────────────────────────────────────────
+function sendPicksEmail(p) {
+  if (!p || !p.email) return;
+  var subject = "Your Bouman Romoser Pool 2026 picks";
+  GmailApp.sendEmail(p.email, subject, buildPicksEmailPlain(p), {
+    htmlBody: buildPicksEmailHtml(p),
+    name: 'Bouman Romoser Pool 2026'
+  });
+}
+
+function buildPicksEmailHtml(p) {
+  var name = escapeHtml_(p.name || 'there');
+  var winner = escapeHtml_(p.winner || '—');
+  var tiebreak = escapeHtml_(String(p.tiebreak || '—'));
+  var winnerGroup = p.winner ? getTeamGroup(p.winner) : '';
+
+  // R32 by group
+  var groupBlocks = '';
+  GROUP_ORDER.forEach(function(g) {
+    var top2 = (p.groups && p.groups[g]) || [];
+    var wcs = (p.wildcards || []).filter(function(t) { return getTeamGroup(t) === g; });
+    if (top2.length === 0 && wcs.length === 0) return;
+    var rows = '';
+    top2.forEach(function(t) {
+      rows += '<tr><td style="padding:4px 0;color:#0f172a;">' + escapeHtml_(t) + '</td>' +
+              '<td style="padding:4px 0;text-align:right;font-size:11px;color:#64748b;letter-spacing:0.06em;text-transform:uppercase;">Top 2</td></tr>';
+    });
+    wcs.forEach(function(t) {
+      rows += '<tr><td style="padding:4px 0;color:#0f172a;">' + escapeHtml_(t) + '</td>' +
+              '<td style="padding:4px 0;text-align:right;font-size:11px;color:#b87a1f;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">WC</td></tr>';
+    });
+    groupBlocks +=
+      '<div style="margin-bottom:14px;">' +
+        '<div style="font-size:12px;font-weight:700;color:#14a85c;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Group ' + g + '</div>' +
+        '<table style="width:100%;border-collapse:collapse;font-size:14px;">' + rows + '</table>' +
+      '</div>';
+  });
+
+  var koSections =
+    koSectionHtml('Round of 16', '2 pts each', p.r16) +
+    koSectionHtml('Quarterfinals', '4 pts each', p.qf) +
+    koSectionHtml('Semifinals', '8 pts each', p.sf) +
+    koSectionHtml('Finals', '16 pts each', p.final);
+
+  return [
+    '<!doctype html>',
+    '<html><body style="margin:0;padding:0;background:#f6f7fb;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#0f172a;">',
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f7fb;padding:24px 0;">',
+    '<tr><td align="center">',
+    '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">',
+
+    '<tr><td style="padding:28px 28px 20px;border-bottom:1px solid #e5e7eb;">',
+    '<div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:0.18em;text-transform:uppercase;">Submission received</div>',
+    '<div style="font-size:24px;font-weight:800;color:#0f172a;margin-top:6px;">Your picks are in, ' + name + '.</div>',
+    '<div style="font-size:14px;color:#475569;margin-top:8px;line-height:1.5;">Here\'s what we recorded. The tournament kicks off June 11, 2026. Standings updates will land in your inbox as the rounds play out.</div>',
+    '</td></tr>',
+
+    '<tr><td style="padding:24px 28px;">',
+    '<div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;">Round of 32 · 1 pt each</div>',
+    groupBlocks,
+    '</td></tr>',
+
+    '<tr><td style="padding:0 28px 8px;">',
+    koSections,
+    '</td></tr>',
+
+    '<tr><td style="padding:8px 28px 24px;">',
+    '<div style="background:#f0fdf4;border:1px solid #14a85c;border-radius:8px;padding:18px;text-align:center;">',
+      '<div style="font-size:11px;font-weight:700;color:#14a85c;letter-spacing:0.18em;text-transform:uppercase;">Champion · 32 pts</div>',
+      '<div style="font-size:22px;font-weight:800;color:#0f172a;margin-top:6px;">' + winner + (winnerGroup ? ' <span style="font-size:13px;font-weight:600;color:#64748b;">· Group ' + winnerGroup + '</span>' : '') + '</div>',
+      '<div style="font-size:12px;color:#64748b;margin-top:10px;">Tiebreaker: ' + tiebreak + ' goals in the Final</div>',
+    '</div>',
+    '</td></tr>',
+
+    '<tr><td style="padding:18px 28px 24px;border-top:1px solid #e5e7eb;font-size:13px;color:#64748b;line-height:1.5;">',
+    'See something off? Reply to this email and we\'ll fix it. You can also resubmit at <a href="https://seandavidromoser-del.github.io/br-pool-2026/" style="color:#14a85c;text-decoration:underline;">the form</a> any time before kickoff.',
+    '<div style="margin-top:14px;">— JB &amp; SD</div>',
+    '</td></tr>',
+
+    '</table>',
+    '</td></tr>',
+    '</table>',
+    '</body></html>'
+  ].join('');
+}
+
+function koSectionHtml(title, sub, teams) {
+  if (!teams || teams.length === 0) return '';
+  var rows = teams.map(function(t) {
+    var g = getTeamGroup(t);
+    return '<tr>' +
+      '<td style="padding:4px 0;color:#0f172a;">' + escapeHtml_(t) + '</td>' +
+      '<td style="padding:4px 0;text-align:right;font-size:11px;color:#94a3b8;letter-spacing:0.06em;">' + (g ? 'Group ' + g : '') + '</td>' +
+    '</tr>';
+  }).join('');
+  return '<div style="margin-bottom:18px;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">' +
+      '<span style="font-size:13px;font-weight:700;color:#0f172a;">' + title + '</span>' +
+      '<span style="font-size:11px;font-weight:700;color:#14a85c;letter-spacing:0.08em;text-transform:uppercase;">' + sub + '</span>' +
+    '</div>' +
+    '<table style="width:100%;border-collapse:collapse;font-size:14px;">' + rows + '</table>' +
+  '</div>';
+}
+
+function buildPicksEmailPlain(p) {
+  var lines = [];
+  lines.push('Your picks are in, ' + (p.name || 'there') + '.');
+  lines.push('');
+  lines.push('Round of 32 (1 pt each):');
+  GROUP_ORDER.forEach(function(g) {
+    var top2 = (p.groups && p.groups[g]) || [];
+    var wcs = (p.wildcards || []).filter(function(t) { return getTeamGroup(t) === g; });
+    if (top2.length === 0 && wcs.length === 0) return;
+    lines.push('  Group ' + g + ':');
+    top2.forEach(function(t) { lines.push('    - ' + t + ' (Top 2)'); });
+    wcs.forEach(function(t) { lines.push('    - ' + t + ' (Wildcard)'); });
+  });
+  lines.push('');
+  ['Round of 16:2', 'Quarterfinals:4', 'Semifinals:8', 'Finals:16'].forEach(function(s) {
+    var parts = s.split(':');
+    var key = parts[0] === 'Round of 16' ? 'r16' : parts[0] === 'Quarterfinals' ? 'qf' : parts[0] === 'Semifinals' ? 'sf' : 'final';
+    var teams = p[key] || [];
+    if (teams.length === 0) return;
+    lines.push(parts[0] + ' (' + parts[1] + ' pts each):');
+    teams.forEach(function(t) { lines.push('  - ' + t); });
+    lines.push('');
+  });
+  lines.push('Champion (32 pts): ' + (p.winner || '—'));
+  lines.push('Tiebreaker: ' + (p.tiebreak || '—') + ' goals in the Final');
+  lines.push('');
+  lines.push('See something off? Reply to this email and we\'ll fix it.');
+  lines.push('You can resubmit at https://seandavidromoser-del.github.io/br-pool-2026/ any time before kickoff.');
+  lines.push('');
+  lines.push('— JB & SD');
+  return lines.join('\n');
+}
+
+function escapeHtml_(s) {
+  return String(s).replace(/[&<>"']/g, function(c) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
 }
 
 // ─── One-time setup: write header row to the Picks tab ──────────────────────
@@ -295,6 +598,39 @@ function columnToLetter(col) {
     col = Math.floor((col - mod) / 26);
   }
   return letter;
+}
+
+// ─── Dev helper: send a sample picks email to yourself (no sheet write) ────
+// Run from the Apps Script editor to preview the confirmation email layout.
+function testEmail() {
+  var payload = sampleTestPayload_();
+  payload.email = Session.getActiveUser().getEmail();
+  payload.name = 'Sean';
+  sendPicksEmail(payload);
+  Logger.log('Sent sample picks email to ' + payload.email);
+}
+
+function sampleTestPayload_() {
+  return {
+    name: 'Test User',
+    email: 'test@example.com',
+    tiebreak: '3',
+    groups: {
+      A: ['Mexico', 'South Korea'], B: ['Canada', 'Switzerland'],
+      C: ['Brazil', 'Morocco'], D: ['USA', 'Paraguay'],
+      E: ['Germany', 'Ecuador'], F: ['Netherlands', 'Japan'],
+      G: ['Belgium', 'Egypt'], H: ['Spain', 'Uruguay'],
+      I: ['France', 'Senegal'], J: ['Argentina', 'Austria'],
+      K: ['Portugal', 'Colombia'], L: ['England', 'Croatia']
+    },
+    wildcards: ['Haiti','Sweden','Ghana','Norway','Uruguay','Ecuador','Japan','Morocco'],
+    r16: ['Mexico','Brazil','USA','Germany','Netherlands','Belgium','Spain','France',
+          'Argentina','Portugal','England','Canada','Japan','Morocco','Colombia','Uruguay'],
+    qf: ['Brazil','Germany','Spain','France','Argentina','Portugal','England','Netherlands'],
+    sf: ['Brazil','France','Argentina','England'],
+    final: ['Brazil','Argentina'],
+    winner: 'Brazil'
+  };
 }
 
 // ─── Dev helper: test the doPost pipeline without a real HTTP request ──────
