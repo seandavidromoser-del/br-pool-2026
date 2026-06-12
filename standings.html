@@ -520,15 +520,16 @@ function renderPodium() {
   var labels = ['Champion', 'Runner-up', 'Third', 'In the money'];
   var classes = ['podium-1','podium-2','podium-3','podium-4'];
   var ranks = ['1st', '2nd', '3rd', '4th'];
+  var prizes = ['$480', '$240', '$144', '$96'];
 
   var html = '';
   for (var i = 0; i < 4; i++) {
     var p = standings.players[i];
     if (!p) {
       html += '<div class="podium-card podium-' + (i+1) + ' empty">' +
-                '<div class="flex items-baseline justify-between">' +
+                '<div class="flex items-end justify-between">' +
                   '<div class="podium-rank">' + ranks[i] + '</div>' +
-                  '<div class="podium-label">' + labels[i] + '</div>' +
+                  '<div class="podium-label text-right">' + labels[i] + '<br>' + prizes[i] + '</div>' +
                 '</div>' +
                 '<div class="podium-name text-chalk-mute italic">Awaiting picks</div>' +
                 '<div class="podium-pts">—</div>' +
@@ -537,9 +538,9 @@ function renderPodium() {
       continue;
     }
     html += '<div class="podium-card ' + classes[i] + '">' +
-              '<div class="flex items-baseline justify-between">' +
+              '<div class="flex items-end justify-between">' +
                 '<div class="podium-rank">' + ranks[i] + '</div>' +
-                '<div class="podium-label">' + labels[i] + '</div>' +
+                '<div class="podium-label text-right">' + labels[i] + '<br>' + prizes[i] + '</div>' +
               '</div>' +
               '<div class="podium-name">' + escapeHtml(p.name) + '</div>' +
               '<div class="podium-pts">' + p.total + '</div>' +
