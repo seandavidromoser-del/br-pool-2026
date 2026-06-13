@@ -308,6 +308,90 @@
              font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-turf;
     }
     .status-pill.idle { @apply border-chalk-mute/40 bg-chalk-mute/10 text-chalk-mute; }
+
+    /* Champion-pick groups ("Pick Your Side") */
+    /* Section gets its own framed zone with a diagonal gradient wash so it
+       reads as distinct from the scoreboard and leaderboard. */
+    .pick-side {
+      @apply relative overflow-hidden rounded-2xl border px-4 py-5 sm:px-6 sm:py-6;
+      border-color: rgba(34,255,136,0.22);
+      background-color: rgba(10,33,23,0.7);
+      background-image:
+        linear-gradient(135deg, rgba(34,255,136,0.1), transparent 42%),
+        radial-gradient(circle at 96% 0%, rgba(255,181,71,0.07), transparent 52%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 22px);
+      animation: pickSidePulse 2.6s ease-in-out infinite;
+    }
+    @keyframes pickSidePulse {
+      0%, 100% {
+        border-color: rgba(34,255,136,0.2);
+        box-shadow: 0 0 22px -12px rgba(34,255,136,0.25), 0 0 0 0 rgba(34,255,136,0);
+      }
+      50% {
+        border-color: rgba(34,255,136,0.6);
+        box-shadow: 0 0 40px -8px rgba(34,255,136,0.5), 0 0 0 1px rgba(34,255,136,0.35);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pick-side {
+        animation: none;
+        border-color: rgba(34,255,136,0.4);
+        box-shadow: 0 0 28px -10px rgba(34,255,136,0.3);
+      }
+    }
+    /* Columns are popularity tiers: all panels in a column share the same
+       number of backers, so panels within a column are the same height. */
+    .wg-cols { @apply flex flex-wrap gap-3 sm:gap-4 items-start; }
+    .wg-col { @apply flex flex-col gap-4 min-w-0; flex: 1 1 160px; }
+    .wg-col-head {
+      @apply flex items-baseline gap-2 pb-1.5 border-b border-ink-500/60;
+    }
+    .wg-col-count { @apply font-display text-lg text-chalk leading-none; }
+    .wg-col-label {
+      @apply font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-chalk-mute;
+    }
+    .wg-panel {
+      @apply rounded-lg border border-ink-400 bg-ink-800 overflow-hidden;
+      box-shadow: 0 8px 20px -10px rgba(0,0,0,0.6);
+    }
+    .wg-panel.is-winner {
+      border-color: rgba(34,255,136,0.5);
+      box-shadow: 0 0 0 1px rgba(34,255,136,0.4), 0 0 24px -6px rgba(34,255,136,0.4);
+    }
+    .wg-head {
+      @apply flex items-center gap-3 px-3.5 py-3.5 border-b-2 border-ink-400 bg-ink-600/70;
+    }
+    .wg-panel.is-winner .wg-head {
+      @apply border-turf/40;
+      background:
+        radial-gradient(circle at 12% 50%, rgba(34,255,136,0.2), transparent 65%),
+        rgba(15,51,34,0.5);
+    }
+    .wg-flag {
+      @apply shrink-0 rounded-sm object-cover;
+      width: 32px; height: 24px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 2px 6px -2px rgba(0,0,0,0.7);
+    }
+    .wg-flag-none { @apply shrink-0 text-2xl leading-none; }
+    .wg-country {
+      @apply min-w-0 flex-1 font-display text-[15px] text-chalk leading-tight truncate;
+      letter-spacing: 0.01em;
+    }
+    .wg-list { @apply flex flex-col; }
+    .wg-entrant {
+      @apply flex items-center gap-2 px-3 py-1.5 text-[13px]
+             border-b border-ink-500/30;
+    }
+    .wg-entrant:last-child { @apply border-b-0; }
+    .wg-rank {
+      @apply font-mono text-[10.5px] font-bold text-chalk-mute shrink-0 text-right;
+      width: 1.9rem;
+    }
+    .wg-rank.top-1 { color: #ffb547; }
+    .wg-rank.top-2 { color: #cdd4e3; }
+    .wg-rank.top-3 { color: #d8893a; }
+    .wg-rank.top-4 { color: #22ff88; }
+    .wg-entrant-name { @apply text-chalk-dim truncate; }
   }
 </style>
 </head>
@@ -353,6 +437,21 @@
     </div>
     <div class="mt-3 text-[11px] font-mono uppercase tracking-[0.12em] text-chalk-mute">
       Top 4 finishers take home prizes
+    </div>
+  </section>
+
+  <!-- Pick Your Side -->
+  <section class="pick-side mb-6 sm:mb-8">
+    <div class="flex items-baseline justify-between mb-4">
+      <h2 class="font-display text-lg sm:text-xl text-chalk">Fly Your Flag</h2>
+      <div class="section-label">Grouped by title pick</div>
+    </div>
+    <div class="wg-cols" id="winner-groups">
+      <div class="skeleton-row" style="height:8rem;flex:1 1 160px;"></div>
+      <div class="skeleton-row" style="height:8rem;flex:1 1 160px;"></div>
+      <div class="skeleton-row" style="height:8rem;flex:1 1 160px;"></div>
+      <div class="skeleton-row" style="height:8rem;flex:1 1 160px;"></div>
+      <div class="skeleton-row" style="height:8rem;flex:1 1 160px;"></div>
     </div>
   </section>
 
@@ -410,6 +509,35 @@ function getTeamGroup(team) {
   return TEAM_TO_GROUP[team] || '';
 }
 
+// ISO 3166-1 alpha-2 codes for flag emoji. Scotland/England use subdivision flags.
+var FLAG_ISO = {
+  'Mexico':'MX','South Korea':'KR','South Africa':'ZA','Czechia':'CZ',
+  'Canada':'CA','Switzerland':'CH','Qatar':'QA','Bosnia & Herzegovina':'BA',
+  'Brazil':'BR','Morocco':'MA','Haiti':'HT',
+  'USA':'US','Paraguay':'PY','Australia':'AU','Türkiye':'TR',
+  'Germany':'DE','Curaçao':'CW','Ivory Coast':'CI','Ecuador':'EC',
+  'Netherlands':'NL','Japan':'JP','Sweden':'SE','Tunisia':'TN',
+  'Belgium':'BE','Egypt':'EG','Iran':'IR','New Zealand':'NZ',
+  'Spain':'ES','Cape Verde':'CV','Saudi Arabia':'SA','Uruguay':'UY',
+  'France':'FR','Senegal':'SN','Iraq':'IQ','Norway':'NO',
+  'Argentina':'AR','Algeria':'DZ','Austria':'AT','Jordan':'JO',
+  'Portugal':'PT','DR Congo':'CD','Uzbekistan':'UZ','Colombia':'CO',
+  'Croatia':'HR','Ghana':'GH','Panama':'PA'
+};
+function flagCode(country) {
+  if (country === 'Scotland') return 'gb-sct';
+  if (country === 'England')  return 'gb-eng';
+  var iso = FLAG_ISO[country];
+  return iso ? iso.toLowerCase() : null;
+}
+function flagImg(country) {
+  var code = flagCode(country);
+  if (!code) return '<span class="wg-flag-none">🏳️</span>';
+  return '<img class="wg-flag" alt="" loading="lazy" width="32" height="24" ' +
+    'src="https://flagcdn.com/w80/' + code + '.png" ' +
+    'srcset="https://flagcdn.com/w160/' + code + '.png 2x">';
+}
+
 function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -452,7 +580,33 @@ function render() {
   renderRoundStatus();
   renderUpdated();
   renderPodium();
+  renderWinnerGroups();
   renderLeaderboard();
+}
+
+// Display ranks with ties: same total → same rank. Players arrive sorted by
+// total descending, so the array index drives the rank.
+function getDisplayRanks() {
+  var ranks = [];
+  var lastTotal = null;
+  var lastDisplayRank = 0;
+  for (var i = 0; i < standings.players.length; i++) {
+    var p = standings.players[i];
+    if (p.total === lastTotal) {
+      ranks.push(lastDisplayRank);
+    } else {
+      lastDisplayRank = i + 1;
+      lastTotal = p.total;
+      ranks.push(lastDisplayRank);
+    }
+  }
+  return ranks;
+}
+
+function ordinal(n) {
+  var s = ['th','st','nd','rd'];
+  var v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 
 function currentRoundLabel() {
@@ -547,6 +701,87 @@ function renderPodium() {
   host.innerHTML = html;
 }
 
+// ─── Backing the Champion (group entries by their winner pick) ──────────────
+function renderWinnerGroups() {
+  var host = document.getElementById('winner-groups');
+  var players = standings.players;
+
+  if (!players.length) {
+    host.innerHTML =
+      '<div class="card p-5 text-center text-chalk-mute italic" style="grid-column:1/-1;">' +
+        'No picks submitted yet.' +
+      '</div>';
+    return;
+  }
+
+  var ranks = getDisplayRanks();
+  var actualWinner = standings.actuals.winner;
+
+  // Group entrants by champion pick. Players arrive in rank order, so each
+  // group's list is already rank-ordered as we push.
+  var groups = {};      // country -> [{ name, rank }]
+  for (var i = 0; i < players.length; i++) {
+    var country = players[i].picks.winner || 'No pick';
+    if (!groups[country]) groups[country] = [];
+    groups[country].push({ name: players[i].name, rank: ranks[i] });
+  }
+
+  // Bucket countries by backer count, then render one column per count
+  // (descending), so every panel inside a column is the same height.
+  var byCount = {};     // count -> [countries]
+  Object.keys(groups).forEach(function(country) {
+    var n = groups[country].length;
+    (byCount[n] || (byCount[n] = [])).push(country);
+  });
+
+  var counts = Object.keys(byCount).map(Number).sort(function(a, b) { return b - a; });
+
+  function panelHtml(country) {
+    var entrants = groups[country];
+    var isWinner = actualWinner && country === actualWinner;
+
+    var rows = '';
+    entrants.forEach(function(e) {
+      var rankClass = e.rank <= 4 ? ' top-' + e.rank : '';
+      rows += '<div class="wg-entrant">' +
+                '<span class="wg-rank' + rankClass + '">' + ordinal(e.rank) + '</span>' +
+                '<span class="wg-entrant-name">' + escapeHtml(e.name) + '</span>' +
+              '</div>';
+    });
+
+    return '<div class="wg-panel' + (isWinner ? ' is-winner' : '') + '">' +
+             '<div class="wg-head">' +
+               flagImg(country) +
+               '<span class="wg-country">' + escapeHtml(country) + '</span>' +
+             '</div>' +
+             '<div class="wg-list">' + rows + '</div>' +
+           '</div>';
+  }
+
+  var html = '';
+  counts.forEach(function(n) {
+    // Sort countries in this column by best (lowest) rank, then alphabetically.
+    // "No pick" sinks to the bottom of its column.
+    var countries = byCount[n].sort(function(a, b) {
+      if (a === 'No pick') return 1;
+      if (b === 'No pick') return -1;
+      var bestA = groups[a][0].rank, bestB = groups[b][0].rank;
+      if (bestA !== bestB) return bestA - bestB;
+      return a.localeCompare(b);
+    });
+
+    html += '<div class="wg-col">' +
+              '<div class="wg-col-head">' +
+                '<span class="wg-col-count">' + n + '</span>' +
+                '<span class="wg-col-label">' + (n === 1 ? 'pick' : 'picks') + '</span>' +
+              '</div>' +
+              countries.map(panelHtml).join('') +
+            '</div>';
+  });
+
+  host.innerHTML = html;
+}
+
 function renderLeaderboard() {
   var host = document.getElementById('leaderboard');
   if (!standings.players.length) {
@@ -558,19 +793,10 @@ function renderLeaderboard() {
   }
 
   var html = '';
-  // Compute display rank with ties: same total → same rank.
-  var lastTotal = null;
-  var lastDisplayRank = 0;
+  var ranks = getDisplayRanks();
   for (var i = 0; i < standings.players.length; i++) {
     var p = standings.players[i];
-    var displayRank;
-    if (p.total === lastTotal) {
-      displayRank = lastDisplayRank;
-    } else {
-      displayRank = i + 1;
-      lastDisplayRank = displayRank;
-      lastTotal = p.total;
-    }
+    var displayRank = ranks[i];
 
     var topClass = displayRank <= 4 ? ' top-' + displayRank : '';
     var champClass = '';
